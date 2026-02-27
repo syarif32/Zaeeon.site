@@ -7,24 +7,23 @@ export const UMAMI_ACCOUNT = {
     sessions: "/sessions/stats",
   },
   parameters: {
-    startAt: 1717174800000, // 1 Juni 2024 00:00 WIB
-    endAt: 1767190799000, // 31 Desember 2025 23:59 WIB
+    startAt: 1717174800000, 
+    endAt: 1798736399000, 
     unit: "month",
     timezone: "Asia/Jakarta",
   },
   is_active: true,
   websites: [
     {
-      domain: "",
-      website_id: process.env.UMAMI_WEBSITE_ID_MYID,
-      umami_url:
-        "",
+      domain: "zaeeon-site.vercel.app", 
+      website_id: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID, 
+      umami_url: "https://cloud.umami.is/share/ID_SHARE_BOS", 
     },
-    {
-      domain: "",
-      website_id: process.env.UMAMI_WEBSITE_ID_SITE,
-      umami_url:
-        "",
-    },
+    // {
+      
+    //   domain: "zaeeon.site.vercel.app",
+    //   website_id: "ID_KEDUA_BOS_KALAU_ADA",
+    //   umami_url: "",
+    // },
   ],
 };
