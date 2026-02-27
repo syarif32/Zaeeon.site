@@ -11,7 +11,7 @@ export const UMAMI_ACCOUNT = {
   parameters: {
     startAt: 1717174800000, 
     endAt: 1830297599001, 
-    unit: "month",
+    unit: "day",
     timezone: "Asia/Jakarta",
   },
   is_active: true,
