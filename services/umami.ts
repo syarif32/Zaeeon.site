@@ -91,34 +91,40 @@ const mergeData = (allResults: UmamiResponse[]): UmamiResponse => {
   };
 
   allResults.forEach((result) => {
-    combined.websiteStats.pageviews.value +=
-      result.websiteStats.pageviews.value;
-    combined.websiteStats.visitors.value += result.websiteStats.visitors.value;
-    combined.websiteStats.visits.value += result.websiteStats.visits.value;
-    combined.websiteStats.events.value += result.websiteStats.events.value;
-    combined.websiteStats.countries.value = Math.max(
-      combined.websiteStats.countries.value,
-      result.websiteStats.countries.value,
-    );
+    // TAMBAHKAN PENGECEKAN INI: Pastikan websiteStats ada sebelum dijumlahkan
+    if (result && result.websiteStats && result.websiteStats.pageviews) {
+      combined.websiteStats.pageviews.value += result.websiteStats.pageviews.value || 0;
+      combined.websiteStats.visitors.value += result.websiteStats.visitors.value || 0;
+      combined.websiteStats.visits.value += result.websiteStats.visits.value || 0;
+      combined.websiteStats.events.value += result.websiteStats.events.value || 0;
+      combined.websiteStats.countries.value = Math.max(
+        combined.websiteStats.countries.value,
+        result.websiteStats.countries.value || 0,
+      );
+    }
 
     const mergeChart = (target: UmamiDataPoint[], source: UmamiDataPoint[]) => {
-      source.forEach((item) => {
-        const existing = target.find((p) => p.x === item.x);
-        if (existing) existing.y += item.y;
-        else target.push({ ...item });
-      });
+      // Pastikan source adalah array sebelum di-loop
+      if (Array.isArray(source)) {
+        source.forEach((item) => {
+          const existing = target.find((p) => p.x === item.x);
+          if (existing) existing.y += item.y;
+          else target.push({ ...item });
+        });
+      }
     };
 
     mergeChart(combined.pageviews, result.pageviews);
     mergeChart(combined.sessions, result.sessions);
   });
 
-  combined.pageviews.sort(
-    (a, b) => new Date(a.x).getTime() - new Date(b.x).getTime(),
-  );
-  combined.sessions.sort(
-    (a, b) => new Date(a.x).getTime() - new Date(b.x).getTime(),
-  );
+  // Sort hanya jika ada isinya
+  if (combined.pageviews.length > 0) {
+    combined.pageviews.sort((a, b) => new Date(a.x).getTime() - new Date(b.x).getTime());
+  }
+  if (combined.sessions.length > 0) {
+    combined.sessions.sort((a, b) => new Date(a.x).getTime() - new Date(b.x).getTime());
+  }
 
   return combined;
 };
