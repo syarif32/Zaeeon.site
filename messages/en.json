@@ -225,7 +225,8 @@
     "Contact": "Contact",
     "Smart Talk": "Smart Talk",
     "AI Assistant": "AI Assistant",
-    "Services": "Services"
+    "Terminal": "Terminal"
+    
   },
   "NotFoundPage": {
     "title": "Page Not Found",

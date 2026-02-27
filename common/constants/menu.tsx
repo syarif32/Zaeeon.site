@@ -9,7 +9,7 @@ import { IoPhonePortraitOutline as ContentIcon } from "react-icons/io5";
 import { PiChatTeardropDotsBold as ChatRoomIcon } from "react-icons/pi";
 import { PiCertificate as AchievementIcon } from "react-icons/pi";
 import { VscHubot as SmartChatIcon } from "react-icons/vsc";
-
+import { BiTerminal } from "react-icons/bi"; 
 import { MenuItemProps } from "../types/menu";
 import { HiSparkles } from "react-icons/hi";
 import { HiOutlineBriefcase } from "react-icons/hi2";
@@ -96,13 +96,21 @@ export const MENU_ITEMS: MenuItemProps[] = [
     isExternal: false,
     eventName: "Pages: Contact",
   },
-  {
-    title: "Smart Talk",
-    href: "/smart-talk",
-    icon: <SmartChatIcon size={20} className="text-blue-500" />,
-    isShow: false,
-    isExternal: false,
-    eventName: "Pages: Smart Talk",
-    isExclusive: true,
-  },
+  // {
+  //   title: "Smart Talk",
+  //   href: "/smart-talk",
+  //   icon: <SmartChatIcon size={20} className="text-blue-500" />,
+  //   isShow: true,
+  //   isExternal: false,
+  //   eventName: "Pages: Smart Talk",
+  //   isExclusive: true,
+  // },
+  // {
+  //   title: "Terminal",
+  //   href: "/terminal",
+  //   icon: <BiTerminal size={20} className="text-blue-500" />,
+  //   isShow: true,
+  //   isExternal: false,
+  //   eventName: "Pages: Terminal",
+  // },
 ];

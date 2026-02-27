@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MdVerified as VerifiedIcon } from "react-icons/md";
+import { BiTerminal } from "react-icons/bi"; 
 
 import ThemeToggle from "./ThemeToggle";
 import IntlToggle from "./IntlToggle";
@@ -41,10 +42,22 @@ const ProfileHeader = ({ expandMenu, imageSize }: ProfileHeaderProps) => {
           <VerifiedIcon size={18} className="text-blue-400" />
         </Tooltip>
       </div>
+      <div className="hidden items-center gap-2 text-sm text-neutral-600 transition-all duration-300 dark:text-neutral-500 lg:flex mt-1">
+        <span className="hover:text-neutral-700 dark:hover:text-neutral-400">
+          @najwa_sarep
+        </span>
 
-      <div className="hidden text-sm text-neutral-600 transition-all duration-300 hover:text-neutral-700 dark:text-neutral-500 dark:hover:text-neutral-400 lg:flex">
-        @najwa_sarep
+        <Tooltip title="Access Mainframe?">
+          <Link
+            href="/terminal"
+            className="flex items-center mt-0.5 opacity-1 transition-all duration-300 hover:scale-125 hover:text-green-500 hover:opacity-100"
+            aria-label="Terminal Mode"
+          >
+            <BiTerminal size={20} />
+          </Link>
+        </Tooltip>
       </div>
+     
 
       <div className="hidden justify-between gap-6 lg:mt-4 lg:flex">
         <IntlToggle />

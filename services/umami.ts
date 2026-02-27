@@ -3,7 +3,7 @@ import { UMAMI_ACCOUNT } from "@/common/constants/umami";
 import { UmamiResponse, UmamiDataPoint } from "@/common/types/umami";
 
 const { api_key, endpoint, base_url, parameters, websites } = UMAMI_ACCOUNT;
-
+const startFrom27Feb = new Date("2026-02-27T00:00:00+07:00").getTime();
 const getWebsiteIdByDomain = (domain: string) => {
   const found = websites.find((w) => w.domain === domain);
   return found?.website_id;
@@ -27,7 +27,12 @@ export const getPageViewsByDataRange = async (domain: string) => {
         Accept: "application/json",
         "x-umami-api-key": api_key || "",
       },
-      params: parameters,
+      
+      params: {
+        ...parameters,
+        startAt: startFrom27Feb,
+        endAt: Date.now(),
+      },
     });
 
     return {
@@ -61,7 +66,11 @@ export const getWebsiteStats = async (domain: string) => {
         Accept: "application/json",
         "x-umami-api-key": api_key || "",
       },
-      params: { startAt: parameters.startAt, endAt: parameters.endAt },
+     
+      params: { 
+        startAt: startFrom27Feb,
+        endAt: Date.now() 
+      },
     });
 
     return {
@@ -91,7 +100,7 @@ const mergeData = (allResults: UmamiResponse[]): UmamiResponse => {
   };
 
   allResults.forEach((result) => {
-    // TAMBAHKAN PENGECEKAN INI: Pastikan websiteStats ada sebelum dijumlahkan
+    // Pastikan websiteStats ada sebelum dijumlahkan
     if (result && result.websiteStats && result.websiteStats.pageviews) {
       combined.websiteStats.pageviews.value += result.websiteStats.pageviews.value || 0;
       combined.websiteStats.visitors.value += result.websiteStats.visitors.value || 0;
@@ -104,7 +113,6 @@ const mergeData = (allResults: UmamiResponse[]): UmamiResponse => {
     }
 
     const mergeChart = (target: UmamiDataPoint[], source: UmamiDataPoint[]) => {
-      // Pastikan source adalah array sebelum di-loop
       if (Array.isArray(source)) {
         source.forEach((item) => {
           const existing = target.find((p) => p.x === item.x);
