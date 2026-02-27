@@ -1,15 +1,15 @@
 export const UMAMI_ACCOUNT = {
   username: "Syarif32",
   api_key: process.env.UMAMI_API_KEY,
-  base_url: "https://api.umami.is/v1/websites", 
+  base_url: "https://api.umami.is/v1/websites",
   endpoint: {
     page_views: "/pageviews",
     sessions: "/stats", 
   },
   parameters: {
-    startAt: 1717174800000, 
-    endAt: 1798736399000, 
-    unit: "day", 
+    startAt: Date.now() - (30 * 24 * 60 * 60 * 1000), 
+    endAt: Date.now(), 
+    unit: "day",
     timezone: "Asia/Jakarta",
   },
   is_active: true,
