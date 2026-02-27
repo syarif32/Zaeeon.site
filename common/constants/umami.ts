@@ -19,5 +19,10 @@ export const UMAMI_ACCOUNT = {
       website_id: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
       umami_url: "https://cloud.umami.is/share/ID_SHARE_BOS", // Kosongin aja kalau belum ada
     },
+    {
+      domain: "ritecs.org",
+      website_id: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
+      umami_url: "https://cloud.umami.is/share/ID_SHARE_BOS",
+    },
   ],
 };
