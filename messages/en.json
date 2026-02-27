@@ -1,0 +1,234 @@
+{
+  "HomePage": {
+    "intro": "Hi, I'm Muhammad Najwa Syarif",
+    "location": "Based in Semarang, Indonesia 🇮🇩",
+    "location_type": "Onsite",
+    "resume": {
+      "paragraph_1": " with a profound passion for Web and Mobile App Development.",
+      "paragraph_2": "My focus lies in designing intuitive user interfaces and engineering robust backend systems. Beyond writing code, I have a strong interest in photography—a hobby that refines my visual acuity and understanding of composition. This directly inspires my creativity in crafting aesthetic, modern, and user-centric UI/UX designs."
+    },
+    "skills": {
+      "title": "Skills",
+      "sub_title": "My technical proficiency and professional toolkit."
+    },
+    "bento": {
+      "title": "Featured Sections",
+      "sub_title": "Explore my crafted works, open-source contributions, and professional milestones."
+    },
+    "error": "An internal server error occurred.",
+    "no_data": "No data available."
+  },
+  "AboutPage": {
+    "title": "About",
+    "description": "A brief overview of who I am and my professional focus.",
+    "resume": {
+      "paragraph_1": "I am Muhammad Najwa Syarif, a Software Engineer based in Semarang. I am highly dedicated to creating efficient and innovative digital solutions, specializing primarily in Web Development (utilizing modern ecosystems like Laravel, React, and Next.js) as well as Mobile Development.",
+      "paragraph_2": "My primary focus is architecting applications that not only perform optimally but also feature clean, maintainable code structures centered entirely on the end-user experience. I am consistently driven by the challenge of translating complex business requirements into practical, scalable technological solutions, ranging from e-commerce systems to comprehensive management platforms.",
+      "paragraph_3": "Outside my daily routine of software development, I am an avid photographer. Through the camera lens, I have cultivated a deep appreciation for meticulous detail, lighting, and visual aesthetics. These skills seamlessly integrate into my technical work, enriching how I design the look and feel of every digital product. I firmly believe that the intersection of solid programming logic and visual artistry yields exceptional results.",
+      "paragraph_4": "Best regards,"
+    },
+    "career": {
+      "title": "Career & Experience",
+      "sub_title": "My professional journey and selected project involvements."
+    },
+    "education": {
+      "title": "Education",
+      "sub_title": "My academic background."
+    },
+    "resume_download_button": "Download Resume",
+    "portfolio_download_button": "Download Portfolio",
+    "error": "An internal server error occurred.",
+    "no_data": "No data available."
+  },
+  "ContentsPage": {
+    "title": "Contents",
+    "description": "A curated collection of my technical writings and creative explorations.",
+    "open_tiktok": "Open TikTok",
+    "view": "View",
+    "load_more": "Load More",
+    "privacy_policy": "Privacy Policy",
+    "error": "An internal server error occurred.",
+    "no_data": "No content available."
+  },
+  "AchievementsPage": {
+    "title": "Achievements",
+    "description": "A collection of certificates, awards, and recognitions I have earned throughout my academic and professional journey.",
+    "error": "An internal server error occurred.",
+    "no_data": "No data available.",
+    "show_credential": "Show Credentials"
+  },
+  "ProjectsPage": {
+    "title": "Projects",
+    "description": "A showcase of the best applications and systems I have architected and built from the ground up.",
+    "view_project": "View Project",
+    "tech_stack": "Tech Stack",
+    "back_button": "Back",
+    "source_code_text": "Source Code",
+    "live_demo_text": "Live Demo",
+    "error": "An internal server error occurred.",
+    "no_data": "No projects available."
+  },
+  "DashboardPage": {
+    "title": "Dashboard",
+    "description": "My personal dashboard visualizing real-time coding statistics and development metrics.",
+    "error": "An internal server error occurred.",
+    "no_data": "Statistics are currently unavailable.",
+    "umami": {
+      "title": "Umami",
+      "sub_title": "Monitor real-time traffic and interactions across my portfolio.",
+      "overview": {
+        "page_views": "Page Views",
+        "visitors": "Visitors",
+        "visits": "Visits",
+        "countries": "Countries",
+        "events": "Events"
+      },
+      "chart": {
+        "title": "Traffic Trends",
+        "sessions": "Sessions",
+        "page_views": "Page Views"
+      },
+      "all": "All",
+      "filter_placeholder": "Filter domain..."
+    },
+    "github": {
+      "title": "GitHub Contributions",
+      "sub_title": "My repository activity and code commits over the past year.",
+      "title_total_contribution": "Total",
+      "title_total_this_week_contribution": "This week",
+      "title_best_contribution": "Best",
+      "title_average_contribution": "Average",
+      "title_less_contribution": "Less",
+      "title_more_contribution": "More",
+      "unit": "day"
+    },
+    "wakatime": {
+      "title": "WakaTime Stats",
+      "sub_title": "My tracked coding activity over the past 7 days.",
+      "last_update": "Last Update",
+      "start_date": "Start Date",
+      "end_date": "End Date",
+      "daily_average": "Daily Average",
+      "total_this_week": "Total This Week",
+      "best_day": "Best Day",
+      "all_time_since_joined": "All-Time Coding Hours",
+      "languages": "Top Languages"
+    },
+    "codewars": {
+      "title": "Codewars Progress",
+      "sub_title": "Performance metrics from algorithmic problem-solving challenges.",
+      "title_rank": "Rank",
+      "title_honor": "Honor",
+      "title_completed": "Challenges Completed",
+      "title_leaderboard": "Global Leaderboard",
+      "title_clan": "Clan",
+      "title_skills": "Associated Skills"
+    },
+    "monkeytype": {
+      "title": "Monkeytype Stats",
+      "sub_title": "Typing speed and accuracy metrics.",
+      "joined": "Joined",
+      "current_streak": "Current Streak",
+      "unit_days": "days",
+      "title_test_started": "Tests Started",
+      "title_test_completed": "Tests Completed",
+      "title_time_typing": "Total Typing Time",
+      "title_leaderboard": "English Leaderboard",
+      "unit_seconds": "seconds",
+      "unit_time": "time",
+      "unit_words": "words",
+      "top": "top",
+      "days_ago": "days ago",
+      "xp_until_next_level": "XP to Next Level",
+      "total_xp": "Total XP"
+    }
+  },
+  "ChatRoomPage": {
+    "title": "Chat Room",
+    "description": "Feel free to drop a message, share ideas, or inquire about collaborations!",
+    "placeholder": "Type your message here...",
+    "error": "An internal server error occurred.",
+    "no_data": "No messages yet.",
+    "sign_in": {
+      "title": "Please sign in to join the conversation. Your data privacy is strictly respected.",
+      "label": "Sign in with",
+      "signed_label": "Signed in as",
+      "sign_out_label": "Sign out"
+    },
+    "widget": {
+      "title": "Chat Room",
+      "tooltip_title": "Open Chat Room",
+      "tooltip_minimize": "Minimize",
+      "tooltip_signout": "Sign out"
+    }
+  },
+  "ContactPage": {
+    "title": "Contact",
+    "description": "Let's connect and discuss potential professional collaborations.",
+    "error": "Failed to send the message.",
+    "no_data": "Contact information is unavailable.",
+    "social_media": {
+      "title": "Find me on social networks",
+      "gmail": {
+        "title": "Stay in Touch",
+        "description": "Reach out via email for professional inquiries and project collaborations."
+      },
+      "instagram": {
+        "title": "Visuals & Moments",
+        "description": "Explore my photography portfolio and visual storytelling."
+      },
+      "linkedin": {
+        "title": "Professional Network",
+        "description": "Connect with me on LinkedIn for professional updates."
+      },
+      "tiktok": {
+        "title": "Short-form Content",
+        "description": "Watch engaging content on technology and software development."
+      },
+      "github": {
+        "title": "Explore My Code",
+        "description": "Review my open-source contributions and software repositories."
+      }
+    },
+    "form": {
+      "title": "Or send a direct message",
+      "input_name": "Full Name",
+      "input_email": "Email Address",
+      "input_message": "Your Message",
+      "button": "Send Message"
+    }
+  },
+  "SmartTalkPage": {
+    "title": "Smart Talk",
+    "description": "An AI-powered environment for insightful discourse and idea exploration.",
+    "error": "The AI service is currently unavailable.",
+    "no_data": "No conversation history found."
+  },
+  "Footer": {
+    "hire": "Let's work together.",
+    "copyright_1": "COPYRIGHT © ",
+    "copyright_2": "Muhammad Najwa Syarif. All rights reserved."
+  },
+  "LocaleSwitcher": {
+    "en": "🇺🇸",
+    "id": "🇮🇩",
+    "label": "Language"
+  },
+  "Navigation": {
+    "Home": "Home",
+    "About": "About",
+    "Contents": "Contents",
+    "Achievements": "Achievements",
+    "Projects": "Projects",
+    "Dashboard": "Dashboard",
+    "Chat Room": "Chat Room",
+    "Contact": "Contact",
+    "Smart Talk": "Smart Talk",
+    "AI Assistant": "AI Assistant",
+    "Services": "Services"
+  },
+  "NotFoundPage": {
+    "title": "Page Not Found",
+    "button": "Return to Home"
+  }
+}
