@@ -38,7 +38,9 @@ interface DataProps {
 
 const TrafficTrendsChart = ({ data }: DataProps) => {
   const rawLabels = data?.pageviews?.map((point) => point.x) || [];
-  const labels = rawLabels?.map((isoDate) => format(parseISO(isoDate), "MMM"));
+  
+  // 1. BIAR LANGSING: Ubah format label dari "MMM" (Bulan) ke "dd MMM" (Tanggal)
+  const labels = rawLabels?.map((isoDate) => format(parseISO(isoDate), "dd MMM"));
 
   const chartData = {
     labels,
@@ -46,16 +48,20 @@ const TrafficTrendsChart = ({ data }: DataProps) => {
       {
         label: "Sessions",
         data: data?.sessions?.map((point) => point.y) || [],
-        backgroundColor: "rgba(255, 255, 184, 0.7)",
+        // 2. BIAR BIRU: Gunakan warna biru yang lebih gelap/soft untuk Sessions
+        backgroundColor: "rgba(59, 130, 246, 0.5)", 
         stack: "traffic",
         borderRadius: 4,
+        barPercentage: 0.5, // 3. BIAR GAK GENDUT: Perkecil lebar batang
       },
       {
         label: "Page views",
         data: data?.pageviews?.map((point) => point.y) || [],
-        backgroundColor: "rgba(251, 228, 0, 0.7)",
+        // 4. BIAR BIRU: Gunakan warna biru solid untuk Page Views
+        backgroundColor: "rgba(37, 99, 235, 1)", 
         stack: "traffic",
         borderRadius: 4,
+        barPercentage: 0.5, // 3. BIAR GAK GENDUT: Perkecil lebar batang
       },
     ],
   };
@@ -79,7 +85,8 @@ const TrafficTrendsChart = ({ data }: DataProps) => {
           title: (tooltipItems) => {
             const index = tooltipItems[0].dataIndex;
             const isoDate = rawLabels[index];
-            return isoDate ? format(parseISO(isoDate), "MMM yyyy") : "";
+            // 5. TOOLTIP: Tampilkan format tanggal lengkap saat di-hover
+            return isoDate ? format(parseISO(isoDate), "dd MMMM yyyy") : "";
           },
         },
       },
@@ -90,16 +97,25 @@ const TrafficTrendsChart = ({ data }: DataProps) => {
         grid: {
           display: false,
         },
+        // 6. BIAR RAPI: Batasi jumlah label yang muncul di sumbu X agar tidak tabrakan
+        ticks: {
+          maxRotation: 0,
+          autoSkip: true,
+          maxTicksLimit: 10, 
+        }
       },
       y: {
         stacked: true,
         beginAtZero: true,
+        grid: {
+          color: "rgba(255, 255, 255, 0.1)", // Biar ada garis tipis di background
+        }
       },
     },
   };
 
   return (
-    <div className="h-[350px] w-full md:h-[400px]">
+    <div className="h-[300px] w-full md:h-[350px]"> {/* Tinggi dikurangi sedikit agar proporsional */}
       <Bar data={chartData} options={options} />
     </div>
   );
