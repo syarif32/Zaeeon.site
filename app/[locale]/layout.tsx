@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
-      : process.env.DOMAIN || "https://zaeeon.site",
+      : process.env.DOMAIN || "https://zaeeon-site.vercel.app",
   ),
   description: METADATA.description,
   keywords: METADATA.keyword,
@@ -66,7 +66,7 @@ const RootLayout = async ({
         <Script
           defer
           src="https://cloud.umami.is/script.js"
-          data-website-id="91c868c5-2a89-4a1d-b292-56c40ea30137"
+          data-website-id="1d7f97ea-29bb-4535-bf94-6e59edc872b9"
         />
       </head>
       <body className={inter.className}>
