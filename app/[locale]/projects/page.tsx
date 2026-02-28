@@ -18,7 +18,7 @@ export async function generateMetadata({
   return {
     title: `${t("title")} ${METADATA.exTitle}`,
     description: t("description"),
-    keywords: "portfolio frontend developer, software engineer jambi",
+    keywords: "portfolio frontend developer, projects, web development, software engineering",
     alternates: {
       canonical: `${process.env.DOMAIN}/${locale}/projects`,
     },
