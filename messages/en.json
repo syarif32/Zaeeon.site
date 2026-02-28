@@ -74,14 +74,14 @@
     "error": "An internal server error occurred.",
     "no_data": "Statistics are currently unavailable.",
     "umami": {
-      "title": "Umami",
+      "title": "Site Analytics",
       "sub_title": "Monitor real-time traffic and interactions across my portfolio.",
       "overview": {
         "page_views": "Page Views",
         "visitors": "Visitors",
         "visits": "Visits",
         "countries": "Countries",
-        "events": "Events"
+        "events": "Interactions"
       },
       "chart": {
         "title": "Traffic Trends",
