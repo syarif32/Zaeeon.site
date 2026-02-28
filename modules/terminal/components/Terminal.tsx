@@ -6,13 +6,15 @@ import { ABOUT } from "@/common/constants/about";
 import { STACKS } from "@/common/constants/stacks";
 import { SOCIAL_MEDIA } from "@/common/constants/socialMedia";
 import { EDUCATION } from "@/common/constants/education";
+import { useSession } from "next-auth/react";
 
 type HistoryItem = {
   command: string;
   output: React.ReactNode;
 };
 
-// 
+//
+
 const activeSkills = Object.entries(STACKS)
   .filter(([_, value]) => value.isActive)
   .map(([key]) => key)
@@ -69,7 +71,7 @@ const fileSystem: Record<string, string | React.ReactNode> = {
       <p>1. Lapak Siswa (Marketplace Sekolah)</p>
       <p>2. Ritecs (Web System)</p>
       <p>3. F&B POS System (Laravel & React)</p>
-      <p>4. BrainDuel & EchoArena</p>
+      <p>4. EchoArena</p>
       <p className="mt-2 text-gray-500 italic">Ketik 'open projects' untuk melihat UI aslinya.</p>
     </div>
   ),
@@ -80,7 +82,9 @@ export default function Terminal() {
   const [input, setInput] = useState("");
   const [cmdHistory, setCmdHistory] = useState<string[]>([]);
   const [historyPointer, setHistoryPointer] = useState<number>(0);
-  
+  const { data: session } = useSession();
+  const username = session?.user?.name || "guest";
+  const prompt = `${username}@zaeeon:~$`;
   const [themeClass, setThemeClass] = useState("text-green-500");
   const [themeName, setThemeName] = useState("Hacker Green");
 
@@ -182,7 +186,7 @@ export default function Terminal() {
               </pre>
             </div>
             <div className="text-gray-300 text-sm sm:text-base flex flex-col gap-1">
-              <p><span className={`font-bold ${themeClass}`}>guest</span>@<span className={`font-bold ${themeClass}`}>zaeeon</span></p>
+              <p><span className={`font-bold ${themeClass}`}>@{username}</span>@<span className={`font-bold ${themeClass}`}>zaeeon</span></p>
               <p>-------------------</p>
               <p><span className={`font-bold ${themeClass}`}>OS</span>: Zaeeon Web OS</p>
               <p><span className={`font-bold ${themeClass}`}>Host</span>: Vercel / Next.js</p>
@@ -247,7 +251,7 @@ export default function Terminal() {
         break;
 
       case "whoami":
-        output = <p className="text-gray-300 mt-1 mb-2">guest</p>;
+        output = <p className="text-gray-300 mt-1 mb-2">{username}</p>;
         break;
 
       case "date":
@@ -327,7 +331,7 @@ export default function Terminal() {
           <div key={index}>
             {item.command !== "" && (
               <div className="flex gap-2">
-                <span className="font-bold">guest@zaeeon</span>
+                <span className="font-bold">@{username}</span>
                 <span className="text-white">:</span>
                 <span className="text-blue-400 font-bold">~/portfolio</span>
                 <span className="text-white">$</span>
@@ -339,7 +343,7 @@ export default function Terminal() {
         ))}
 
         <div className="flex gap-2 items-center mt-1">
-          <span className="font-bold">guest@zaeeon</span>
+          <span className="font-bold">@{username}</span>
           <span className="text-white">:</span>
           <span className="text-blue-400 font-bold">~/portfolio</span>
           <span className="text-white">$</span>
