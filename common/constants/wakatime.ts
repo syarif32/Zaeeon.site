@@ -1,6 +1,7 @@
 export const WAKATIME_ACCOUNT = {
   username: "Syarif32",
-  api_key: process.env.WAKATIME_API_KEY,
+  // api_key: process.env.WAKATIME_API_KEY,
+  api_key: process.env.WAKATIME_ACCESS_TOKEN,
   stats_endpoint: "/stats",
   all_time_endpoint: "/all_time_since_today",
   base_url: "https://wakatime.com/api/v1/users/current",
