@@ -241,7 +241,7 @@ export default function AdminDashboard() {
                 <td className="px-6 py-4 font-medium">{career.position}</td>
                 <td className="px-6 py-4">{career.company}</td>
                 <td className="px-6 py-4 flex justify-center gap-3">
-                  <Link href={`/admin/career/edit/${career.id}`} className="p-2 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-lg"><HiOutlinePencil size={18} /></Link>
+                  <Link href={`/admin/career/edit-career/${career.id}`} className="p-2 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-lg"><HiOutlinePencil size={18} /></Link>
                   <button onClick={() => handleDeleteCareer(career.id, career.company)} className="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg"><HiOutlineTrash size={18} /></button>
                 </td>
               </tr>
