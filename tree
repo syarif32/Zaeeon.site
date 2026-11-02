@@ -1,0 +1,407 @@
+# File Tree: Zaeeon.site
+
+**Generated:** 11/2/2026, 11:29:19 AM
+**Root Path:** `c:\Users\IT Prog 1\Documents\Sarep\project\Zaeeon.site`
+
+```
+├── app
+│   ├── [locale]
+│   │   ├── about
+│   │   │   └── page.tsx
+│   │   ├── achievements
+│   │   │   └── page.tsx
+│   │   ├── admin
+│   │   │   ├── career
+│   │   │   │   ├── edit-career
+│   │   │   │   │   └── [id]
+│   │   │   │   │       └── page.tsx
+│   │   │   │   └── insert
+│   │   │   │       └── page.tsx
+│   │   │   ├── certif
+│   │   │   │   ├── edit
+│   │   │   │   │   └── [id]
+│   │   │   │   │       └── page.tsx
+│   │   │   │   └── insert
+│   │   │   │       └── page.tsx
+│   │   │   ├── education
+│   │   │   │   ├── edit
+│   │   │   │   │   └── [id]
+│   │   │   │   │       └── page.tsx
+│   │   │   │   └── insert-educations
+│   │   │   │       └── page.tsx
+│   │   │   ├── project
+│   │   │   │   ├── edit
+│   │   │   │   │   └── [id]
+│   │   │   │   │       └── page.tsx
+│   │   │   │   └── insert-project
+│   │   │   │       └── page.tsx
+│   │   │   └── page.tsx
+│   │   ├── assistant
+│   │   │   └── page.tsx
+│   │   ├── chat
+│   │   │   └── page.tsx
+│   │   ├── contact
+│   │   │   └── page.tsx
+│   │   ├── contents
+│   │   │   └── page.tsx
+│   │   ├── dashboard
+│   │   │   └── page.tsx
+│   │   ├── layanan
+│   │   │   └── page.tsx
+│   │   ├── legal
+│   │   │   ├── privacy-policy
+│   │   │   │   └── page.tsx
+│   │   │   └── terms-of-service
+│   │   │       └── page.tsx
+│   │   ├── projects
+│   │   │   ├── [slug]
+│   │   │   │   └── page.tsx
+│   │   │   └── page.tsx
+│   │   ├── smart-talk
+│   │   │   └── page.tsx
+│   │   ├── terminal
+│   │   │   └── page.tsx
+│   │   ├── layout.tsx
+│   │   ├── not-found.tsx
+│   │   └── page.tsx
+│   ├── api
+│   │   ├── achievements
+│   │   │   ├── categories
+│   │   │   │   └── route.ts
+│   │   │   ├── types
+│   │   │   │   └── route.ts
+│   │   │   └── route.ts
+│   │   ├── auth
+│   │   │   └── [...nextauth]
+│   │   │       └── route.ts
+│   │   ├── chat
+│   │   │   ├── [slug]
+│   │   │   │   └── route.ts
+│   │   │   ├── cleanup
+│   │   │   │   └── routes.ts
+│   │   │   ├── email
+│   │   │   │   └── route.ts
+│   │   │   └── route.ts
+│   │   ├── chat-ai
+│   │   │   └── route.ts
+│   │   ├── codewars
+│   │   │   └── route.ts
+│   │   ├── email
+│   │   │   └── route.ts
+│   │   ├── github
+│   │   │   └── route.ts
+│   │   ├── monkeytype
+│   │   │   └── route.ts
+│   │   ├── projects
+│   │   │   ├── [slug]
+│   │   │   │   └── route.ts
+│   │   │   └── route.ts
+│   │   ├── read-stats
+│   │   │   └── route.ts
+│   │   ├── tiktok
+│   │   │   └── route.ts
+│   │   └── umami
+│   │       └── route.ts
+│   ├── favicon.ico
+│   ├── global.d.ts
+│   └── globals.css
+├── common
+│   ├── components
+│   │   ├── elements
+│   │   │   ├── AnimateCounter.tsx
+│   │   │   ├── AnimatedList.tsx
+│   │   │   ├── BackButton.tsx
+│   │   │   ├── Breakline.tsx
+│   │   │   ├── Button.tsx
+│   │   │   ├── Card.tsx
+│   │   │   ├── ClickSpark.tsx
+│   │   │   ├── CodeBlock.tsx
+│   │   │   ├── Container.tsx
+│   │   │   ├── Copyright.tsx
+│   │   │   ├── CountUp.tsx
+│   │   │   ├── DecryptedText.tsx
+│   │   │   ├── EmptyState.tsx
+│   │   │   ├── Folder.tsx
+│   │   │   ├── FuzzyText.tsx
+│   │   │   ├── GlareHover.tsx
+│   │   │   ├── GlassIcon.tsx
+│   │   │   ├── GlitchText.tsx
+│   │   │   ├── GradientText.tsx
+│   │   │   ├── Image.tsx
+│   │   │   ├── InputField.tsx
+│   │   │   ├── MDXComponent.tsx
+│   │   │   ├── MagicBento.tsx
+│   │   │   ├── MarqueeElement.tsx
+│   │   │   ├── Notif.tsx
+│   │   │   ├── PageHeading.tsx
+│   │   │   ├── Portal.tsx
+│   │   │   ├── RollingGallery.tsx
+│   │   │   ├── RotatingText.tsx
+│   │   │   ├── ScrambleText.tsx
+│   │   │   ├── ScrollStack.tsx
+│   │   │   ├── SectionHeading.tsx
+│   │   │   ├── SectionSubHeading.tsx
+│   │   │   ├── ShinyText.tsx
+│   │   │   ├── SkeletonLoader.tsx
+│   │   │   ├── SpotlightCard.tsx
+│   │   │   ├── StackImages.tsx
+│   │   │   ├── StarBorder.tsx
+│   │   │   ├── Status.tsx
+│   │   │   ├── Terminal.tsx
+│   │   │   ├── TextType.tsx
+│   │   │   ├── ThemeSwitcher.tsx
+│   │   │   ├── Tooltip.tsx
+│   │   │   └── TrueFocus.tsx
+│   │   └── layouts
+│   │       ├── sidebar
+│   │       │   ├── IntlToggle.tsx
+│   │       │   ├── Menu.tsx
+│   │       │   ├── MenuItem.tsx
+│   │       │   ├── MobileMenu.tsx
+│   │       │   ├── MobileMenuButton.tsx
+│   │       │   ├── Profile.tsx
+│   │       │   ├── ProfileHeader.tsx
+│   │       │   ├── ThemeToggle.tsx
+│   │       │   └── index.tsx
+│   │       ├── MobileHeader.tsx
+│   │       └── index.tsx
+│   ├── config
+│   │   └── api.ts
+│   ├── constants
+│   │   ├── about.ts
+│   │   ├── carreers.ts
+│   │   ├── codewars.ts
+│   │   ├── education.ts
+│   │   ├── github.ts
+│   │   ├── menu.tsx
+│   │   ├── metadata.ts
+│   │   ├── monkeytype.ts
+│   │   ├── socialMedia.tsx
+│   │   ├── stacks.tsx
+│   │   ├── umami.ts
+│   │   └── wakatime.ts
+│   ├── helpers
+│   │   └── index.ts
+│   ├── libs
+│   │   ├── clsxm.ts
+│   │   ├── firebase.ts
+│   │   └── mdx.ts
+│   ├── stores
+│   │   ├── chat.tsx
+│   │   ├── menu.tsx
+│   │   ├── notif.tsx
+│   │   └── theme.tsx
+│   ├── styles
+│   │   ├── MagicBento.css
+│   │   └── fonts.ts
+│   ├── types
+│   │   ├── achievements.ts
+│   │   ├── bento.ts
+│   │   ├── careers.ts
+│   │   ├── chat.ts
+│   │   ├── codewars.ts
+│   │   ├── education.ts
+│   │   ├── mdx.ts
+│   │   ├── menu.ts
+│   │   ├── monkeytype.ts
+│   │   ├── projects.ts
+│   │   ├── service.ts
+│   │   ├── socialMedia.ts
+│   │   ├── tiktok.ts
+│   │   └── umami.ts
+│   └── utils
+│       ├── apiResponse.ts
+│       ├── client.ts
+│       ├── middleware.ts
+│       └── server.ts
+├── contents
+│   └── projects
+│       ├── read.mdx
+│       └── readme.mdx
+├── hooks
+│   ├── useIsMobile.ts
+│   ├── useIsTablet.ts
+│   └── useNotif.ts
+├── i18n
+│   ├── navigation.ts
+│   ├── request.ts
+│   └── routing.ts
+├── messages
+│   ├── en.json
+│   └── id.json
+├── modules
+│   ├── about
+│   │   ├── components
+│   │   │   ├── About.tsx
+│   │   │   ├── CareerCard.tsx
+│   │   │   ├── CareerList.tsx
+│   │   │   ├── EducationCard.tsx
+│   │   │   ├── EducationList.tsx
+│   │   │   ├── Portfolio.tsx
+│   │   │   ├── Resume.tsx
+│   │   │   └── Story.tsx
+│   │   └── index.ts
+│   ├── achievements
+│   │   ├── components
+│   │   │   ├── AchievementCard.tsx
+│   │   │   ├── AchievementSkeleton.tsx
+│   │   │   ├── Achievements.tsx
+│   │   │   ├── ComboBoxFilter.tsx
+│   │   │   ├── FilterHeader.tsx
+│   │   │   └── InputSearch.tsx
+│   │   └── index.ts
+│   ├── assistant
+│   │   └── components
+│   │       ├── AIAssistant.tsx
+│   │       ├── ChatInput.tsx
+│   │       ├── ChatRoom.tsx
+│   │       └── SidebarHistory.tsx
+│   ├── chat
+│   │   ├── components
+│   │   │   ├── ChatAuth.tsx
+│   │   │   ├── ChatButton.tsx
+│   │   │   ├── ChatInput.tsx
+│   │   │   ├── ChatItem.tsx
+│   │   │   ├── ChatItemSkeleton.tsx
+│   │   │   ├── ChatList.tsx
+│   │   │   ├── ChatRoom.tsx
+│   │   │   ├── ChatTime.tsx
+│   │   │   ├── ChatUserInfo.tsx
+│   │   │   ├── ChatWidget.tsx
+│   │   │   └── ChatWidgetHeader.tsx
+│   │   └── index.ts
+│   ├── contact
+│   │   ├── components
+│   │   │   ├── Contact.tsx
+│   │   │   ├── ContactCard.tsx
+│   │   │   ├── ContactForm.tsx
+│   │   │   └── ContactList.tsx
+│   │   └── index.ts
+│   ├── contents
+│   │   ├── ProfileHeader.tsx
+│   │   ├── Tiktok.tsx
+│   │   ├── TiktokSkeleton.tsx
+│   │   ├── VideoCard.tsx
+│   │   └── VideoList.tsx
+│   ├── dashboard
+│   │   ├── components
+│   │   │   ├── Codewars
+│   │   │   │   ├── Codewars.tsx
+│   │   │   │   ├── CodewarsSkeleton.tsx
+│   │   │   │   ├── Overview.tsx
+│   │   │   │   ├── OverviewItem.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── CodingActive
+│   │   │   │   ├── CodingActive.tsx
+│   │   │   │   ├── CodingActiveList.tsx
+│   │   │   │   ├── CodingActiveSkeleton.tsx
+│   │   │   │   ├── Overview.tsx
+│   │   │   │   ├── OverviewItem.tsx
+│   │   │   │   ├── Progress.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── Contributions
+│   │   │   │   ├── Calendar.tsx
+│   │   │   │   ├── Contributions.tsx
+│   │   │   │   ├── ContributionsSkeleton.tsx
+│   │   │   │   ├── Overview.tsx
+│   │   │   │   ├── OverviewItem.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── Monkeytype
+│   │   │   │   ├── Leaderboard.tsx
+│   │   │   │   ├── Monkeytype.tsx
+│   │   │   │   ├── MonkeytypeSkeleton.tsx
+│   │   │   │   ├── Overview.tsx
+│   │   │   │   ├── OverviewItem.tsx
+│   │   │   │   ├── Profile.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── Umami
+│   │   │   │   ├── ComboBoxFilter.tsx
+│   │   │   │   ├── Overview.tsx
+│   │   │   │   ├── OverviewItem.tsx
+│   │   │   │   ├── TrafficTrendsChart.tsx
+│   │   │   │   ├── Umami.tsx
+│   │   │   │   ├── UmamiSkeleton.tsx
+│   │   │   │   └── index.ts
+│   │   │   └── Dashboard.tsx
+│   │   └── index.ts
+│   ├── home
+│   │   ├── components
+│   │   │   ├── Hexagon.tsx
+│   │   │   ├── Home.tsx
+│   │   │   ├── Introduction.tsx
+│   │   │   ├── Services.tsx
+│   │   │   ├── SkillCard.tsx
+│   │   │   └── SkillList.tsx
+│   │   └── index.ts
+│   ├── projects
+│   │   ├── components
+│   │   │   ├── ProjectCard.tsx
+│   │   │   ├── ProjectDetail.tsx
+│   │   │   ├── ProjectLink.tsx
+│   │   │   ├── ProjectSkeleton.tsx
+│   │   │   └── Projects.tsx
+│   │   └── index.ts
+│   ├── smarttalk
+│   │   ├── components
+│   │   │   └── SmartTalk.tsx
+│   │   └── index.ts
+│   └── terminal
+│       └── components
+│           └── Terminal.tsx
+├── public
+│   ├── images
+│   │   ├── careers
+│   │   │   ├── ai.webp
+│   │   │   ├── d.png
+│   │   │   ├── genai.webp
+│   │   │   ├── inai.webp
+│   │   │   ├── mnjp.webp
+│   │   │   ├── mobile.pdf
+│   │   │   ├── py.webp
+│   │   │   ├── sertif-aiethicgg.pdf
+│   │   │   └── web.pdf
+│   │   ├── eco.webp
+│   │   ├── hbd.png
+│   │   ├── lapak-siswa.webp
+│   │   ├── najwa.jpg
+│   │   ├── piku.png
+│   │   ├── placeholder.webp
+│   │   ├── porto.png
+│   │   ├── ritecs.webp
+│   │   ├── signature.png
+│   │   ├── tiktok.png
+│   │   ├── {6BD4E505-9FED-437D-AE2A-BB773BC70B11}.png
+│   │   └── {808F8F05-1C12-4778-82DE-5F591C87A037}.png
+│   ├── image.png
+│   ├── next.svg
+│   ├── tiktok27uMsbuuu6yXQEoJMMIuDZJtI6Mh1WFl.txt
+│   ├── tiktokRiLZS4IEy8bPp4erwUesNoapkVhVNfcL.txt
+│   └── vercel.svg
+├── services
+│   ├── achievements.ts
+│   ├── codewars.ts
+│   ├── fetcher.ts
+│   ├── github.ts
+│   ├── monkeytype.ts
+│   ├── projects.ts
+│   ├── tiktok.ts
+│   ├── umami.ts
+│   └── wakatime.ts
+├── .eslintrc.json
+├── .gitignore
+├── README.md
+├── SessionProvider.tsx
+├── SkeletonThemeProvider.tsx
+├── bun.lockb
+├── middleware.ts
+├── next.config.mjs
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── prettier.config.js
+├── tailwind.config.ts
+└── tsconfig.json
+```
+
+---
+*Generated by FileTree Pro Extension*

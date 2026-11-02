@@ -27,7 +27,7 @@ const SkillList = () => {
         </SectionSubHeading>
       </div>
 
-      <div className="grid w-full grid-cols-6 gap-x-[1em] gap-y-[2.7em] py-2 md:grid-cols-10 lg:grid-cols-11">
+      <div data-responsive-skills className="grid w-full grid-cols-6 gap-x-[1em] gap-y-[2.7em] py-2 md:grid-cols-10 lg:grid-cols-11">
         {stacksInArray.map(([name, { icon, background }], index) => (
           <GlassIcon
             key={index}

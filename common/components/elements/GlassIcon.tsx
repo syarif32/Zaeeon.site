@@ -11,6 +11,7 @@ const GlassIcon: React.FC<GlassIconProps> = ({
 }: GlassIconProps) => {
   return (
     <button
+      data-responsive-skill
       type="button"
       aria-label={name}
       className={`group relative h-[2.6em] w-[2.6em] bg-transparent outline-none [-webkit-tap-highlight-color:transparent] [perspective:24em] [transform-style:preserve-3d] md:h-[3em] md:w-[3em]`}

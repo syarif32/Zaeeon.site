@@ -63,15 +63,15 @@ const Home = async () => {
   const featuredCertificates = [
     {
       id: 1,
-      title: "IBM SkillsBuild: AI Ethics and Responsible AI",
-      issuer: "IBM SkillsBuild",
+      title: "Web Developer",
+      issuer: "Badan Nasiaonal Sertifikasi Profesi (BNSP)",
       year: "2026",
       image: "/images/careers/ai.webp", 
     },
     {
       id: 2,
-      title: "Penerapan Data Science dengan Microsoft Fabric",
-      issuer: "Dicoding Indonesia",
+      title: "Mobile App Developer",
+      issuer: "Badan Nasiaonal Sertifikasi Profesi (BNSP)",
       year: "2026",
       image: "/images/careers/d.png",
     }
