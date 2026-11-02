@@ -12,5 +12,5 @@ export const METADATA = {
     locale: "id-ID",
   },
   exTitle: "| Najwa Syarif",
-  profile: "/images/najwa.jpg",
+  profile: "/images/najwa.png",
 };
