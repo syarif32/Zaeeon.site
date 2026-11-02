@@ -17,6 +17,7 @@ interface ProfileHeaderProps {
 const ProfileHeader = ({ expandMenu, imageSize }: ProfileHeaderProps) => {
   return (
     <div
+      data-responsive-profile
       className={cn(
         "flex w-full flex-grow items-center gap-4 lg:flex-col  lg:gap-0.5",
         expandMenu && "flex-col !items-start",

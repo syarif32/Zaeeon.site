@@ -104,7 +104,7 @@ export default function LayananPage() {
   };
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 font-sans transition-colors duration-500">
+    <div data-responsive-services className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 font-sans transition-colors duration-500">
       <div className="max-w-5xl mx-auto space-y-12">
         <div className="flex justify-center animate-fade-in-up">
           <div className="bg-neutral-200/50 dark:bg-neutral-800/50 p-1.5 rounded-full flex gap-1 shadow-inner backdrop-blur-sm border border-neutral-300/50 dark:border-neutral-700/50">
@@ -210,11 +210,11 @@ export default function LayananPage() {
 
                   <div className="mt-8 relative z-10">
                     <Link
-                      href="https://wa.me/6289646753644" 
+                      href={isKuliner ? "https://miekopyokzain.my.id" : "https://wa.me/6289646753644"}
                       target="_blank"
                       className={`group flex items-center justify-center gap-2 w-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-xl ${theme.btnSubmit}`}
                     >
-                      <span>{isKuliner ? "Hubungi via WhatsApp" : "Konsultasi Proyek via WA"}</span>
+                      <span>{isKuliner ? "Kunjungi Web" : "Konsultasi Proyek via WA"}</span>
                       <HiOutlineArrowRight className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </div>

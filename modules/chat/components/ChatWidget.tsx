@@ -6,6 +6,7 @@ const ChatWidget = () => {
   return (
     <AnimatePresence>
       <motion.div
+        data-responsive-chat
         className="fixed bottom-24 right-6 w-[450px] rounded-lg border bg-neutral-50/80 backdrop-blur-sm border-neutral-300 dark:border-neutral-600 dark:bg-neutral-900/90"
         initial={{ opacity: 0, scale: 0, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}

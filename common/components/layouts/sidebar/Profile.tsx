@@ -48,6 +48,7 @@ const Profile = () => {
 
   return (
     <div
+      data-responsive-header
       className={clsx(
         "fixed z-20 w-full bg-neutral-50 p-5 shadow-sm dark:border-b dark:border-neutral-800 dark:bg-neutral-900 lg:relative lg:border-none lg:!bg-transparent lg:p-0 xl:shadow-none",
         isOpen && "pb-0",

@@ -29,3 +29,94 @@
     clip-path: polygon(0 25%, 50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%);
   }
 }
+
+/* Keep narrow screens within their viewport without disabling browser zoom. */
+@media (max-width: 1023px) {
+  [data-responsive-content] {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  [data-responsive-header] > div:first-child {
+    gap: 0.5rem;
+  }
+
+  [data-responsive-profile] {
+    min-width: 0;
+    gap: 0.5rem;
+  }
+
+  [data-responsive-profile]:not(.flex-col) > div:first-child {
+    flex-shrink: 0;
+    max-width: 40px;
+  }
+
+  [data-responsive-profile]:not(.flex-col) > div:first-child img {
+    width: 40px;
+    height: 40px;
+  }
+
+  [data-responsive-profile] > div:nth-child(2) {
+    min-width: 0;
+    gap: 0.25rem;
+  }
+
+  [data-responsive-profile] h2 {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  [data-responsive-header] > div:first-child > div:last-child:not([data-responsive-profile]) {
+    flex-shrink: 0;
+    gap: 0.5rem;
+  }
+
+  [data-responsive-header] > div:first-child > div:last-child > .flex {
+    gap: 0.5rem;
+  }
+
+  [data-responsive-chat] {
+    max-width: calc(100% - 3rem);
+  }
+}
+
+@media (max-width: 639px) {
+  [data-responsive-home] > section > .flex {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  [data-responsive-services] > div > div:first-child > div {
+    width: 100%;
+    max-width: 24rem;
+  }
+
+  [data-responsive-services] > div > div:first-child button {
+    flex: 1 1 0%;
+    min-width: 0;
+    justify-content: center;
+    padding-inline: 0.5rem;
+  }
+
+  [data-responsive-services] .grid > div {
+    min-width: 0;
+  }
+
+  [data-responsive-services] .grid > div > .p-8 {
+    padding: 1.25rem;
+  }
+
+  [data-responsive-services] .text-3xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+}
+
+/* Reserve space for the fixed header above the services toggle. */
+@media (max-width: 1023px) {
+  [data-responsive-services] {
+    margin-top: 6rem;
+  }
+}

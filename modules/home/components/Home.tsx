@@ -32,17 +32,31 @@ const Home = async () => {
   const featuredExperiences = [
     {
       id: 1,
+      role: "Information Technology Programmer ",
+      company: "PT Cipta Wijaya Mandiri",
+      date: "Sep 2026 - now",
+      description: "Menembangkan sistem internal berbasis web untuk mendukung operasional perusahaan, termasuk pengelolaan data dan proses bisnis.",
+    },
+    {
+      id: 2,
       role: "Full-Stack Web Developer (Intern)",
       company: "Ritecs (Riset Teknologi dan Inovasi Computer Science)",
       date: "Agu 2025 - Des 2025",
       description: "Mengembangkan sistem berbasis web untuk riset dan inovasi teknologi dari tahap perancangan hingga presentasi akhir.",
     },
     {
-      id: 2,
+      id: 3,
+      role: "Full-Stack Web Developer (Intern)",
+      company: "Dinas Komunikasi dan Informatika Kota Semarang",
+      date: "April 2026 - Mei 2026",
+      description: "Mengembangkan sistem manajemen dokumen yang terintegrasi  cloud untuk meningkatkan efisiensi pengelolaan dokumen di lingkungan pemerintahan.",
+    },
+    {
+      id: 4,
       role: "Web Developer (Freelance)",
       company: "Freelance",
       date: "July 2025 - Now",
-      description: "Membangun Website seperti Lapak Siswa dan mendevelop sistem pencatatan keuangan F&B menggunakan Laravel & React.",
+      description: "Membangun Website UMKM dan mendevelop sistem pencatatan keuangan F&B menggunakan Laravel, Next.js.",
     }
   ];
 
@@ -65,7 +79,7 @@ const Home = async () => {
   
 
   return (
-    <div className="space-y-12 animate-fade-in">
+    <div data-responsive-home className="space-y-12 animate-fade-in">
       
       <Introduction />
       <Breakline className="my-6" />
