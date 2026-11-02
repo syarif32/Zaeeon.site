@@ -1,3 +1,4 @@
+import { METADATA } from "@/common/constants/metadata";
 import Image from "next/image";
 import { differenceInDays, format } from "date-fns";
 import { motion, Variants } from "framer-motion";
@@ -89,7 +90,7 @@ const Profile = ({ data }: ProfileProps) => {
         <div className="flex gap-x-4">
           <div className="flex items-center">
             <Image
-              src={"/images/najwa.jpg"}
+              src={METADATA.profile}
               width={80}
               height={80}
               alt="syurep"

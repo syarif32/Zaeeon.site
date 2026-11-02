@@ -1,3 +1,4 @@
+import { METADATA } from "@/common/constants/metadata";
 import Link from "next/link";
 import { MdVerified as VerifiedIcon } from "react-icons/md";
 import { BiTerminal } from "react-icons/bi"; 
@@ -24,7 +25,7 @@ const ProfileHeader = ({ expandMenu, imageSize }: ProfileHeaderProps) => {
       )}
     >
       <Image
-        src={"/images/najwa.jpg"}
+        src={METADATA.profile}
         width={expandMenu ? 80 : imageSize * 1}
         height={expandMenu ? 80 : imageSize * 1}
         alt="Muhammad Najwa Syarif"
