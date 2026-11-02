@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Container from "@/common/components/elements/Container";
 import PageHeading from "@/common/components/elements/PageHeading";
-import Dashboard from "@/modules/dashboard/components/Dashboard";
+import Dashboard from "@/modules/dashboard/components/Dashboardold";
 import { METADATA } from "@/common/constants/metadata";
 
 type Props = { params: { locale: string } };
