@@ -1,5 +1,5 @@
 export const METADATA = {
-  creator: "Nuhammad Najwa Syarif",
+  creator: "Muhammad Najwa Syarif",
   description: "Personal website, portfolio, blog",
   keyword: "syarif, najwa syarif",
   authors: {
