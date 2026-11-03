@@ -13,8 +13,7 @@ const Dashboard = () => {
   return (
     <>
       {/* <Umami /> */}
-      <RepositoryObservatory />
-      <Breakline className="my-8" />
+     
       <Contributions endpoint={GITHUB_ACCOUNTS.endpoint} />
       <Breakline className="my-8" />
       <CodingActive />
