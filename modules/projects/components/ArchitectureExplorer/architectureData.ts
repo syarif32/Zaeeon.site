@@ -187,12 +187,13 @@ const ZAEEON: ArchitectureDefinition = {
   ],
 };
 
-// Tambahkan proyek lain di sini setelah relasi antarkomponennya diverifikasi.
-export const ARCHITECTURES: Record<string, ArchitectureDefinition> = {
+export const ARCHITECTURES: Record<string,ArchitectureDefinition> = {
   "zaeeon.site": ZAEEON,
   "zaeeon-site": ZAEEON,
   "zaeeon": ZAEEON,
+  "zaeeon-site-portofolio-website": ZAEEON,
 };
+
 
 export function getArchitectureForSlug(value: string): ArchitectureDefinition | null {
   let slug = value;
