@@ -16,12 +16,12 @@ const Dashboard = () => {
      
       <Contributions endpoint={GITHUB_ACCOUNTS.endpoint} />
       <Breakline className="my-8" />
-      <CodingActive />
-      <Breakline className="my-8" />
       <TechnologyFootprint />
       <Breakline className="my-8" />
-      <Codewars endpoint={CODEWARS_ACCOUNT.endpoint} />
+      <CodingActive />
       <Breakline className="my-8" />
+      {/* <Codewars endpoint={CODEWARS_ACCOUNT.endpoint} />
+      <Breakline className="my-8" /> */}
       <RepositoryObservatory />
       <Breakline className="my-8" />
       {/* <Monkeytype /> */}
