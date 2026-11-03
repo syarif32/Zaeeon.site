@@ -7,11 +7,13 @@ import Breakline from "@/common/components/elements/Breakline";
 import { GITHUB_ACCOUNTS } from "@/common/constants/github";
 import { CODEWARS_ACCOUNT } from "@/common/constants/codewars";
 import Umami from "./Umami";
+import RepositoryObservatory from "./RepositoryObservatory";
 
 const Dashboard = () => {
   return (
     <>
       {/* <Umami /> */}
+      <RepositoryObservatory />
       <Breakline className="my-8" />
       <Contributions endpoint={GITHUB_ACCOUNTS.endpoint} />
       <Breakline className="my-8" />
