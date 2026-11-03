@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 
 import { getAllTimeSinceToday, getReadStats } from "@/services/wakatime";
 
+// Cache successful upstream results in the service, not the route response.
+export const dynamic = "force-dynamic";
+
 export const GET = async () => {
   try {
     const readStatsResponse = await getReadStats();

@@ -11,7 +11,7 @@ import Umami from "./Umami";
 const Dashboard = () => {
   return (
     <>
-      <Umami />
+      {/* <Umami /> */}
       <Breakline className="my-8" />
       <Contributions endpoint={GITHUB_ACCOUNTS.endpoint} />
       <Breakline className="my-8" />
@@ -19,7 +19,7 @@ const Dashboard = () => {
       <Breakline className="my-8" />
       <Codewars endpoint={CODEWARS_ACCOUNT.endpoint} />
       {/* <Breakline className="my-8" /> */}
-      <Monkeytype />
+      {/* <Monkeytype /> */}
     </>
   );
 };

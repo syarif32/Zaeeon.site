@@ -1,18 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { 
-  HiOutlineChartBar, 
-  HiOutlineDevicePhoneMobile, 
-  HiOutlineGlobeAlt, 
-  HiCheckCircle,
+import {
+  HiOutlineChartBar,
+  HiOutlineDevicePhoneMobile,
+  HiOutlineGlobeAlt,
   HiOutlineArrowRight,
   HiOutlineShoppingBag,
   HiOutlineUserGroup,
-  HiOutlineSparkles
+  HiOutlineSparkles,
 } from "react-icons/hi2";
-
 
 const digitalServicesData = [
   {
@@ -76,156 +74,97 @@ const kulinerServicesData = [
 ];
 
 export default function LayananPage() {
-  
   const [category, setCategory] = useState<"digital" | "kuliner">("digital");
-  
-  
-  const [activeService, setActiveService] = useState(digitalServicesData[0].id);
-
- 
-  useEffect(() => {
-    if (category === "digital") setActiveService(digitalServicesData[0].id);
-    else setActiveService(kulinerServicesData[0].id);
-  }, [category]);
   const isKuliner = category === "kuliner";
   const currentData = isKuliner ? kulinerServicesData : digitalServicesData;
-  const currentService = currentData.find(s => s.id === activeService);
-  const theme = {
-    bgBadge: isKuliner ? "bg-orange-100 dark:bg-orange-900/30" : "bg-blue-100 dark:bg-blue-900/30",
-    textBadge: isKuliner ? "text-orange-700 dark:text-orange-300" : "text-blue-700 dark:text-blue-300",
-    borderBadge: isKuliner ? "border-orange-200 dark:border-orange-800" : "border-blue-200 dark:border-blue-800",
-    textHighlight: isKuliner ? "from-orange-500 to-red-500" : "from-blue-600 to-teal-500",
-    bgActiveTab: isKuliner ? "bg-orange-500 text-white border-orange-500 shadow-orange-500/30" : "bg-blue-600 text-white border-blue-600 shadow-blue-500/30",
-    hoverTab: isKuliner ? "hover:border-orange-400 dark:hover:border-orange-700" : "hover:border-blue-400 dark:hover:border-blue-700",
-    glowColor: isKuliner ? "bg-orange-500/10" : "bg-blue-500/10",
-    textPrice: isKuliner ? "text-orange-600 dark:text-orange-400" : "text-blue-600 dark:text-blue-400",
-    iconCheck: isKuliner ? "text-orange-500" : "text-teal-500",
-    btnSubmit: isKuliner ? "hover:bg-orange-600 dark:hover:bg-orange-500" : "hover:bg-blue-600 dark:hover:bg-blue-500",
-  };
 
   return (
-    <div data-responsive-services className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 font-sans transition-colors duration-500">
-      <div className="max-w-5xl mx-auto space-y-12">
-        <div className="flex justify-center animate-fade-in-up">
-          <div className="bg-neutral-200/50 dark:bg-neutral-800/50 p-1.5 rounded-full flex gap-1 shadow-inner backdrop-blur-sm border border-neutral-300/50 dark:border-neutral-700/50">
-            <button 
-              onClick={() => setCategory("digital")}
-              className={`px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2 ${
-                !isKuliner ? "bg-white dark:bg-neutral-900 shadow-md text-blue-600 dark:text-blue-400" : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
-              }`}
-            >
-              💻 Solusi Digital
-            </button>
-            <button 
-              onClick={() => setCategory("kuliner")}
-              className={`px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2 ${
-                isKuliner ? "bg-gradient-to-r from-orange-500 to-red-500 shadow-md text-white" : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
-              }`}
-            >
-              🍜 Bisnis Kuliner
-            </button>
-          </div>
-        </div>
-        <section className="text-center space-y-6 animate-fade-in-up" key={category}>
-          <div className={`inline-block px-4 py-2 rounded-full text-sm font-bold tracking-wide mb-2 shadow-sm border ${theme.bgBadge} ${theme.textBadge} ${theme.borderBadge}`}>
-            {isKuliner ? "WARISAN RASA SEMARANG" : "SOLUSI TEKNOLOGI UMKM"}
-          </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-neutral-900 dark:text-white tracking-tight transition-colors">
-            {isKuliner ? "Cita Rasa Legendaris " : "Digitalisasi Mudah untuk "}
-            <span className={`text-transparent bg-clip-text bg-gradient-to-r ${theme.textHighlight}`}>
-              {isKuliner ? "Kuliner Khas" : "Bisnis Modern Anda."}
-            </span>
-          </h1>
-          <p className="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto leading-relaxed">
-            {isKuliner 
-              ? "Lebih dari sekadar makanan. Ini adalah dedikasi rasa yang dipertahankan turun temurun. Siap memanjakan lidah Anda untuk porsi harian maupun acara besar."
-              : "Berawal dari pencatatan keuangan, saya menyadari UMKM butuh teknologi yang mudah dan terjangkau. Mari digitalisasi bisnis Anda bersama saya."}
-          </p>
-        </section>
+    <div data-responsive-services className="px-5 pb-16 pt-8 sm:px-8 lg:px-0 lg:pt-8">
+      <header className="space-y-4">
+        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+          {isKuliner ? "WARISAN RASA SEMARANG" : "SOLUSI TEKNOLOGI UMKM"}
+        </p>
+        <h1 className="text-2xl font-medium leading-tight text-neutral-900 dark:text-neutral-100 sm:text-3xl">
+          {isKuliner ? "Cita Rasa Legendaris Kuliner Khas" : "Digitalisasi Mudah untuk Bisnis Modern Anda."}
+        </h1>
+        <p className="max-w-2xl leading-relaxed text-neutral-600 dark:text-neutral-400">
+          {isKuliner
+            ? "Lebih dari sekadar makanan. Ini adalah dedikasi rasa yang dipertahankan turun temurun. Siap memanjakan lidah Anda untuk porsi harian maupun acara besar."
+            : "Berawal dari pencatatan keuangan, saya menyadari UMKM butuh teknologi yang mudah dan terjangkau. Mari digitalisasi bisnis Anda bersama saya."}
+        </p>
+      </header>
 
-        {/* INTERACTIVE SERVICES SECTION */}
-        <section className="space-y-8">
-          <div className="grid lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-5 flex flex-col gap-3">
-              {currentData.map((service) => (
-                <button
-                  key={service.id}
-                  onClick={() => setActiveService(service.id)}
-                  className={`relative flex items-center gap-4 p-4 rounded-2xl text-left transition-all duration-300 border ${
-                    activeService === service.id
-                      ? `${theme.bgActiveTab} transform scale-[1.02]`
-                      : `bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-800 ${theme.hoverTab} hover:bg-neutral-50 dark:hover:bg-neutral-800`
-                  }`}
-                >
-                  <div className={`p-2 rounded-xl flex-shrink-0 ${activeService === service.id ? "bg-white/20" : "bg-neutral-100 dark:bg-neutral-800"}`}>
-                    {service.icon}
-                  </div>
-                  <div>
-                    <div className="font-bold">{service.title}</div>
-                    <div className={`text-xs mt-1 ${activeService === service.id ? "text-white/80" : "text-neutral-500"}`}>
-                      {service.popular ? "⭐ Paling banyak dicari" : "Tersedia untuk Anda"}
+      <nav aria-label="Kategori layanan" className="mt-10 flex gap-7 border-b border-neutral-300 dark:border-neutral-700">
+        <button
+          type="button"
+          onClick={() => setCategory("digital")}
+          aria-current={!isKuliner ? "page" : undefined}
+          className={"border-b-2 pb-3 text-left text-sm font-medium transition-colors " + (!isKuliner ? "border-primary text-neutral-900 dark:text-neutral-100" : "border-transparent text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200")}
+        >
+          Solusi Digital
+        </button>
+        <button
+          type="button"
+          onClick={() => setCategory("kuliner")}
+          aria-current={isKuliner ? "page" : undefined}
+          className={"border-b-2 pb-3 text-left text-sm font-medium transition-colors " + (isKuliner ? "border-primary text-neutral-900 dark:text-neutral-100" : "border-transparent text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200")}
+        >
+          Bisnis Kuliner
+        </button>
+      </nav>
+
+      <div>
+        {currentData.map((service, index) => (
+          <article key={service.id} className="border-b border-neutral-300 py-8 dark:border-neutral-700 sm:py-10">
+            <div className="flex items-start gap-4 sm:gap-6">
+              <span className="pt-1 font-mono text-xs text-neutral-400 dark:text-neutral-500">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <div className="min-w-0 flex-1 space-y-5">
+                <div className="flex flex-wrap items-start gap-3 sm:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-2 flex items-center gap-2 text-neutral-500 dark:text-neutral-400">
+                      <span className="[&>svg]:h-5 [&>svg]:w-5">{service.icon}</span>
+                      {service.popular && <span className="text-xs">Paling banyak dicari</span>}
                     </div>
+                    <h2 className="text-xl font-medium text-neutral-900 dark:text-neutral-100 sm:text-2xl">
+                      {service.title}
+                    </h2>
                   </div>
-                </button>
-              ))}
-            </div>
-
-            {/* KANAN: Detail Card Dinamis */}
-            <div className="lg:col-span-7">
-              {currentService && (
-                <div key={currentService.id} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-8 shadow-xl relative overflow-hidden h-full flex flex-col animate-fade-in">
-                  
-                  {/* Efek Background Glow (Warna berubah sesuai tema) */}
-                  <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-colors ${theme.glowColor}`}></div>
-                  
-                  {currentService.popular && (
-                    <div className={`absolute top-4 right-6 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md bg-gradient-to-r ${theme.textHighlight}`}>
-                      BEST CHOICE
-                    </div>
-                  )}
-
-                  <div className="relative z-10 flex-1 mt-4">
-                    <h3 className="text-2xl font-bold text-neutral-900 dark:text-white">{currentService.title}</h3>
-                    <p className="text-neutral-600 dark:text-neutral-400 mt-3 leading-relaxed">
-                      {currentService.description}
-                    </p>
-
-                    <div className="my-6 p-4 bg-neutral-50 dark:bg-neutral-950/50 rounded-2xl border border-neutral-100 dark:border-neutral-800">
-                      <div className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-1">Estimasi Biaya</div>
-                      <div className={`text-3xl font-extrabold ${theme.textPrice}`}>
-                        {currentService.priceRange}
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="font-semibold text-neutral-900 dark:text-neutral-100">Layanan meliputi:</div>
-                      {currentService.features.map((feature, index) => (
-                        <div key={index} className="flex items-start gap-3">
-                          <HiCheckCircle className={`w-5 h-5 flex-shrink-0 mt-0.5 ${theme.iconCheck}`} />
-                          <span className="text-neutral-700 dark:text-neutral-300 text-sm">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-8 relative z-10">
-                    <Link
-                      href={isKuliner ? "https://miekopyokzain.my.id" : "https://wa.me/6289646753644"}
-                      target="_blank"
-                      className={`group flex items-center justify-center gap-2 w-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-xl ${theme.btnSubmit}`}
-                    >
-                      <span>{isKuliner ? "Kunjungi Web" : "Konsultasi Proyek via WA"}</span>
-                      <HiOutlineArrowRight className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </div>
-
+                  <p className="w-full text-base font-medium text-neutral-800 dark:text-neutral-200 sm:w-auto sm:max-w-[45%] sm:text-right">
+                    {service.priceRange}
+                  </p>
                 </div>
-              )}
+
+                <p className="max-w-2xl leading-relaxed text-neutral-600 dark:text-neutral-400">
+                  {service.description}
+                </p>
+
+                <div>
+                  <h3 className="mb-3 text-sm font-medium text-neutral-800 dark:text-neutral-200">Layanan meliputi</h3>
+                  <ul className="grid gap-x-6 gap-y-2 text-sm text-neutral-600 dark:text-neutral-400 sm:grid-cols-2">
+                    {service.features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-2">
+                        <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-neutral-400" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <Link
+                  href={isKuliner ? "https://miekopyokzain.my.id" : "https://wa.me/6289646753644"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                >
+                  {isKuliner ? "Kunjungi Web" : "Konsultasi Proyek via WA"}
+                  <HiOutlineArrowRight className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                </Link>
+              </div>
             </div>
-
-          </div>
-        </section>
-
+          </article>
+        ))}
       </div>
     </div>
   );
