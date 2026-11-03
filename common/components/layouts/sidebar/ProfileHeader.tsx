@@ -50,13 +50,19 @@ const ProfileHeader = ({ expandMenu, imageSize }: ProfileHeaderProps) => {
         </span>
 
         <Tooltip title="Access Mainframe?">
-          <Link
-            href="/terminal"
-            className="flex items-center mt-0.5 opacity-1 transition-all duration-300 hover:scale-125 hover:text-green-500 hover:opacity-100"
-            aria-label="Terminal Mode"
-          >
-            <BiTerminal size={20} />
-          </Link>
+         <Link
+  href="/terminal"
+  className="group relative inline-flex items-center mt-0.5 opacity-80 transition-all duration-300 hover:scale-110 hover:text-green-500 hover:opacity-100"
+  aria-label="Terminal Mode"
+>
+  <BiTerminal size={20} />
+
+  {/* Indikator Titik Berkedip (Subtle Radar Ping) */}
+  <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
+    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+  </span>
+</Link>
         </Tooltip>
       </div>
      
