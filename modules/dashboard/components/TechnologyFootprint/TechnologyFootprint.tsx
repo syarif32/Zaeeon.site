@@ -63,10 +63,56 @@ function colorOf(name: string, index: number) {
   return colors[name] ?? fallbackColors[index % fallbackColors.length];
 }
 
+// Each language owns a separate SVG donut segment, so it can animate alone.
+function donutSlicePath(startAngle: number, endAngle: number) {
+  const outerRadius = 46;
+  const innerRadius = 26;
+  const point = (angle: number, radius: number) => {
+    const radians = ((angle - 90) * Math.PI) / 180;
+    return {
+      x: 50 + Math.cos(radians) * radius,
+      y: 50 + Math.sin(radians) * radius,
+    };
+  };
+
+  const sweep = endAngle - startAngle;
+  if (sweep <= 0) return "";
+
+  const outerStart = point(startAngle, outerRadius);
+  const innerStart = point(startAngle, innerRadius);
+
+  // A full 360-degree sector needs two arcs; one SVG arc cannot close a circle.
+  if (sweep >= 359.999) {
+    const outerMid = point(startAngle + 180, outerRadius);
+    const innerMid = point(startAngle + 180, innerRadius);
+    return [
+      `M ${outerStart.x} ${outerStart.y}`,
+      `A ${outerRadius} ${outerRadius} 0 1 1 ${outerMid.x} ${outerMid.y}`,
+      `A ${outerRadius} ${outerRadius} 0 1 1 ${outerStart.x} ${outerStart.y}`,
+      `L ${innerStart.x} ${innerStart.y}`,
+      `A ${innerRadius} ${innerRadius} 0 1 0 ${innerMid.x} ${innerMid.y}`,
+      `A ${innerRadius} ${innerRadius} 0 1 0 ${innerStart.x} ${innerStart.y}`,
+      "Z",
+    ].join(" ");
+  }
+
+  const outerEnd = point(endAngle, outerRadius);
+  const innerEnd = point(endAngle, innerRadius);
+  const largeArc = sweep > 180 ? 1 : 0;
+  return [
+    `M ${outerStart.x} ${outerStart.y}`,
+    `A ${outerRadius} ${outerRadius} 0 ${largeArc} 1 ${outerEnd.x} ${outerEnd.y}`,
+    `L ${innerEnd.x} ${innerEnd.y}`,
+    `A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${innerStart.x} ${innerStart.y}`,
+    "Z",
+  ].join(" ");
+}
+
 export default function TechnologyFootprint() {
   const locale = useLocale();
   const isID = locale === "id";
   const [selected, setSelected] = useState<string | null>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
   const reveal = useMotionValue(0);
   const revealMask = useMotionTemplate`conic-gradient(#000 0% ${reveal}%, transparent ${reveal}% 100%)`;
@@ -119,17 +165,16 @@ export default function TechnologyFootprint() {
     ];
   }, [data, labels.other]);
 
-  const gradient = useMemo(() => {
+  const chartSegments = useMemo(() => {
     const total = display.reduce((sum, item) => sum + item.bytes, 0);
-    if (total === 0) return "conic-gradient(#52525b 0% 100%)";
-    let start = 0;
-    const stops = display.map((item, i) => {
-      const end = start + (item.bytes / total) * 100;
-      const part = `${colorOf(item.name, i)} ${start}% ${end}%`;
-      start = end;
-      return part;
+    if (total <= 0) return [];
+    let angle = 0;
+    return display.flatMap((item, index) => {
+      const startAngle = angle;
+      angle += (item.bytes / total) * 360;
+      const path = donutSlicePath(startAngle, angle);
+      return path ? [{ name: item.name, color: colorOf(item.name, index), path }] : [];
     });
-    return `conic-gradient(${stops.join(", ")})`;
   }, [display]);
 
   useEffect(() => {
@@ -147,46 +192,12 @@ export default function TechnologyFootprint() {
   const activeIndex = display.findIndex((item) => item.name === selected);
   const activeColor = active ? colorOf(active.name, activeIndex) : null;
   const ActiveIcon = active ? languageIcons[active.name] ?? FiCode : null;
-  const chartIcons = useMemo(() => {
-    const total = display.reduce((sum, item) => sum + item.bytes, 0);
-    let start = 0;
-    return display.flatMap((item, index) => {
-      const share = total ? item.bytes / total : 0;
-      const middle = start + share / 2;
-      start += share;
-      // Small slices keep their logo in the center when selected.
-      if (share < 0.12) return [];
-      const angle = middle * Math.PI * 2 - Math.PI / 2;
-      return [{
-        name: item.name,
-        Icon: languageIcons[item.name] ?? FiCode,
-        color: colorOf(item.name, index),
-        x: 50 + Math.cos(angle) * 39,
-        y: 50 + Math.sin(angle) * 39,
-      }];
-    });
-  }, [display]);
-  const selectFromChart = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (event.detail === 0) {
-      const next = display[(display.findIndex((item) => item.name === selected) + 1) % display.length];
-      if (next) setSelected(next.name);
-      return;
-    }
+  // Draw the emphasized segment last so it stays above adjacent segments.
+  const emphasizedName = hovered ?? selected;
+  const orderedSegments = [...chartSegments].sort(
+    (a, b) => Number(a.name === emphasizedName) - Number(b.name === emphasizedName),
+  );
 
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const x = event.clientX - bounds.left - bounds.width / 2;
-    const y = event.clientY - bounds.top - bounds.height / 2;
-    const angle = (Math.atan2(y, x) * 180 / Math.PI + 450) % 360;
-    const total = display.reduce((sum, item) => sum + item.bytes, 0);
-    if (!total) return;
-
-    let end = 0;
-    const clicked = display.find((item) => {
-      end += item.bytes / total * 360;
-      return angle < end;
-    }) ?? display[display.length - 1];
-    setSelected(selected === clicked.name ? null : clicked.name);
-  };
   const formatPercentage = (value: number) =>
     value > 0 && value < 0.01 ? "<0.01%" : `${value.toFixed(1)}%`;
 
@@ -222,37 +233,52 @@ export default function TechnologyFootprint() {
 
           <div className="grid gap-8 rounded-xl border border-neutral-200 p-4 dark:border-neutral-800 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] md:p-6">
             <div className="flex items-center justify-center">
-              <motion.button
-                type="button"
-                className="relative aspect-square w-full max-w-56 rounded-full"
-                onClick={selectFromChart}
-                aria-label="Select a programming language from the chart"
-                animate={{
-                  scale: active && !reduceMotion ? 1.06 : 1,
-                  boxShadow: activeColor ? `0 0 30px ${activeColor}77` : "0 0 0px #00000000",
-                }}
-                whileHover={reduceMotion ? undefined : { scale: active ? 1.08 : 1.03 }}
-                whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 300, damping: 22 }}
-              >
-                <motion.span
-                  aria-hidden="true"
-                  className="absolute inset-0 rounded-full"
-                  style={{ background: gradient, WebkitMaskImage: revealMask, maskImage: revealMask }}
-                />
-                {chartIcons.map(({ name, Icon, color, x, y }) => (
-                  <motion.span
-                    key={name}
-                    aria-hidden="true"
-                    className="pointer-events-none absolute z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-base shadow-sm dark:bg-neutral-900/90"
-                    style={{ left: `${x}%`, top: `${y}%`, color, translateX: "-50%", translateY: "-50%" }}
-                    initial={reduceMotion ? false : { opacity: 0, scale: 0.6 }}
-                    animate={{ opacity: 1, scale: selected === name && !reduceMotion ? 1.25 : 1 }}
-                    transition={{ delay: reduceMotion ? 0 : 0.85, duration: 0.25 }}
-                  >
-                    <Icon />
-                  </motion.span>
-                ))}
+              <div className="relative aspect-square w-full max-w-56">
+                <motion.svg
+                  viewBox="0 0 100 100"
+                  className="absolute inset-0 h-full w-full overflow-visible"
+                  style={{ WebkitMaskImage: revealMask, maskImage: revealMask }}
+                  role="group"
+                  aria-label={isID ? "Distribusi bahasa pemrograman" : "Programming language distribution"}
+                >
+                  {orderedSegments.length === 0 ? (
+                    <circle cx="50" cy="50" r="36" fill="none" stroke="#52525b" strokeWidth="20" />
+                  ) : (
+                    orderedSegments.map(({ name, color, path }) => {
+                      const emphasized = emphasizedName === name;
+                      return (
+                        <motion.path
+                          key={name}
+                          d={path}
+                          fill={color}
+                          className="cursor-pointer outline-none focus-visible:opacity-80"
+                          style={{ transformOrigin: "50% 50%", transformBox: "view-box" }}
+                          animate={{
+                            scale: emphasized && !reduceMotion ? 1.075 : 1,
+                            filter: emphasized && !reduceMotion ? "brightness(1.12)" : "brightness(1)",
+                          }}
+                          whileTap={reduceMotion ? undefined : { scale: 1.035 }}
+                          transition={{ type: "spring", stiffness: 340, damping: 25 }}
+                          onMouseEnter={() => setHovered(name)}
+                          onMouseLeave={() => setHovered((current) => current === name ? null : current)}
+                          onFocus={() => setHovered(name)}
+                          onBlur={() => setHovered((current) => current === name ? null : current)}
+                          onClick={() => setSelected((current) => current === name ? null : name)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                              event.preventDefault();
+                              setSelected((current) => current === name ? null : name);
+                            }
+                          }}
+                          role="button"
+                          tabIndex={0}
+                          aria-pressed={selected === name}
+                          aria-label={name}
+                        />
+                      );
+                    })
+                  )}
+                </motion.svg>
                 <div className="pointer-events-none absolute inset-[22%] flex flex-col items-center justify-center rounded-full bg-white text-center dark:bg-[#111111]">
                   {ActiveIcon ? (
                     <>
@@ -266,7 +292,7 @@ export default function TechnologyFootprint() {
                     </>
                   )}
                 </div>
-              </motion.button>
+              </div>
             </div>
 
             <div className="space-y-3 self-center">

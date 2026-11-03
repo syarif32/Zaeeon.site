@@ -54,7 +54,7 @@ const PAGE_TERMS: Record<string, { id: string; en: string }> = {
   "/assistant": { id: "asisten ai kecerdasan buatan tanya", en: "ai assistant ask questions" },
   "/chat": { id: "ruang obrolan diskusi pesan", en: "chat room discussion messages" },
   "/contact": { id: "kontak email hubungi kolaborasi", en: "contact email collaboration" },
-  "/contents": { id: "konten artikel video tulisan", en: "content articles videos writing" },
+//   "/contents": { id: "konten artikel video tulisan", en: "content articles videos writing" },
 };
 
 const simplify = (text: string) =>
@@ -170,17 +170,17 @@ export function CommandSearchProvider({ children }: { children: ReactNode }) {
       };
     });
 
-    // Halaman konten sudah tersedia, walaupun menu navigasinya disembunyikan.
-    if (!fromMenu.some((item) => item.href === "/contents")) {
-      fromMenu.push({
-        id: "page:/contents",
-        type: "page",
-        title: t("Contents"),
-        subtitle: isId ? "Halaman" : "Page",
-        href: "/contents",
-        keywords: `${PAGE_TERMS["/contents"].id} ${PAGE_TERMS["/contents"].en}`,
-      });
-    }
+    // // Halaman konten sudah tersedia, walaupun menu navigasinya disembunyikan.
+    // if (!fromMenu.some((item) => item.href === "/contents")) {
+    //   fromMenu.push({
+    //     id: "page:/contents",
+    //     type: "page",
+    //     title: t("Contents"),
+    //     subtitle: isId ? "Halaman" : "Page",
+    //     href: "/contents",
+    //     keywords: `${PAGE_TERMS["/contents"].id} ${PAGE_TERMS["/contents"].en}`,
+    //   });
+    // }
     return fromMenu;
   }, [isId, t]);
 

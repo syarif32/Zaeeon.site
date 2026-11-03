@@ -36,3 +36,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .command-search-backup/
+install-smart-search.mjs
