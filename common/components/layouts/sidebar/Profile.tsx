@@ -9,6 +9,7 @@ import MobileMenuButton from "./MobileMenuButton";
 import ProfileHeader from "./ProfileHeader";
 import ThemeToggle from "./ThemeToggle";
 import IntlToggle from "./IntlToggle";
+import { SearchTrigger } from "@/common/components/elements/CommandSearch";
 
 const Profile = () => {
   const [width, setWidth] = useState(0);
@@ -20,11 +21,11 @@ const Profile = () => {
 
   useEffect(() => {
     setWidth(window.innerWidth);
-    setIsMobile(window.innerWidth < 769);
+    setIsMobile(window.innerWidth < 768);
 
     const handleResize = () => {
       setWidth(window.innerWidth);
-      setIsMobile(window.innerWidth < 769);
+      setIsMobile(window.innerWidth < 768);
     };
 
     window.addEventListener("resize", handleResize);
@@ -56,6 +57,12 @@ const Profile = () => {
     >
       <div className="flex items-center justify-between md:px-2 lg:flex-col lg:space-y-4">
         <ProfileHeader expandMenu={isOpen} imageSize={imageSize} />
+        <div className="hidden w-full lg:block">
+          <SearchTrigger />
+        </div>
+        <div className="hidden md:block lg:hidden">
+          <SearchTrigger compact />
+        </div>
         {isMobile && (
           <div
             className={clsx(
@@ -65,6 +72,7 @@ const Profile = () => {
             )}
           >
             <div className="flex gap-4">
+              <SearchTrigger compact />
               <IntlToggle />
               <ThemeToggle />
             </div>

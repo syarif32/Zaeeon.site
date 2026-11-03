@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import ChatButton from "../../../modules/chat/components/ChatButton";
 
 import Sidebar from "./sidebar";
+import { CommandSearchProvider } from "@/common/components/elements/CommandSearch";
 
 const Notif = dynamic(() => import("../elements/Notif"), { ssr: false });
 
@@ -28,7 +29,8 @@ const Layouts = ({ children }: LayoutsProps) => {
     });
   }, []);
   return (
-    <div className="mx-auto max-w-7xl lg:px-12">
+    <CommandSearchProvider>
+      <div className="mx-auto max-w-7xl lg:px-12">
       <div className="mx-auto flex flex-col lg:flex-row lg:gap-5 lg:py-4">
         <Sidebar />
         <main data-responsive-content className="max-w-[854px] transition-all duration-300 lg:w-4/5">
@@ -37,7 +39,8 @@ const Layouts = ({ children }: LayoutsProps) => {
       </div>
       <Notif />
       {isShowChatButton && <ChatButton />}
-    </div>
+      </div>
+    </CommandSearchProvider>
   );
 };
 

@@ -1,10 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 import { useLocale } from "next-intl";
 import { FiCode, FiExternalLink } from "react-icons/fi";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, animate, motion, useMotionTemplate, useMotionValue, useReducedMotion } from "framer-motion";
+import {
+  SiCss3, SiDart, SiGnubash, SiGo, SiHtml5, SiJavascript,
+  SiKotlin, SiOpenjdk, SiPhp, SiPython, SiSwift, SiTypescript,
+} from "react-icons/si";
+import type { IconType } from "react-icons";
 
 import SectionHeading from "@/common/components/elements/SectionHeading";
 import SectionSubHeading from "@/common/components/elements/SectionSubHeading";
@@ -40,6 +45,20 @@ const colors: Record<string, string> = {
   Shell: "#8a9d63",
 };
 const fallbackColors = ["#4e9d88", "#bb83c5", "#da9b55", "#6587b1", "#9a9a9a"];
+const languageIcons: Record<string, IconType> = {
+  TypeScript: SiTypescript,
+  JavaScript: SiJavascript,
+  PHP: SiPhp,
+  Dart: SiDart,
+  Kotlin: SiKotlin,
+  Python: SiPython,
+  CSS: SiCss3,
+  HTML: SiHtml5,
+  Java: SiOpenjdk,
+  Go: SiGo,
+  Swift: SiSwift,
+  Shell: SiGnubash,
+};
 function colorOf(name: string, index: number) {
   return colors[name] ?? fallbackColors[index % fallbackColors.length];
 }
@@ -49,6 +68,9 @@ export default function TechnologyFootprint() {
   const isID = locale === "id";
   const [selected, setSelected] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
+  const reveal = useMotionValue(0);
+  const revealMask = useMotionTemplate`conic-gradient(#000 0% ${reveal}%, transparent ${reveal}% 100%)`;
+  const hasRevealed = useRef(false);
   const { data, error, isLoading } = useSWR<FootprintResponse>(
     "/api/github/languages",
     fetcher,
@@ -110,7 +132,40 @@ export default function TechnologyFootprint() {
     return `conic-gradient(${stops.join(", ")})`;
   }, [display]);
 
+  useEffect(() => {
+    if (!data?.languages?.length || hasRevealed.current) return;
+    hasRevealed.current = true;
+    if (reduceMotion) {
+      reveal.set(100);
+      return;
+    }
+    const controls = animate(reveal, 100, { duration: 1.4, ease: [0.22, 1, 0.36, 1] });
+    return () => controls.stop();
+  }, [data?.languages?.length, reduceMotion, reveal]);
+
   const active = display.find((item) => item.name === selected);
+  const activeIndex = display.findIndex((item) => item.name === selected);
+  const activeColor = active ? colorOf(active.name, activeIndex) : null;
+  const ActiveIcon = active ? languageIcons[active.name] ?? FiCode : null;
+  const chartIcons = useMemo(() => {
+    const total = display.reduce((sum, item) => sum + item.bytes, 0);
+    let start = 0;
+    return display.flatMap((item, index) => {
+      const share = total ? item.bytes / total : 0;
+      const middle = start + share / 2;
+      start += share;
+      // Small slices keep their logo in the center when selected.
+      if (share < 0.12) return [];
+      const angle = middle * Math.PI * 2 - Math.PI / 2;
+      return [{
+        name: item.name,
+        Icon: languageIcons[item.name] ?? FiCode,
+        color: colorOf(item.name, index),
+        x: 50 + Math.cos(angle) * 39,
+        y: 50 + Math.sin(angle) * 39,
+      }];
+    });
+  }, [display]);
   const selectFromChart = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (event.detail === 0) {
       const next = display[(display.findIndex((item) => item.name === selected) + 1) % display.length];
@@ -170,19 +225,46 @@ export default function TechnologyFootprint() {
               <motion.button
                 type="button"
                 className="relative aspect-square w-full max-w-56 rounded-full"
-                style={{ background: gradient }}
                 onClick={selectFromChart}
                 aria-label="Select a programming language from the chart"
-                animate={{ scale: active && !reduceMotion ? 1.04 : 1 }}
-                whileHover={reduceMotion ? undefined : { scale: 1.04 }}
-                whileTap={reduceMotion ? undefined : { scale: 0.96 }}
+                animate={{
+                  scale: active && !reduceMotion ? 1.06 : 1,
+                  boxShadow: activeColor ? `0 0 30px ${activeColor}77` : "0 0 0px #00000000",
+                }}
+                whileHover={reduceMotion ? undefined : { scale: active ? 1.08 : 1.03 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 300, damping: 22 }}
               >
+                <motion.span
+                  aria-hidden="true"
+                  className="absolute inset-0 rounded-full"
+                  style={{ background: gradient, WebkitMaskImage: revealMask, maskImage: revealMask }}
+                />
+                {chartIcons.map(({ name, Icon, color, x, y }) => (
+                  <motion.span
+                    key={name}
+                    aria-hidden="true"
+                    className="pointer-events-none absolute z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-base shadow-sm dark:bg-neutral-900/90"
+                    style={{ left: `${x}%`, top: `${y}%`, color, translateX: "-50%", translateY: "-50%" }}
+                    initial={reduceMotion ? false : { opacity: 0, scale: 0.6 }}
+                    animate={{ opacity: 1, scale: selected === name && !reduceMotion ? 1.25 : 1 }}
+                    transition={{ delay: reduceMotion ? 0 : 0.85, duration: 0.25 }}
+                  >
+                    <Icon />
+                  </motion.span>
+                ))}
                 <div className="pointer-events-none absolute inset-[22%] flex flex-col items-center justify-center rounded-full bg-white text-center dark:bg-[#111111]">
-                  <span className="text-3xl font-semibold text-neutral-900 dark:text-neutral-100">
-                    {data?.languages.length ?? 0}
-                  </span>
-                  <span className="text-xs text-neutral-500">Languages</span>
+                  {ActiveIcon ? (
+                    <>
+                      <ActiveIcon className="text-2xl" style={{ color: activeColor ?? undefined }} />
+                      <span className="mt-1 max-w-[90%] truncate text-xs font-medium text-neutral-700 dark:text-neutral-200">{active?.name}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-3xl font-semibold text-neutral-900 dark:text-neutral-100">{data?.languages.length ?? 0}</span>
+                      <span className="text-xs text-neutral-500">Languages</span>
+                    </>
+                  )}
                 </div>
               </motion.button>
             </div>
@@ -194,7 +276,12 @@ export default function TechnologyFootprint() {
                   type="button"
                   onClick={() => setSelected(selected === lang.name ? null : lang.name)}
                   aria-pressed={selected === lang.name}
-                  animate={{ x: selected === lang.name && !reduceMotion ? 4 : 0 }}
+                  animate={{
+                    x: selected === lang.name && !reduceMotion ? 4 : 0,
+                    boxShadow: selected === lang.name
+                      ? `0 0 0 1px ${colorOf(lang.name, index)}88, 0 4px 18px ${colorOf(lang.name, index)}44`
+                      : "0 0 0 0px #00000000",
+                  }}
                   whileTap={reduceMotion ? undefined : { scale: 0.98 }}
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                   className={`w-full rounded-lg px-2 py-1 text-left transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800 ${selected === lang.name ? "bg-neutral-100 dark:bg-neutral-800" : ""}`}
@@ -214,11 +301,19 @@ export default function TechnologyFootprint() {
                   <div className="h-1.5 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                     <motion.div
                       className="h-full rounded-full"
-                      animate={{ scaleY: selected === lang.name && !reduceMotion ? 1.45 : 1 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      initial={reduceMotion ? false : { scaleX: 0 }}
+                      animate={{
+                        scaleX: 1,
+                        scaleY: selected === lang.name && !reduceMotion ? 1.45 : 1,
+                        boxShadow: selected === lang.name
+                          ? `0 0 12px ${colorOf(lang.name, index)}aa`
+                          : "0 0 0px #00000000",
+                      }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20, delay: reduceMotion ? 0 : index * 0.08 }}
                       style={{
                         backgroundColor: colorOf(lang.name, index),
                         width: `${lang.percentage}%`,
+                        transformOrigin: "left center",
                       }}
                     />
                   </div>
