@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { HiOutlineBriefcase, HiOutlineAcademicCap, HiOutlineTrophy, HiOutlineQrCode, HiOutlineTrash, HiOutlinePencil } from "react-icons/hi2";
+import { notFound } from "next/navigation";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || "",
@@ -105,19 +106,22 @@ export default function AdminDashboard() {
     }
   }, [session]);
 
-  if (status === "loading") return <div className="min-h-screen flex items-center justify-center animate-pulse">Loading</div>;
+  // login ditolak 
+if (status === "loading") {
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-300 border-t-blue-500 dark:border-neutral-700 dark:border-t-blue-400" />
+    </div>
+  );
+}
 
-  if (!session || session?.user?.email !== ADMIN_EMAIL) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center text-center space-y-4">
-        <h1 className="text-4xl font-bold text-red-500">Akses Ditolak! 🚫</h1>
-        <p className="p-3 bg-red-100 text-red-800 rounded-lg font-mono text-sm">
-          Sistem mendeteksi Anda login dengan email: <b>{session?.user?.email || "Belum Login"}</b>
-        </p>
-        <Link href="/chat" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Kembali & Login Ulang</Link>
-      </div>
-    );
-  }
+if (
+  !session ||
+  session.user?.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()
+) {
+  notFound();
+}
+
 
   return (
     <div className="max-w-5xl mx-auto p-8 mt-10 mb-20">
