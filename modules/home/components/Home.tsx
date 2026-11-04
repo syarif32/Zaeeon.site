@@ -32,7 +32,7 @@ const Home = async () => {
   const featuredExperiences = [
     {
       id: 1,
-      role: "Information Technology Programmer ",
+      role: "Information Tech Programmer ",
       company: "PT Cipta Wijaya Mandiri",
       date: "Sep 2026 - now",
       description: "Menembangkan sistem internal berbasis web untuk mendukung operasional perusahaan, termasuk pengelolaan data dan proses bisnis.",
@@ -66,14 +66,14 @@ const Home = async () => {
       title: "Web Developer",
       issuer: "Badan Nasiaonal Sertifikasi Profesi (BNSP)",
       year: "2026",
-      image: "/images/careers/ai.webp", 
+      image: "/images/careers/web.webp", 
     },
     {
       id: 2,
       title: "Mobile App Developer",
       issuer: "Badan Nasiaonal Sertifikasi Profesi (BNSP)",
       year: "2026",
-      image: "/images/careers/d.png",
+      image: "/images/careers/mobile.webp",
     }
   ];
   
