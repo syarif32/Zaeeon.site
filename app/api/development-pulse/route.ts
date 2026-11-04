@@ -20,6 +20,7 @@ type GithubSummary = {
 type WakaTimeSummary = {
   totalSeconds7: number;
   topLanguage: string | null;
+  topLanguages: Array<{ name: string; totalSeconds: number }>;
   rangeLabel: string;
 };
 
@@ -159,18 +160,25 @@ async function fetchWakaTime(): Promise<WakaTimeSummary> {
     throw new Error("wakatime response incomplete");
   }
 
-  const top = [...(stats.languages ?? [])]
+  const languages = [...(stats.languages ?? [])]
     .filter(
       (language) =>
         typeof language.name === "string" &&
         typeof language.total_seconds === "number" &&
-        Number.isFinite(language.total_seconds),
+        Number.isFinite(language.total_seconds) &&
+        language.total_seconds >= 0,
     )
-    .sort((a, b) => (b.total_seconds ?? 0) - (a.total_seconds ?? 0))[0];
+    .sort((a, b) => (b.total_seconds ?? 0) - (a.total_seconds ?? 0))
+    .slice(0, 3)
+    .map((language) => ({
+      name: language.name!,
+      totalSeconds: language.total_seconds!,
+    }));
 
   return {
     totalSeconds7: stats.total_seconds,
-    topLanguage: top?.name ?? null,
+    topLanguage: languages[0]?.name ?? null, // tetap ada untuk kompatibilitas
+    topLanguages: languages,
     rangeLabel: stats.human_readable_range ?? "Last 7 days",
   };
 }
@@ -183,8 +191,6 @@ export async function GET() {
 
   const github = githubResult.status === "fulfilled" ? githubResult.value : null;
   const wakatime = wakatimeResult.status === "fulfilled" ? wakatimeResult.value : null;
-
-  // jangan bocorkan detail kesalahan API atau token pada respons publik
   const health = {
     github: github ? "ok" : "unavailable",
     wakatime: wakatime ? "ok" : "unavailable",

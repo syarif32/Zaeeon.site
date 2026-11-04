@@ -14,6 +14,7 @@ type GithubSummary = {
 type WakaTimeSummary = {
   totalSeconds7: number;
   topLanguage: string | null;
+  topLanguages?: Array<{ name: string; totalSeconds: number }>;
   rangeLabel: string;
 };
 type PulseResponse = {
@@ -48,6 +49,25 @@ function weeklyChange(current: number, previous: number, isId: boolean): string 
   if (Math.abs(percent) < 0.5) return isId ? "Stabil dari 7 hari lalu" : "Same as prior 7 days";
   const sign = percent > 0 ? "+" : "";
   return `${sign}${percent.toFixed(0)}% ${isId ? "vs 7 hari sebelumnya" : "vs previous 7 days"}`;
+}
+
+function languageLabel(name: string, isId: boolean): string {
+  if (/^markdown$/i.test(name)) {
+    return isId ? "Dokumentasi (Markdown)" : "Documentation (Markdown)";
+  }
+  return name;
+}
+
+function trackedActivities(data: WakaTimeSummary, isId: boolean): string {
+  // tampilkan bahasa yang benar-benar tercatat, bukan menebak teknologi pengguna
+  const names = data.topLanguages?.length
+    ? data.topLanguages.map((language) => language.name)
+    : data.topLanguage ? [data.topLanguage] : [];
+
+  if (!names.length) return isId ? "Aktivitas belum terinci" : "Activity details unavailable";
+
+  const activities = names.slice(0, 3).map((name) => languageLabel(name, isId));
+  return `${isId ? "Tercatat" : "Tracked"}: ${activities.join(" · ")}`;
 }
 
 function shortDate(date: string, isId: boolean): string {
@@ -121,19 +141,23 @@ export default function DevelopmentPulse() {
     <section aria-labelledby="dev-pulse-title" className="w-full">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <div className="mb-1 flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-blue-500" aria-hidden="true" />
-            <span className="font-mono text-[11px] tracking-wider text-neutral-500 dark:text-neutral-400">
-              DEVELOPMENT / PULSE
+          <div className="flex items-center gap-2.5">
+            <span
+              aria-hidden="true"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-neutral-300 text-neutral-600 dark:border-neutral-600 dark:text-neutral-300"
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 12h4l3-7 4 14 3-7h4" />
+              </svg>
             </span>
+            <h2 id="dev-pulse-title" className="text-xl font-semibold tracking-tight text-neutral-800 dark:text-neutral-200">
+              {isId ? "Aktivitas Coding" : "Coding Activity"}
+            </h2>
           </div>
-          <h2 id="dev-pulse-title" className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
-            Development Pulse
-          </h2>
-          <p className="mt-1 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
+          <p className="mt-2 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
             {isId
-              ? "Ringkasan aktivitas pengembangan dari GitHub dan WakaTime."
-              : "A snapshot of development activity from GitHub and WakaTime."}
+              ? "Ringkasan kegiatan 7 hari terakhir dari GitHub dan editor kode."
+              : "Your last 7 days of activity on GitHub and in your code editor."}
           </p>
         </div>
         <button
@@ -151,21 +175,21 @@ export default function DevelopmentPulse() {
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <StatCard
-          eyebrow={isId ? "Kontribusi GitHub · 7 hari" : "GitHub contributions · 7 days"}
+          eyebrow={isId ? "Kontribusi GitHub · 7 hari" : "GitHub activity · 7 days"}
           value={github ? github.current7.toLocaleString(isId ? "id-ID" : "en-US") : "—"}
           footer={github ? weeklyChange(github.current7, github.previous7, isId) : (isId ? "GitHub belum tersedia" : "GitHub unavailable")}
           isLoading={loading}
         />
         <StatCard
-          eyebrow={isId ? "Waktu coding · WakaTime" : "Coding time · WakaTime"}
+          eyebrow={isId ? "Waktu tercatat · 7 hari" : "Time tracked · 7 days"}
           value={wakatime ? timeLabel(wakatime.totalSeconds7) : "—"}
           footer={wakatime
-            ? (wakatime.topLanguage ? `${isId ? "Aktivitas teratas" : "Top activity"}: ${wakatime.topLanguage}` : (isId ? "7 hari terakhir" : "Last 7 days"))
-            : (isId ? "WakaTime belum tersedia" : "WakaTime unavailable")}
+            ? trackedActivities(wakatime, isId)
+            : (isId ? "Data waktu belum tersedia" : "Time data unavailable")}
           isLoading={loading}
         />
         <StatCard
-          eyebrow={isId ? "Hari aktif · GitHub" : "Active days · GitHub"}
+          eyebrow={isId ? "Hari aktif · 7 hari" : "Active days · 7 days"}
           value={github ? `${github.activeDays7}/7` : "—"}
           footer={isId ? "Hari dengan minimal 1 kontribusi" : "Days with at least 1 contribution"}
           isLoading={loading}
@@ -176,10 +200,10 @@ export default function DevelopmentPulse() {
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 px-4 py-4 dark:border-neutral-800 sm:px-5">
           <div>
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-              {isId ? "Aktivitas Kontribusi" : "Contribution Activity"}
+              {isId ? "Kontribusi Harian" : "Daily Contributions"}
             </h3>
             <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-              {isId ? "Jumlah kontribusi GitHub per hari" : "GitHub contributions by day"}
+              {isId ? "Jumlah kontribusi GitHub setiap hari" : "GitHub activity each day"}
             </p>
           </div>
           <div className="flex items-center rounded-lg border border-neutral-200 p-0.5 dark:border-neutral-800" aria-label={isId ? "Rentang grafik" : "Chart period"}>
@@ -261,15 +285,15 @@ export default function DevelopmentPulse() {
           <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-1.5">
               <span className={`h-1.5 w-1.5 rounded-full ${data.health.github === "ok" ? "bg-emerald-500" : "bg-amber-500"}`} />
-              GitHub {data.health.github === "ok" ? "OK" : "Unavailable"}
+              GitHub {data.health.github === "ok" ? (isId ? "tersambung" : "connected") : (isId ? "tidak tersedia" : "unavailable")}
             </span>
-            <span className="inline-flex items-center gap-1.5">
+            <span className="inline-flex items-center gap-1.5" title="Data source: WakaTime">
               <span className={`h-1.5 w-1.5 rounded-full ${data.health.wakatime === "ok" ? "bg-emerald-500" : "bg-amber-500"}`} />
-              WakaTime {data.health.wakatime === "ok" ? "OK" : "Unavailable"}
+              {isId ? "Pencatat waktu" : "Time tracker"} {data.health.wakatime === "ok" ? (isId ? "tersambung" : "connected") : (isId ? "tidak tersedia" : "unavailable")}
             </span>
           </div>
           <time dateTime={data.updatedAt}>
-            {isId ? "Diambil" : "Retrieved"}: {new Date(data.updatedAt).toLocaleString(isId ? "id-ID" : "en-US", {
+            {isId ? "Diperiksa" : "Checked"}: {new Date(data.updatedAt).toLocaleString(isId ? "id-ID" : "en-US", {
               dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Jakarta",
             })} WIB
           </time>
