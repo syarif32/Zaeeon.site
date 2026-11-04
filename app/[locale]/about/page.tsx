@@ -23,8 +23,8 @@ const AboutPage = async ({ params: { locale } }: Props) => {
   return (
     <Container data-aos="fade-up">
       <PageHeading title={t("title")} description={t("description")} />
-      <About />
       <CVPreview />
+      <About />
     </Container>
   );
 };
