@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 
 import Container from "@/common/components/elements/Container";
-import Layouts from "@/common/components/layouts";
+
 
 const NotFound = () => {
   const t = useTranslations("NotFoundPage");
@@ -34,7 +34,7 @@ const NotFound = () => {
   ];
 
   return (
-    <Layouts>
+  
       <Container
         data-aos="fade-up"
         className="flex min-h-[75vh] w-full flex-col justify-center py-12 transition-all duration-300 sm:py-20"
@@ -185,7 +185,6 @@ const NotFound = () => {
           </div>
         </div>
       </Container>
-    </Layouts>
   );
 };
 
