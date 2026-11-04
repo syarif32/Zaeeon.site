@@ -4,7 +4,7 @@ import Container from "@/common/components/elements/Container";
 import PageHeading from "@/common/components/elements/PageHeading";
 import About from "@/modules/about";
 import { METADATA } from "@/common/constants/metadata";
-
+import CVPreview from "@/common/components/elements/CVPreview";
 type Props = { params: { locale: string } };
 
 export async function generateMetadata({
@@ -24,6 +24,7 @@ const AboutPage = async ({ params: { locale } }: Props) => {
     <Container data-aos="fade-up">
       <PageHeading title={t("title")} description={t("description")} />
       <About />
+      <CVPreview />
     </Container>
   );
 };
