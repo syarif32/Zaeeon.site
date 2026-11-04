@@ -40,7 +40,7 @@ async function githubGet<T>(path: string, headers: Record<string, string>): Prom
 
   if (!response.ok) {
     // Never log token/header values.
-    console.error("Technology Footprint GitHub request failed", {
+    console.error(" GitHub request failed", {
       status: response.status,
       endpoint: path.split("?")[0],
     });
@@ -122,7 +122,7 @@ export async function GET() {
       languages,
     });
   } catch (error) {
-    console.error("Technology Footprint aggregation failed", {
+    console.error(" aggregation failed", {
       message: error instanceof Error ? error.message : "Unknown error",
     });
     return NextResponse.json(

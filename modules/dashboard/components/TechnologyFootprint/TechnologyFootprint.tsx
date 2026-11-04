@@ -204,7 +204,7 @@ export default function TechnologyFootprint() {
   return (
     <section className="space-y-4">
       <div className="space-y-2">
-        <SectionHeading title="Technology Footprint" icon={<FiCode />} />
+        <SectionHeading title="Top Languages" icon={<FiCode />} />
         <SectionSubHeading>{labels.subtitle}</SectionSubHeading>
       </div>
 
