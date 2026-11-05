@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { HiOutlineBriefcase, HiOutlineAcademicCap, HiOutlineTrophy, HiOutlineQrCode, HiOutlineTrash, HiOutlinePencil } from "react-icons/hi2";
 import { notFound } from "next/navigation";
+import FeaturedCareersManager from "@/modules/admin/components/FeaturedCareersManager";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || "",
@@ -231,6 +232,9 @@ if (
           </tbody>
         </table>
       </div>
+
+      {/* PILIH DAN URUTKAN PENGALAMAN UTAMA DI HOME */}
+      <FeaturedCareersManager careers={careers} />
 
       {/* TABEL KARIER */}
       <h2 className="text-xl font-semibold mb-4 dark:text-neutral-200">Manajemen Data: Karier & Magang</h2>
