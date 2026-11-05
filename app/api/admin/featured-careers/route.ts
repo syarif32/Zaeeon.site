@@ -40,29 +40,57 @@ function unauthorized() {
   );
 }
 
-export async function GET(req: NextRequest) {
-  if (!(await isAdmin(req))) return unauthorized();
 
+export async function GET() {
   try {
-    const db = createAdminDb();
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!url || !anonKey) {
+      throw new Error("Konfigurasi Supabase belum tersedia");
+    }
+
+    // membaca pilihan publik dengan akses terbatas RLS
+    const db = createClient(url, anonKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
+
     const { data, error } = await db
-      .from(TABLE)
+      .from("home_featured_careers")
       .select("career_ids")
       .eq("id", 1)
-      .single();
+      .maybeSingle();
+
     if (error) throw error;
 
-    const careerIds = Array.isArray(data?.career_ids)
-      ? data.career_ids.filter((id: unknown) => Number.isSafeInteger(id))
-      : [];
+    
+const careerIds: number[] = Array.isArray(data?.career_ids)
+  ? data.career_ids.filter(
+      (id: unknown): id is number =>
+        typeof id === "number" &&
+        Number.isSafeInteger(id) &&
+        id > 0
+    )
+  : [];
+
 
     return NextResponse.json(
       { careerIds },
-      { headers: { "Cache-Control": "no-store" } },
+      {
+        status: 200,
+        headers: { "Cache-Control": "no-store" },
+      }
     );
   } catch (error) {
-    console.error("Failed to read featured careers", error);
-    return NextResponse.json({ error: "Gagal membaca pengaturan unggulan" }, { status: 500 });
+    console.error("Failed to read featured careers:", error);
+
+    return NextResponse.json(
+      { error: "Gagal membaca pengaturan unggulan" },
+      { status: 500 }
+    );
   }
 }
 
