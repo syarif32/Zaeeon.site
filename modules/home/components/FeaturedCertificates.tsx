@@ -1,4 +1,4 @@
-
+import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
 import { getLocale } from "next-intl/server";
 import {
@@ -17,28 +17,56 @@ type Certificate = {
 };
 
 export default async function FeaturedCertificates() {
+  noStore();
   const locale = await getLocale();
   const isId = locale === "id";
   const supabase = createClient();
 
-  // ambil dua sertifikat aktif terbaru
-  const { data, error } = await supabase
-    .from("achievements")
-    .select(
-      "id, name, slug, issuing_organization, issue_date"
-    )
-    .eq("is_show", true)
-    .order("issue_date", { ascending: false })
-    .limit(2);
+  // prioritas pilihan admin. jika belum ada konfigurasi, tampilkan 2 terbaru.
+  const { data: preference, error: preferenceError } = await supabase
+    .from("home_featured_achievements")
+    .select("achievement_ids")
+    .eq("id", 1)
+    .maybeSingle();
 
-  if (error) {
-    console.error(
-      "Gagal mengambil sertifikat unggulan:",
-      error.message
-    );
+  if (preferenceError) {
+    console.error("Gagal membaca sertifikat unggulan:", preferenceError.message);
   }
 
-  const certificates = (data ?? []) as Certificate[];
+  const selectedIds: number[] = Array.isArray(preference?.achievement_ids)
+    ? preference.achievement_ids.filter(
+        (id: unknown): id is number =>
+          typeof id === "number" && Number.isSafeInteger(id) && id > 0,
+      ).slice(0, 2)
+    : [];
+
+  let certificates: Certificate[] = [];
+
+  if (preference && !preferenceError) {
+    if (selectedIds.length > 0) {
+      const { data, error } = await supabase
+        .from("achievements")
+        .select("id, name, slug, issuing_organization, issue_date")
+        .eq("is_show", true)
+        .in("id", selectedIds);
+
+      if (error) console.error("Gagal mengambil sertifikat pilihan:", error.message);
+      const rows = (data ?? []) as Certificate[];
+      const byId = new Map(rows.map((item) => [item.id, item]));
+      certificates = selectedIds
+        .map((id) => byId.get(id))
+        .filter((item): item is Certificate => Boolean(item));
+    }
+  } else {
+    const { data, error } = await supabase
+      .from("achievements")
+      .select("id, name, slug, issuing_organization, issue_date")
+      .eq("is_show", true)
+      .order("issue_date", { ascending: false })
+      .limit(2);
+    if (error) console.error("Gagal mengambil sertifikat terbaru:", error.message);
+    certificates = (data ?? []) as Certificate[];
+  }
 
   return (
     <section className="space-y-6">

@@ -1,153 +1,123 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
 import { createClient } from "@supabase/supabase-js";
+import { isAuthorizedAdmin } from "@/common/libs/authOptions";
 
 export const dynamic = "force-dynamic";
 
 const TABLE = "home_featured_careers";
 
-function createAdminDb() {
+function makeReadClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!url || !key) {
-    throw new Error("Supabase server environment is not configured");
-  }
-
-  // kunci service_role hanya boleh dipakai di route server.
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) throw new Error("Supabase public env missing");
   return createClient(url, key, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 }
 
-async function isAdmin(req: NextRequest) {
-  const secret = process.env.NEXTAUTH_SECRET;
-  const adminEmail = process.env.ADMIN_EMAIL;
-  if (!secret || !adminEmail) return false;
-
-  // Membutuhkan NextAuth v4 dengan JWT session strategy.
-  const token = await getToken({ req, secret });
-  return (
-    typeof token?.email === "string" &&
-    token.email.toLowerCase() === adminEmail.toLowerCase()
-  );
+function makeWriteClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error("Supabase server env missing");
+  // service role tidak boleh pernah dikirim ke browser.
+  return createClient(url, key, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
 }
 
-function unauthorized() {
+function isPositiveId(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value > 0;
+}
+
+function notFound() {
   return NextResponse.json(
     { error: "Not found" },
     { status: 404, headers: { "Cache-Control": "no-store" } },
   );
 }
 
-
+// id pengalaman yang sudah ditampilkan di home boleh dibaca publik.
 export async function GET() {
   try {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!url || !anonKey) {
-      throw new Error("Konfigurasi Supabase belum tersedia");
-    }
-
-    // membaca pilihan publik dengan akses terbatas RLS
-    const db = createClient(url, anonKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    });
-
+    const db = makeReadClient();
     const { data, error } = await db
-      .from("home_featured_careers")
+      .from(TABLE)
       .select("career_ids")
       .eq("id", 1)
       .maybeSingle();
 
     if (error) throw error;
 
-    
-const careerIds: number[] = Array.isArray(data?.career_ids)
-  ? data.career_ids.filter(
-      (id: unknown): id is number =>
-        typeof id === "number" &&
-        Number.isSafeInteger(id) &&
-        id > 0
-    )
-  : [];
-
+    const careerIds: number[] = Array.isArray(data?.career_ids)
+      ? data.career_ids.filter(isPositiveId)
+      : [];
 
     return NextResponse.json(
       { careerIds },
-      {
-        status: 200,
-        headers: { "Cache-Control": "no-store" },
-      }
+      { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
-    console.error("Failed to read featured careers:", error);
-
-    return NextResponse.json(
-      { error: "Gagal membaca pengaturan unggulan" },
-      { status: 500 }
-    );
+    console.error("[featured-careers] GET failed", error);
+    return NextResponse.json({ error: "Gagal membaca pengaturan" }, { status: 500 });
   }
 }
 
+// hanya sesi admin sah yang boleh mengubah urutan pilihan.
 export async function PUT(req: NextRequest) {
-  if (!(await isAdmin(req))) return unauthorized();
-
-  let body: unknown;
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "JSON tidak valid" }, { status: 400 });
-  }
+    if (!(await isAuthorizedAdmin())) return notFound();
 
-  const ids =
-    body && typeof body === "object" && "careerIds" in body
-      ? (body as { careerIds: unknown }).careerIds
-      : undefined;
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "JSON tidak valid" }, { status: 400 });
+    }
 
-  if (
-    !Array.isArray(ids) ||
-    ids.length > 4 ||
-    !ids.every((id) => Number.isSafeInteger(id) && id > 0) ||
-    new Set(ids).size !== ids.length
-  ) {
-    return NextResponse.json(
-      { error: "Pilih maksimal 4 ID pengalaman yang berbeda" },
-      { status: 400 },
-    );
-  }
+    const ids =
+      body && typeof body === "object" && "careerIds" in body
+        ? (body as { careerIds: unknown }).careerIds
+        : undefined;
 
-  try {
-    const db = createAdminDb();
+    if (
+      !Array.isArray(ids) ||
+      ids.length > 4 ||
+      !ids.every(isPositiveId) ||
+      new Set(ids).size !== ids.length
+    ) {
+      return NextResponse.json(
+        { error: "Pilih maksimal 4 ID pengalaman yang berbeda" },
+        { status: 400 },
+      );
+    }
 
-    if (ids.length > 0) {
+    const careerIds = ids as number[];
+    const db = makeWriteClient();
+
+    if (careerIds.length > 0) {
       const { data: careers, error: verifyError } = await db
         .from("careers")
         .select("id, is_show")
-        .in("id", ids);
+        .in("id", careerIds);
       if (verifyError) throw verifyError;
+
       const available = new Set(
         (careers ?? [])
           .filter((career) => career.is_show === true)
           .map((career) => career.id),
       );
-      if (!ids.every((id) => available.has(id))) {
+      if (!careerIds.every((id) => available.has(id))) {
         return NextResponse.json(
-          { error: "Ada pengalaman yang tidak ditemukan atau tidak ditampilkan" },
+          { error: "Ada pengalaman yang tidak ditemukan atau disembunyikan" },
           { status: 400 },
         );
       }
     }
 
-    // Satu upsert, sehingga pilihan dan urutan disimpan bersama.
     const { error } = await db.from(TABLE).upsert(
       {
         id: 1,
-        career_ids: ids,
+        career_ids: careerIds,
         updated_at: new Date().toISOString(),
       },
       { onConflict: "id" },
@@ -155,11 +125,11 @@ export async function PUT(req: NextRequest) {
     if (error) throw error;
 
     return NextResponse.json(
-      { success: true, careerIds: ids },
+      { success: true, careerIds },
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
-    console.error("Failed to save featured careers", error);
+    console.error("[featured-careers] PUT failed", error);
     return NextResponse.json({ error: "Gagal menyimpan pengalaman unggulan" }, { status: 500 });
   }
 }
