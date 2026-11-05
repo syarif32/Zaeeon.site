@@ -14,13 +14,14 @@ import { HiOutlineRocketLaunch as ImpactIcon } from "react-icons/hi2";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocale } from "next-intl";
 // @ts-ignore
-import { differenceInMonths, differenceInYears, format } from "date-fns";
+import { differenceInMonths, differenceInYears } from "date-fns";
 
 import SpotlightCard from "@/common/components/elements/SpotlightCard";
 import { CareerProps } from "@/common/types/careers";
 
 const CareerCard = ({
   position,
+  position_en,
   company,
   logo,
   location,
@@ -30,12 +31,29 @@ const CareerCard = ({
   type,
   location_type,
   responsibilities,
+  responsibilities_en,
   lessons_learned,
+  lessons_learned_en,
   impact,
-}: CareerProps) => {
+  impact_en,
+}: CareerProps & {
+  position_en?: string | null;
+  responsibilities_en?: string[] | null;
+  lessons_learned_en?: string[] | null;
+  impact_en?: string[] | null;
+}) => {
   const [isShowDetails, setIsShowDetails] = useState(false);
 
   const locale = useLocale();
+  const isId = locale === "id";
+  const displayPosition = !isId && position_en?.trim() ? position_en : position;
+  const validList = (items?: string[] | null) => Array.isArray(items) && items.some((item) => typeof item === "string" && item.trim());
+  const displayResponsibilities = !isId && validList(responsibilities_en) ? responsibilities_en : responsibilities;
+  const displayLessons = !isId && validList(lessons_learned_en) ? lessons_learned_en : lessons_learned;
+  const displayImpact = !isId && validList(impact_en) ? impact_en : impact;
+  const formatMonth = (date: Date) => new Intl.DateTimeFormat(isId ? "id-ID" : "en-US", { month: "short", year: "numeric" }).format(date);
+  const displayType = isId ? ({ Internship: "Magang", "Full-time": "Penuh waktu", Freelance: "Freelance" } as Record<string, string>)[type] || type : type;
+  const displayLocationType = isId ? ({ Remote: "Jarak jauh", Onsite: "Di lokasi", Hybrid: "Hybrid" } as Record<string, string>)[location_type] || location_type : location_type;
 
   const startDate = new Date(start_date);
   const endDate = end_date ? new Date(end_date) : new Date();
@@ -46,7 +64,7 @@ const CareerCard = ({
   const yearText =
     locale === "en" ? `year${durationYears > 1 ? "s" : ""}` : "tahun";
   const monthText =
-    locale === "en" ? `Month${durationMonths > 1 ? "s" : ""}` : "bulan";
+    locale === "en" ? `month${durationMonths !== 1 ? "s" : ""}` : "bulan";
 
   let durationText = "";
   if (durationYears > 0) {
@@ -80,7 +98,7 @@ const CareerCard = ({
       )}
 
       <div className="w-full space-y-1">
-        <h5>{position}</h5>
+        <h5>{displayPosition}</h5>
         <div className="space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
           <div className="flex flex-col gap-2 md:flex-row">
             <Link href={link || "#"} target="_blank">
@@ -96,8 +114,8 @@ const CareerCard = ({
 
           <div className="flex flex-col gap-2 text-[13px] md:flex-row">
             <div className="flex gap-1 text-neutral-600 dark:text-neutral-400">
-              <span>{format(startDate, "MMM yyyy")}</span> -{" "}
-              <span>{end_date ? format(endDate, "MMM yyyy") : "Present"}</span>
+              <span>{formatMonth(startDate)}</span> -{" "}
+              <span>{end_date ? formatMonth(endDate) : (isId ? "Sekarang" : "Present")}</span>
             </div>
 
             <span className="hidden text-neutral-300 dark:text-neutral-700 md:block">
@@ -109,14 +127,14 @@ const CareerCard = ({
               •
             </span>
             <span className="text-neutral-600 dark:text-neutral-400">
-              {type}
+              {displayType}
             </span>
 
             <span className="hidden text-neutral-300 dark:text-neutral-700 md:block">
               •
             </span>
             <span className="text-neutral-600 dark:text-neutral-400">
-              {location_type}
+              {displayLocationType}
             </span>
           </div>
 
@@ -148,7 +166,7 @@ const CareerCard = ({
                 >
                   <div className="space-y-4 py-3 leading-normal text-neutral-600 dark:text-neutral-400">
                     {/* Responsibilities Section */}
-                    {responsibilities && responsibilities.length > 0 && (
+                    {displayResponsibilities && displayResponsibilities.length > 0 && (
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 font-semibold text-primary">
                           <ResponsibilityIcon size={16} />
@@ -157,7 +175,7 @@ const CareerCard = ({
                           </span>
                         </div>
                         <ul className="space-y-1 text-xs leading-relaxed opacity-90">
-                          {responsibilities.map((item, index) => (
+                          {displayResponsibilities.map((item, index) => (
                             <li key={index} className="flex items-start gap-2">
                               <span className="font-bold text-neutral-700 dark:text-neutral-300">
                                 ✓
@@ -172,7 +190,7 @@ const CareerCard = ({
                     {/* Lessons Learned & Impact Grid */}
                     <div className="grid grid-cols-1 gap-4 dark:border-neutral-800 sm:grid-cols-2 md:mt-4 md:border-t md:border-neutral-200 md:pt-4">
                       {/* What I Learned */}
-                      {lessons_learned && lessons_learned.length > 0 && (
+                      {displayLessons && displayLessons.length > 0 && (
                         <div className="space-y-2">
                           <div className="flex items-center gap-2 font-semibold text-primary">
                             <LearnIcon size={16} />
@@ -181,7 +199,7 @@ const CareerCard = ({
                             </span>
                           </div>
                           <ul className="space-y-1 text-xs leading-relaxed opacity-90">
-                            {lessons_learned.map((item, index) => (
+                            {displayLessons.map((item, index) => (
                               <li
                                 key={index}
                                 className="flex items-start gap-2"
@@ -197,7 +215,7 @@ const CareerCard = ({
                       )}
 
                       {/* Impact */}
-                      {impact && impact.length > 0 && (
+                      {displayImpact && displayImpact.length > 0 && (
                         <div className="space-y-2">
                           <div className="flex items-center gap-2 font-semibold text-primary dark:text-primary">
                             <ImpactIcon size={16} />
@@ -206,7 +224,7 @@ const CareerCard = ({
                             </span>
                           </div>
                           <ul className="space-y-1 text-xs leading-relaxed opacity-90">
-                            {impact.map((item, index) => (
+                            {displayImpact.map((item, index) => (
                               <li
                                 key={index}
                                 className="flex items-start gap-2"

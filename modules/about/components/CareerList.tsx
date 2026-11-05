@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { HiOutlineBriefcase as CareerIcon } from "react-icons/hi";
 import { createClient } from "@supabase/supabase-js";
 
@@ -18,6 +18,7 @@ const supabase = createClient(
 
 const CareerList = () => {
   const t = useTranslations("AboutPage.career");
+  const isId = useLocale() === "id";
   
   // State untuk menyimpan data dari database
   const [careers, setCareers] = useState<CareerProps[]>([]);
@@ -56,7 +57,7 @@ const CareerList = () => {
 
       {loading ? (
         <div className="animate-pulse text-sm text-neutral-500">
-          Memuat pengalaman karier...
+          {isId ? "Memuat pengalaman karier..." : "Loading work experience..."}
         </div>
       ) : careers.length > 0 ? (
         <div className="grid grid-cols-1 gap-4">
@@ -66,7 +67,7 @@ const CareerList = () => {
         </div>
       ) : (
         <div className="text-sm text-neutral-500">
-          Belum ada data pengalaman karier yang ditampilkan.
+          {isId ? "Belum ada data pengalaman karier yang ditampilkan." : "No work experience available."}
         </div>
       )}
     </section>

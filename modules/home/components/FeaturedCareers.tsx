@@ -7,10 +7,12 @@ import { createClient } from "@/common/utils/server";
 type Career = {
   id: number;
   position: string;
+  position_en: string | null;
   company: string;
   start_date: string;
   end_date: string | null;
   responsibilities: string[] | null;
+  responsibilities_en: string[] | null;
 };
 
 function formatMonth(value: string | null, locale: string, current: string) {
@@ -48,7 +50,7 @@ export default async function FeaturedCareers() {
 
   const { data, error } = await supabase
     .from("careers")
-    .select("id, position, company, start_date, end_date, responsibilities")
+    .select("id, position, position_en, company, start_date, end_date, responsibilities, responsibilities_en")
     .eq("is_show", true)
     .in("id", ids);
 
@@ -82,9 +84,16 @@ export default async function FeaturedCareers() {
 
       <div className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2">
         {careers.map((career) => {
-          const description = Array.isArray(career.responsibilities)
-            ? career.responsibilities.find((item) => typeof item === "string" && item.trim().length > 0)
+          const localizedResponsibilities =
+            !isId && Array.isArray(career.responsibilities_en) && career.responsibilities_en.some((item) => typeof item === "string" && item.trim())
+              ? career.responsibilities_en
+              : career.responsibilities;
+          const description = Array.isArray(localizedResponsibilities)
+            ? localizedResponsibilities.find((item) => typeof item === "string" && item.trim().length > 0)
             : null;
+          const position = !isId && career.position_en?.trim()
+            ? career.position_en
+            : career.position;
 
           return (
             <article key={career.id} className="group flex h-full min-w-0 flex-col rounded-2xl border border-neutral-200 bg-white p-5 transition-colors hover:border-blue-400 dark:border-neutral-800 dark:bg-neutral-900/50 dark:hover:border-blue-700 sm:p-6">
@@ -92,7 +101,7 @@ export default async function FeaturedCareers() {
                 {formatMonth(career.start_date, locale, "")} – {formatMonth(career.end_date, locale, isId ? "Sekarang" : "Present")}
               </div>
               <h3 className="break-words text-base font-semibold leading-snug text-neutral-800 transition-colors group-hover:text-blue-600 dark:text-neutral-100 dark:group-hover:text-blue-400 sm:text-lg">
-                {career.position}
+                {position}
               </h3>
               <p className="mt-1.5 break-words text-sm font-medium leading-relaxed text-neutral-600 dark:text-neutral-400">
                 {career.company}

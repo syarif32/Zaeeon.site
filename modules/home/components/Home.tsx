@@ -11,6 +11,7 @@ import Breakline from "@/common/components/elements/Breakline";
 
 import Introduction from "./Introduction";
 import SkillList from "./SkillList";
+import FeaturedCareers from "./FeaturedCareers";
 
 // data pengalaman utama
 const featuredExperiences = [
@@ -108,34 +109,7 @@ const Home = () => {
 
         {/* experience cards */}
         <div className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2">
-          {featuredExperiences.map((exp) => (
-            <article
-              key={exp.id}
-              className="group flex h-full min-w-0 flex-col rounded-2xl border border-neutral-200 bg-white p-5 transition-all duration-300 hover:border-blue-400 dark:border-neutral-800 dark:bg-neutral-900/50 dark:hover:border-blue-700 sm:p-6"
-            >
-              {/* periode */}
-              <div className="mb-4">
-                <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
-                  {exp.date}
-                </span>
-              </div>
-
-              {/* jabatan */}
-              <h3 className="break-words text-base font-semibold leading-snug text-neutral-800 transition-colors group-hover:text-blue-600 dark:text-neutral-100 dark:group-hover:text-blue-400 sm:text-lg">
-                {exp.role}
-              </h3>
-
-              {/* perusahaan */}
-              <p className="mt-1.5 break-words text-sm font-medium leading-relaxed text-neutral-600 dark:text-neutral-400">
-                {exp.company}
-              </p>
-
-              {/* deskripsi lengkap */}
-              <p className="mt-4 flex-1 whitespace-normal break-words text-sm leading-6 text-neutral-500 dark:text-neutral-400">
-                {exp.description}
-              </p>
-            </article>
-          ))}
+          <FeaturedCareers />
         </div>
       </section>
 

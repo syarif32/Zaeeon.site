@@ -16,6 +16,7 @@ export default function EditCareer({ params }: { params: { id: string } }) {
   
   const [formData, setFormData] = useState({
     position: "",
+    position_en: "",
     company: "",
     logo: "", 
     location: "",
@@ -24,9 +25,12 @@ export default function EditCareer({ params }: { params: { id: string } }) {
     link: "",
     type: "Internship",
     location_type: "Remote",
-    responsibilities: "", 
-    lessons_learned: "", 
-    impact: "", 
+    responsibilities: "",
+    responsibilities_en: "",
+    lessons_learned: "",
+    lessons_learned_en: "",
+    impact: "",
+    impact_en: "", 
   });
 
   // Tarik data lama dari database
@@ -36,6 +40,7 @@ export default function EditCareer({ params }: { params: { id: string } }) {
       if (data) {
         setFormData({
           position: data.position || "",
+          position_en: data.position_en || "",
           company: data.company || "",
           logo: data.logo || "",
           location: data.location || "",
@@ -46,8 +51,11 @@ export default function EditCareer({ params }: { params: { id: string } }) {
           location_type: data.location_type || "Remote",
           // Kembalikan Array dari DB menjadi teks dengan pemisah titik koma (;)
           responsibilities: data.responsibilities?.join("; ") || "",
+          responsibilities_en: data.responsibilities_en?.join("; ") || "",
           lessons_learned: data.lessons_learned?.join("; ") || "",
+          lessons_learned_en: data.lessons_learned_en?.join("; ") || "",
           impact: data.impact?.join("; ") || "",
+          impact_en: data.impact_en?.join("; ") || "",
         });
       }
       setFetching(false);
@@ -69,6 +77,7 @@ export default function EditCareer({ params }: { params: { id: string } }) {
 
       const { data: updatedData, error: dbError } = await supabase.from("careers").update({
         position: formData.position,
+        position_en: formData.position_en.trim() || null,
         company: formData.company,
         logo: formData.logo || null,
         location: formData.location,
@@ -78,8 +87,11 @@ export default function EditCareer({ params }: { params: { id: string } }) {
         type: formData.type,
         location_type: formData.location_type,
         responsibilities: toArray(formData.responsibilities),
+        responsibilities_en: formData.responsibilities_en.trim() ? toArray(formData.responsibilities_en) : null,
         lessons_learned: toArray(formData.lessons_learned),
+        lessons_learned_en: formData.lessons_learned_en.trim() ? toArray(formData.lessons_learned_en) : null,
         impact: toArray(formData.impact),
+        impact_en: formData.impact_en.trim() ? toArray(formData.impact_en) : null,
       })
       .eq("id", params.id)
       .select(); // Mencegah silent failure RLS
@@ -154,6 +166,43 @@ export default function EditCareer({ params }: { params: { id: string } }) {
         
         <div><label className="block text-sm mb-1 text-neutral-600 dark:text-neutral-300">Dampak / Hasil</label>
         <textarea name="impact" value={formData.impact} onChange={handleChange} rows={2} className="w-full p-2 border rounded-lg dark:bg-neutral-800 dark:border-neutral-700 outline-none" /></div>
+
+
+        {/* teks bahasa inggris disimpan pada kolom terpisah */}
+        <div className="mt-6 space-y-4 rounded-xl border border-blue-200 bg-blue-50/40 p-4 dark:border-blue-900/40 dark:bg-blue-950/10">
+          <div>
+            <h2 className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">English content (untuk /en)</h2>
+            <p className="mt-1 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+              Isi terjemahan bahasa Inggris di sini. Data Indonesia di atas tidak berubah.
+              Jika kolom Inggris kosong, website memakai teks Indonesia sebagai cadangan.
+            </p>
+          </div>
+          <div>
+            <label htmlFor="career-position-en" className="mb-1 block text-sm text-neutral-600 dark:text-neutral-300">Job title — English</label>
+            <input id="career-position-en" name="position_en" value={formData.position_en} onChange={handleChange}
+              className="w-full rounded-lg border border-neutral-200 p-2 outline-none focus:border-blue-500 dark:border-neutral-700 dark:bg-neutral-800"
+              placeholder="Full-Stack Web Developer (Intern)" />
+          </div>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">Untuk daftar berikut, pisahkan tiap poin dengan titik koma (;).</p>
+          <div>
+            <label htmlFor="career-responsibilities-en" className="mb-1 block text-sm text-neutral-600 dark:text-neutral-300">Responsibilities — English</label>
+            <textarea id="career-responsibilities-en" name="responsibilities_en" value={formData.responsibilities_en}
+              onChange={handleChange} rows={3}
+              className="w-full rounded-lg border border-neutral-200 p-2 outline-none focus:border-blue-500 dark:border-neutral-700 dark:bg-neutral-800" />
+          </div>
+          <div>
+            <label htmlFor="career-lessons-en" className="mb-1 block text-sm text-neutral-600 dark:text-neutral-300">What I learned — English</label>
+            <textarea id="career-lessons-en" name="lessons_learned_en" value={formData.lessons_learned_en}
+              onChange={handleChange} rows={3}
+              className="w-full rounded-lg border border-neutral-200 p-2 outline-none focus:border-blue-500 dark:border-neutral-700 dark:bg-neutral-800" />
+          </div>
+          <div>
+            <label htmlFor="career-impact-en" className="mb-1 block text-sm text-neutral-600 dark:text-neutral-300">Impact — English</label>
+            <textarea id="career-impact-en" name="impact_en" value={formData.impact_en}
+              onChange={handleChange} rows={3}
+              className="w-full rounded-lg border border-neutral-200 p-2 outline-none focus:border-blue-500 dark:border-neutral-700 dark:bg-neutral-800" />
+          </div>
+        </div>
 
         <div className="flex gap-4 mt-6">
           <button type="button" onClick={() => router.push("/admin")} className="w-1/3 bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 font-bold py-3 px-4 rounded-lg transition-colors">Batal</button>
