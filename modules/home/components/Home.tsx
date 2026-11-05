@@ -78,40 +78,7 @@ const Home = () => {
       <Breakline className="my-6" />
 
       {/* pengalaman utama */}
-      <section className="space-y-6">
-        {/* section heading */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/30">
-              <HiOutlineBriefcase
-                size={21}
-                className="text-blue-600 dark:text-blue-400"
-              />
-            </div>
-
-            <h2 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-2xl">
-              Pengalaman Utama
-            </h2>
-          </div>
-
-          <Link
-            href="/about"
-            className="group inline-flex w-fit items-center gap-1.5 text-sm font-medium text-neutral-500 transition-colors hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400"
-          >
-            Lihat Selengkapnya
-
-            <HiOutlineArrowRight
-              size={16}
-              className="shrink-0 transition-transform duration-200 group-hover:translate-x-1"
-            />
-          </Link>
-        </div>
-
-        {/* experience cards */}
-        <div className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2">
-          <FeaturedCareers />
-        </div>
-      </section>
+      <FeaturedCareers />
 
       <Breakline className="my-6" />
 
