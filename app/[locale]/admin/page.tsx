@@ -7,6 +7,7 @@ import { createClient } from "@supabase/supabase-js";
 import { HiOutlineBriefcase, HiOutlineAcademicCap, HiOutlineTrophy, HiOutlineQrCode, HiOutlineTrash, HiOutlinePencil } from "react-icons/hi2";
 import { notFound } from "next/navigation";
 import FeaturedCareersManager from "@/modules/admin/components/FeaturedCareersManager";
+import FeaturedAchievementsManager from "@/modules/admin/components/FeaturedAchievementsManager";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || "",
@@ -186,6 +187,7 @@ if (
           </button>
         </div>
       </div>
+      <FeaturedAchievementsManager />
       <h2 className="text-xl font-semibold mb-4 dark:text-neutral-200">Manajemen Data: Sertifikat & Penghargaan</h2>
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden shadow-sm mb-10">
         <table className="w-full text-left text-sm">
