@@ -9,6 +9,7 @@ export const METADATA = {
   openGraph: { url: SITE_URL, siteName: "Zaeeon by Najwa Syarif", locale: "en_US" },
   exTitle: "| Najwa Syarif — Zaeeon",
   profile: "/images/najwa.png",
+  logo: "/logo.png",
 };
 // [Indonesian, English], each containing [title, description].
 export const PAGE_SEO: Record<string, [[string, string], [string, string]]> = {
@@ -165,7 +166,7 @@ export function socialImage(image?: string | null): string {
 export function pageMetadata(locale: string, path: string, content?: { title: string; description: string; image?: string | null }): Metadata {
   const [title, description] = content ? [content.title, content.description] : PAGE_SEO[path][locale === "id" ? 0 : 1];
   const fullTitle = path ? title + " | Najwa Syarif — Zaeeon" : title;
-  const image = { url: socialImage(content?.image), alt: content?.title || "Najwa Syarif — Zaeeon" };
+  const image = { url: socialImage(content?.image || METADATA.logo), alt: content?.title || "Najwa Syarif — Zaeeon" };
   return {
     title: { absolute: fullTitle }, description,
     ...(path === "smart-talk" ? { robots: { index: false, follow: true } } : {}),
@@ -174,6 +175,6 @@ export function pageMetadata(locale: string, path: string, content?: { title: st
       languages: { ...Object.fromEntries(routing.locales.map(language => [language, pageUrl(language, path)])), "x-default": pageUrl(routing.defaultLocale, path) },
     },
     openGraph: { title: fullTitle, description, url: pageUrl(locale, path), siteName: METADATA.openGraph.siteName, locale: locale === "id" ? "id_ID" : "en_US", alternateLocale: [locale === "id" ? "en_US" : "id_ID"], type: "website", images: [image] },
-    twitter: { card: "summary_large_image", title: fullTitle, description, images: [image] },
+    twitter: { card: content?.image ? "summary_large_image" : "summary", title: fullTitle, description, images: [image] },
   };
 }

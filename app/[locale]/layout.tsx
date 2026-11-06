@@ -24,6 +24,10 @@ export function generateMetadata({ params: { locale } }: { params: { locale: str
  const [title, description] = PAGE_SEO[""][locale === "id" ? 0 : 1];
  return {
   metadataBase: new URL(SITE_URL),
+  icons: {
+    shortcut: "/icon.svg",
+    apple: [{ url: METADATA.logo, sizes: "1254x1254", type: "image/png" }],
+  },
   title: { default: title, template: "%s | Najwa Syarif — Zaeeon" },
   description, creator: METADATA.creator, authors: METADATA.authors,
   robots: { index: true, follow: true },

@@ -24,6 +24,7 @@ export function ProfileJsonLd({ locale, path = "" }: { locale: string; path?: st
       {
         "@type": "WebSite", "@id": websiteId, name: "Zaeeon",
         alternateName: "Zaeeon by Najwa Syarif", url: SITE_URL,
+        image: SITE_URL + METADATA.logo,
         inLanguage: ["id", "en"], author: { "@id": personId },
       },
       {

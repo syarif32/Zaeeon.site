@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="logo-title">
+  <title id="logo-title">najwasyarif logo</title>
+  <g fill="none" stroke-width="24" stroke-linecap="round" stroke-linejoin="round">
+    <g stroke="#1F3A5F">
+      <path d="M 429.850 147.367 A 205 205 0 1 1 403.465 113.595" />
+      <line x1="169" y1="173" x2="169" y2="339" />
+      <line x1="343" y1="173" x2="343" y2="339" />
+    </g>
+    <g stroke="#7FB2E5">
+      <path d="M 169 173 C 246 169, 267 343, 343 339" />
+    </g>
+  </g>
+</svg>
