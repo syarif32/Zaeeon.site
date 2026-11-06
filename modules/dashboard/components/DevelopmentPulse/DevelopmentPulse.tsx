@@ -59,7 +59,7 @@ function languageLabel(name: string, isId: boolean): string {
 }
 
 function trackedActivities(data: WakaTimeSummary, isId: boolean): string {
-  // tampilkan bahasa yang benar-benar tercatat, bukan menebak teknologi pengguna
+  
   const names = data.topLanguages?.length
     ? data.topLanguages.map((language) => language.name)
     : data.topLanguage ? [data.topLanguage] : [];

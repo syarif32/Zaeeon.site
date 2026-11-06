@@ -15,7 +15,11 @@ export const getProjectsData = async () => {
 
     return {
       ...item,
-      image: imageData.publicUrl,
+      // Gunakan URL yang benar-benar disimpan saat upload, jika ada.
+      image:
+        typeof item.image === "string" && item.image.trim()
+          ? item.image
+          : imageData.publicUrl,
     };
   });
 };
@@ -38,6 +42,9 @@ export const getProjectsDataBySlug = async (slug: string) => {
 
   return {
     ...data,
-    image: imageData.publicUrl,
+    image:
+      typeof data.image === "string" && data.image.trim()
+        ? data.image
+        : imageData.publicUrl,
   };
 };

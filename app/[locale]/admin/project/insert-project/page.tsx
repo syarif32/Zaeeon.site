@@ -16,8 +16,10 @@ export default function InsertProject() {
   const [file, setFile] = useState<File | null>(null); // ✅ STATE UNTUK GAMBAR
   const [formData, setFormData] = useState({
     title: "",
+    title_en: "",
     slug: "",
     description: "",
+    description_en: "",
     tech_stack: [] as string[],
     link_demo: "",
     link_github: "",
@@ -83,8 +85,10 @@ export default function InsertProject() {
       const { error: dbError } = await supabase.from("projects").insert([
         {
           title: formData.title,
+          title_en: formData.title_en.trim() || null,
           slug: formData.slug,
           description: formData.description,
+          description_en: formData.description_en.trim() || null,
           image: imageUrl, // ✅ URL Gambar otomatis dari Supabase Storage
           stacks: formData.tech_stack,
           link_demo: formData.link_demo || null,
@@ -120,6 +124,28 @@ export default function InsertProject() {
 
         <div><label className="block text-sm mb-1 text-neutral-600 dark:text-neutral-300">Deskripsi Singkat</label>
         <textarea required name="description" value={formData.description} onChange={handleChange} rows={3} className="w-full p-2 border rounded-lg dark:bg-neutral-800 outline-none" placeholder="Marketplace untuk produk buatan siswa..." /></div>
+
+        {/* translation form: does not change the generated slug */}
+        <div className="space-y-4 rounded-xl border border-neutral-200 bg-neutral-50 p-5 dark:border-neutral-700 dark:bg-neutral-800/40">
+          <div>
+            <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">English Translation</h2>
+            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+              Versi bahasa Inggris untuk halaman /en. Kosongkan untuk memakai teks asli.
+            </p>
+          </div>
+          <div>
+            <label htmlFor="project-title-en" className="mb-1 block text-sm text-neutral-600 dark:text-neutral-300">Judul proyek (English)</label>
+            <input id="project-title-en" name="title_en" value={formData.title_en} onChange={handleChange}
+              placeholder="Example: Personal Finance App"
+              className="w-full rounded-lg border border-neutral-200 bg-white p-3 text-sm outline-none focus:border-blue-500 dark:border-neutral-700 dark:bg-neutral-900" />
+          </div>
+          <div>
+            <label htmlFor="project-description-en" className="mb-1 block text-sm text-neutral-600 dark:text-neutral-300">Deskripsi singkat (English)</label>
+            <textarea id="project-description-en" name="description_en" value={formData.description_en} onChange={handleChange}
+              rows={4} placeholder="Describe your project in English..."
+              className="w-full rounded-lg border border-neutral-200 bg-white p-3 text-sm leading-relaxed outline-none focus:border-blue-500 dark:border-neutral-700 dark:bg-neutral-900" />
+          </div>
+        </div>
 
         {/* ✅ TOMBOL UPLOAD GAMBAR */}
         <div>

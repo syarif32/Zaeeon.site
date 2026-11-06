@@ -17,22 +17,20 @@ export default function EditProject({ params }: { params: { id: string } }) {
   const [file, setFile] = useState<File | null>(null);
   
   const [formData, setFormData] = useState({
-    title: "", slug: "", description: "", image: "",
+    title: "", title_en: "", slug: "", description: "", description_en: "", image: "",
     tech_stack: [] as string[], link_demo: "", link_github: "",
   });
-
-  const generateSlug = (title: string) => {
-    return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-  };
 
   useEffect(() => {
     const fetchOldData = async () => {
       const { data, error } = await supabase.from("projects").select("*").eq("id", params.id).single();
       if (data) {
         setFormData({
-          title: data.title || "", 
-          slug: data.slug || "", 
-          description: data.description || "", 
+          title: data.title || "",
+          title_en: data.title_en || "",
+          slug: data.slug || "",
+          description: data.description || "",
+          description_en: data.description_en || "",
           image: data.image || "",
           tech_stack: data.stacks || [],
           link_demo: data.link_demo || "", 
@@ -44,13 +42,12 @@ export default function EditProject({ params }: { params: { id: string } }) {
     fetchOldData();
   }, [params.id]);
 
-  const handleChange = (e: any) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    if (name === "title") {
-      setFormData({ ...formData, title: value, slug: generateSlug(value) });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    // Edit judul tidak otomatis mengganti URL/slug proyek lama.
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleStackToggle = (stackName: string) => {
@@ -91,9 +88,11 @@ export default function EditProject({ params }: { params: { id: string } }) {
       }
 
       const { data: updatedData, error: dbError } = await supabase.from("projects").update({
-        title: formData.title, 
-        slug: formData.slug, 
-        description: formData.description, 
+        title: formData.title,
+        title_en: formData.title_en.trim() || null,
+        slug: formData.slug,
+        description: formData.description,
+        description_en: formData.description_en.trim() || null,
         image: finalImageUrl,
         stacks: formData.tech_stack,
         link_demo: formData.link_demo || null, 
@@ -130,11 +129,34 @@ export default function EditProject({ params }: { params: { id: string } }) {
           <input required name="title" value={formData.title} onChange={handleChange} className="w-full p-2 border rounded-lg dark:bg-neutral-800 outline-none" /></div>
           
           <div><label className="block text-sm mb-1 text-neutral-600 dark:text-neutral-300">Slug (URL)</label>
-          <input required name="slug" value={formData.slug} onChange={handleChange} className="w-full p-2 border rounded-lg dark:bg-neutral-800 outline-none bg-neutral-100 dark:bg-neutral-900" /></div>
+          <input required name="slug" value={formData.slug} onChange={handleChange} className="w-full p-2 border rounded-lg dark:bg-neutral-800 outline-none bg-neutral-100 dark:bg-neutral-900" />
+          <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">Jangan mengubah slug jika hanya memperbarui terjemahan. URL proyek dan thumbnail bisa terpengaruh.</p></div>
         </div>
 
         <div><label className="block text-sm mb-1 text-neutral-600 dark:text-neutral-300">Deskripsi Singkat</label>
         <textarea required name="description" value={formData.description} onChange={handleChange} rows={3} className="w-full p-2 border rounded-lg dark:bg-neutral-800 outline-none" /></div>
+
+        {/* translation form: does not change the generated slug */}
+        <div className="space-y-4 rounded-xl border border-neutral-200 bg-neutral-50 p-5 dark:border-neutral-700 dark:bg-neutral-800/40">
+          <div>
+            <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">English Translation</h2>
+            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+              Versi bahasa Inggris untuk halaman /en. Kosongkan untuk memakai teks asli.
+            </p>
+          </div>
+          <div>
+            <label htmlFor="project-title-en" className="mb-1 block text-sm text-neutral-600 dark:text-neutral-300">Judul proyek (English)</label>
+            <input id="project-title-en" name="title_en" value={formData.title_en} onChange={handleChange}
+              placeholder="Example: Personal Finance App"
+              className="w-full rounded-lg border border-neutral-200 bg-white p-3 text-sm outline-none focus:border-blue-500 dark:border-neutral-700 dark:bg-neutral-900" />
+          </div>
+          <div>
+            <label htmlFor="project-description-en" className="mb-1 block text-sm text-neutral-600 dark:text-neutral-300">Deskripsi singkat (English)</label>
+            <textarea id="project-description-en" name="description_en" value={formData.description_en} onChange={handleChange}
+              rows={4} placeholder="Describe your project in English..."
+              className="w-full rounded-lg border border-neutral-200 bg-white p-3 text-sm leading-relaxed outline-none focus:border-blue-500 dark:border-neutral-700 dark:bg-neutral-900" />
+          </div>
+        </div>
 
         <div className="p-4 border border-dashed border-neutral-300 dark:border-neutral-700 rounded-lg bg-neutral-50 dark:bg-neutral-800/50">
           <label className="block text-sm mb-1 text-neutral-600 dark:text-neutral-300">Ganti Thumbnail Proyek (.webp) - <i>Opsional</i></label>
