@@ -1,21 +1,36 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
+
+
+import { useCallback, useEffect, useRef, useState } from "react";
 import { HiSparkles } from "react-icons/hi2";
 import SidebarHistory from "./SidebarHistory";
 import ChatRoom from "./ChatRoom";
 import ChatInput from "./ChatInput";
-import theme from "@/common/stores/theme";
+
 export type Message = { id: string; role: string; content: string };
 export type ChatSession = { id: string; title: string; messages: Message[] };
 
 const AIAssistant = () => {
+  const t = useTranslations("AssistantPage");
+  const locale = useLocale();
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string>("");
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const createNewSession = useCallback(() => {
+    const newSession: ChatSession = {
+      id: Date.now().toString(),
+      title: "",
+      messages: [],
+    };
+    setSessions((prev) => [newSession, ...prev]);
+    setActiveSessionId(newSession.id);
+  }, []);
 
   useEffect(() => {
     const savedSessions = localStorage.getItem("zaeeon_chats");
@@ -26,7 +41,7 @@ const AIAssistant = () => {
     } else {
       createNewSession();
     }
-  }, []);
+  }, [createNewSession]);
 
   useEffect(() => {
     if (sessions.length > 0) {
@@ -36,16 +51,6 @@ const AIAssistant = () => {
 
   const activeSession = sessions.find((s) => s.id === activeSessionId);
   const messages = activeSession?.messages || [];
-
-  const createNewSession = () => {
-    const newSession: ChatSession = {
-      id: Date.now().toString(),
-      title: "Percakapan Baru",
-      messages: [],
-    };
-    setSessions((prev) => [newSession, ...prev]);
-    setActiveSessionId(newSession.id);
-  };
 
   const deleteSession = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -81,10 +86,10 @@ const AIAssistant = () => {
       const response = await fetch("/api/chat-ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: newMessages, locale }),
       });
 
-      if (!response.body) throw new Error("Tidak ada respons dari server");
+      if (!response.ok || !response.body) throw new Error(t("noResponse"));
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -111,7 +116,7 @@ const AIAssistant = () => {
       }
     } catch (error) {
       console.error("Chat error:", error);
-      updateSession(activeSessionId, [...newMessages, { id: "error", role: "assistant", content: "Maaf, sistem sedang sibuk." }]);
+      updateSession(activeSessionId, [...newMessages, { id: "error", role: "assistant", content: t("error") }]);
     } finally {
       setIsLoading(false);
     }
@@ -127,7 +132,7 @@ const AIAssistant = () => {
   Zaeeon AI
 </h2>
         <p className="text-neutral-500 text-sm text-center max-w-md mt-2">
-          Asisten virtual Syarif yang siap membantu anda untuk mengetahui tentang keahlian, pengalaman, dan proyek portofolio. Silakan tanya apa saja!
+          {t("intro")}
         </p>
       </div>
 

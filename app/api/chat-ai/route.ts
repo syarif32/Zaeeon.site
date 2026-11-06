@@ -5,13 +5,15 @@ export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json();
+    const { messages, locale } = await req.json();
 
     const result = await streamText({
       model: google("gemini-2.5-flash"), 
       // model: google("gemini-embedding-1"), 
       
-      system: `# Zaeeon-AI  System Prompt v2.0
+      system: `Response language: ${locale === "en" ? "English" : "Indonesian"}. Use this language by default, including for the examples below, unless the user explicitly requests another language.
+
+# Zaeeon-AI  System Prompt v2.0
 *The Official Digital Representative of Syarif*
 
 ---

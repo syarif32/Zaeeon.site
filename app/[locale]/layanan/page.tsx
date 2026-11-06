@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   HiOutlineChartBar,
   HiOutlineDevicePhoneMobile,
@@ -12,33 +13,35 @@ import {
   HiOutlineSparkles,
 } from "react-icons/hi2";
 
+export default function LayananPage() {
+  const t = useTranslations("ServicesPage");
 const digitalServicesData = [
   {
     id: "kasir",
     icon: <HiOutlineChartBar size={32} />,
-    title: "Sistem Kasir & Keuangan UMKM",
-    description: "Digitalisasi total warung atau toko Anda. Tinggalkan nota kertas, pantau omzet dari HP.",
-    priceRange: "Rp 1.500.000 - Rp 3.500.000",
+    title: t("kasir_title"),
+    description: t("kasir_description"),
+    priceRange: t("kasir_priceRange"),
     popular: true,
-    features: ["Aplikasi Point of Sales (POS)", "Pencatatan Pemasukan & Pengeluaran", "Manajemen Stok Barang", "Laporan Laba/Rugi Otomatis", "Hosting & Domain 1 Tahun"]
+    features: [t("kasir_feature_0"), t("kasir_feature_1"), t("kasir_feature_2"), t("kasir_feature_3"), t("kasir_feature_4")]
   },
   {
     id: "web",
     icon: <HiOutlineGlobeAlt size={32} />,
-    title: "Website Company Profile",
-    description: "Tingkatkan kredibilitas bisnis Anda dengan website profesional yang cepat dan SEO-Friendly.",
-    priceRange: "Rp 250.000 - Rp 2.500.000",
+    title: t("web_title"),
+    description: t("web_description"),
+    priceRange: t("web_priceRange"),
     popular: false,
-    features: ["Desain Premium & Responsif (HP/PC)", "Optimasi SEO Dasar (Masuk Google)", "Integrasi Tombol WhatsApp", "Halaman Admin (Bisa update konten)", "Gratis Domain (.com/.id) 1 Tahun"]
+    features: [t("web_feature_0"), t("web_feature_1"), t("web_feature_2"), t("web_feature_3"), t("web_feature_4")]
   },
   {
     id: "mobile",
     icon: <HiOutlineDevicePhoneMobile size={32} />,
-    title: "Aplikasi Android (Custom)",
-    description: "Hadirkan bisnis Anda di genggaman pelanggan. Cocok untuk sistem internal atau marketplace lokal.",
-    priceRange: "Rp 3.000.000 - Rp 8.000.000",
+    title: t("mobile_title"),
+    description: t("mobile_description"),
+    priceRange: t("mobile_priceRange"),
     popular: false,
-    features: ["Aplikasi Android (APK/AAB)", "Desain UI/UX Modern", "Sistem Login & Database Realtime", "Fitur Notifikasi (Push Notification)", "Bantuan Upload ke Google Play Store"]
+    features: [t("mobile_feature_0"), t("mobile_feature_1"), t("mobile_feature_2"), t("mobile_feature_3"), t("mobile_feature_4")]
   }
 ];
 
@@ -47,33 +50,33 @@ const kulinerServicesData = [
   {
     id: "porsi_harian",
     icon: <HiOutlineShoppingBag size={32} />,
-    title: "Dine-in & Takeaway",
-    description: "Nikmati semangkuk Mie Kopyok legendaris resep rahasia keluarga langsung di kedai kami atau bawa pulang untuk keluarga.",
-    priceRange: "Mulai Rp 10.000 / Porsi",
+    title: t("porsi_harian_title"),
+    description: t("porsi_harian_description"),
+    priceRange: t("porsi_harian_priceRange"),
     popular: true,
-    features: ["Resep Otentik Semarang Asli", "Bahan Segar Setiap Hari", "Porsi Mengenyangkan", "Bisa Pesan via GoFood/GrabFood", "Tempat Nyaman & Bersih"]
+    features: [t("porsi_harian_feature_0"), t("porsi_harian_feature_1"), t("porsi_harian_feature_2"), t("porsi_harian_feature_3"), t("porsi_harian_feature_4")]
   },
   {
     id: "catering",
     icon: <HiOutlineUserGroup size={32} />,
-    title: "Catering & Pesanan Acara",
-    description: "Sajikan menu tradisional yang menggugah selera untuk acara syukuran, arisan, atau meeting kantor Anda.",
-    priceRange: "Menyesuaikan Jumlah Pesanan",
+    title: t("catering_title"),
+    description: t("catering_description"),
+    priceRange: t("catering_priceRange"),
     popular: false,
-    features: ["Harga Khusus untuk Partai Besar", "Lengkap dengan Peralatan Makan", "Diantar Tepat Waktu", "Pilihan Menu Tambahan", "Higienis dan Profesional"]
+    features: [t("catering_feature_0"), t("catering_feature_1"), t("catering_feature_2"), t("catering_feature_3"), t("catering_feature_4")]
   },
   {
     id: "kemitraan",
     icon: <HiOutlineSparkles size={32} />,
-    title: "Kemitraan / Franchise",
-    description: "Tertarik membuka cabang Mie Kopyok di kota Anda? Kami membuka peluang kerja sama dengan sistem yang sudah teruji.",
-    priceRange: "Hubungi Kami",
+    title: t("kemitraan_title"),
+    description: t("kemitraan_description"),
+    priceRange: t("kemitraan_priceRange"),
     popular: false,
-    features: ["Sistem Kasir Digital (Gratis)", "Suplai Bumbu Rahasia", "Panduan Manajemen Outlet", "Dukungan Marketing"]
+    features: [t("kemitraan_feature_0"), t("kemitraan_feature_1"), t("kemitraan_feature_2"), t("kemitraan_feature_3")]
   }
 ];
 
-export default function LayananPage() {
+
   const [category, setCategory] = useState<"digital" | "kuliner">("digital");
   const isKuliner = category === "kuliner";
   const currentData = isKuliner ? kulinerServicesData : digitalServicesData;
@@ -82,26 +85,26 @@ export default function LayananPage() {
     <div data-responsive-services className="px-5 pb-16 pt-8 sm:px-8 lg:px-0 lg:pt-8">
       <header className="space-y-4">
         <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
-          {isKuliner ? "WARISAN RASA SEMARANG" : "SOLUSI TEKNOLOGI UMKM"}
+          {isKuliner ? t("culinaryTag") : t("digitalTag")}
         </p>
         <h1 className="text-2xl font-medium leading-tight text-neutral-900 dark:text-neutral-100 sm:text-3xl">
-          {isKuliner ? "Cita Rasa Legendaris Kuliner Khas" : "Digitalisasi Mudah untuk Bisnis Modern Anda."}
+          {isKuliner ? t("culinaryTitle") : t("digitalTitle")}
         </h1>
         <p className="max-w-2xl leading-relaxed text-neutral-600 dark:text-neutral-400">
           {isKuliner
-            ? "Lebih dari sekadar makanan. Ini adalah dedikasi rasa yang dipertahankan turun temurun. Siap memanjakan lidah Anda untuk porsi harian maupun acara besar."
-            : "Berawal dari pencatatan keuangan, saya menyadari UMKM butuh teknologi yang mudah dan terjangkau. Mari digitalisasi bisnis Anda bersama saya."}
+            ? t("culinaryIntro")
+            : t("digitalIntro")}
         </p>
       </header>
 
-      <nav aria-label="Kategori layanan" className="mt-10 flex gap-7 border-b border-neutral-300 dark:border-neutral-700">
+      <nav aria-label={t("categories")} className="mt-10 flex gap-7 border-b border-neutral-300 dark:border-neutral-700">
         <button
           type="button"
           onClick={() => setCategory("digital")}
           aria-current={!isKuliner ? "page" : undefined}
           className={"border-b-2 pb-3 text-left text-sm font-medium transition-colors " + (!isKuliner ? "border-primary text-neutral-900 dark:text-neutral-100" : "border-transparent text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200")}
         >
-          Solusi Digital
+          {t("digital")}
         </button>
         <button
           type="button"
@@ -109,7 +112,7 @@ export default function LayananPage() {
           aria-current={isKuliner ? "page" : undefined}
           className={"border-b-2 pb-3 text-left text-sm font-medium transition-colors " + (isKuliner ? "border-primary text-neutral-900 dark:text-neutral-100" : "border-transparent text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200")}
         >
-          Bisnis Kuliner
+          {t("culinary")}
         </button>
       </nav>
 
@@ -125,7 +128,7 @@ export default function LayananPage() {
                   <div className="min-w-0 flex-1">
                     <div className="mb-2 flex items-center gap-2 text-neutral-500 dark:text-neutral-400">
                       <span className="[&>svg]:h-5 [&>svg]:w-5">{service.icon}</span>
-                      {service.popular && <span className="text-xs">Paling banyak dicari</span>}
+                      {service.popular && <span className="text-xs">{t("popular")}</span>}
                     </div>
                     <h2 className="text-xl font-medium text-neutral-900 dark:text-neutral-100 sm:text-2xl">
                       {service.title}
@@ -141,7 +144,7 @@ export default function LayananPage() {
                 </p>
 
                 <div>
-                  <h3 className="mb-3 text-sm font-medium text-neutral-800 dark:text-neutral-200">Layanan meliputi</h3>
+                  <h3 className="mb-3 text-sm font-medium text-neutral-800 dark:text-neutral-200">{t("includes")}</h3>
                   <ul className="grid gap-x-6 gap-y-2 text-sm text-neutral-600 dark:text-neutral-400 sm:grid-cols-2">
                     {service.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-2">
@@ -158,7 +161,7 @@ export default function LayananPage() {
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
                 >
-                  {isKuliner ? "Kunjungi Web" : "Konsultasi Proyek via WA"}
+                  {isKuliner ? t("website") : t("consult")}
                   <HiOutlineArrowRight className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
                 </Link>
               </div>

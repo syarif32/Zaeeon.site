@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { HiSparkles, HiUser } from "react-icons/hi2";
 import { Message } from "./AIAssistant";
 import { RefObject } from "react";
@@ -9,12 +10,13 @@ interface ChatRoomProps {
 }
 
 const ChatRoom = ({ messages, isLoading, messagesEndRef }: ChatRoomProps) => {
+  const t = useTranslations("AssistantPage");
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-transparent">
       {messages.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full text-neutral-400 opacity-60">
           <HiSparkles size={48} className="mb-4" />
-          <p className="text-sm font-medium">Mulai percakapan baru dengan Zaeeon...</p>
+          <p className="text-sm font-medium">{t("empty")}</p>
         </div>
       ) : (
         messages.map((m) => (

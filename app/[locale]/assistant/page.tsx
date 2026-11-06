@@ -1,21 +1,24 @@
+import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
 import Container from "@/common/components/elements/Container";
 import PageHeading from "@/common/components/elements/PageHeading";
 import AIAssistant from "@/modules/assistant/components/AIAssistant";
 import { METADATA } from "@/common/constants/metadata";
 
-// Meta tags untuk SEO
-export const metadata: Metadata = {
-  title: `AI Assistant | ${METADATA.creator}`,
-  description: "Ngobrol langsung dengan Asisten AI pribadi saya untuk mengetahui lebih lanjut tentang portofolio dan keahlian saya.",
-};
+type Props = { params: { locale: string } };
 
-const AssistantPage = () => {
+export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
+  const t = await getTranslations({ locale, namespace: "AssistantPage" });
+  return { title: `${t("title")} | ${METADATA.creator}`, description: t("metaDescription") };
+}
+
+const AssistantPage = async ({ params: { locale } }: Props) => {
+  const t = await getTranslations({ locale, namespace: "AssistantPage" });
   return (
     <Container data-aos="fade-up">
       <PageHeading 
-        title="AI Assistant" 
-        description="Tanya apa saja seputar pengalaman, proyek, dan keahlian IT saya kepada asisten virtual cerdas ini." 
+        title={t("title")} 
+        description={t("description")} 
       />
       <AIAssistant />
     </Container>
