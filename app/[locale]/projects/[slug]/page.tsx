@@ -1,63 +1,48 @@
-import { Metadata } from "next";
-
+import { cache } from "react";
+import { notFound } from "next/navigation";
 import BackButton from "@/common/components/elements/BackButton";
 import Container from "@/common/components/elements/Container";
 import PageHeading from "@/common/components/elements/PageHeading";
+import { JsonLd } from "@/common/components/elements/SeoJsonLd";
 import ProjectDetail from "@/modules/projects/components/ProjectDetail";
-import { ProjectItem } from "@/common/types/projects";
-import { METADATA } from "@/common/constants/metadata";
+import { pageMetadata, pageUrl } from "@/common/constants/metadata";
 import { loadMdxFiles } from "@/common/libs/mdx";
 import { getProjectsDataBySlug } from "@/services/projects";
+import { getProjectTranslation } from "@/common/utils/projectLocale";
 
-interface ProjectDetailPageProps {
-  params: {
-    slug: string;
-    locale: string;
-  };
+type Props = { params: { slug: string; locale: string } };
+
+// Share the query between metadata and rendering for this request.
+const getProject = cache(async (slug: string) => {
+  const project = await getProjectsDataBySlug(slug);
+  if (!project || project.is_show !== true) notFound();
+  return project;
+});
+
+export async function generateMetadata({ params: { slug, locale } }: Props) {
+  const project = await getProject(slug);
+  return pageMetadata(locale, "projects/" + encodeURIComponent(slug), {
+    ...getProjectTranslation(project, locale), image: project.image,
+  });
 }
 
-const getProjectDetail = async (slug: string): Promise<ProjectItem> => {
-  const projects = await getProjectsDataBySlug(slug);
-  const contents = loadMdxFiles();
-  const content = contents.find((item) => item.slug === slug);
-  const response = { ...projects, content: content?.content };
-  return JSON.parse(JSON.stringify(response));
-};
-
-export const generateMetadata = async ({
-  params,
-}: ProjectDetailPageProps): Promise<Metadata> => {
-  const project = await getProjectDetail(params?.slug);
-  const locale = params.locale || "en";
-
-  return {
-    title: `${project.title} ${METADATA.exTitle}`,
-    description: project.description,
-    openGraph: {
-      images: project.image,
-      url: `${METADATA.openGraph.url}/${project.slug}`,
-      siteName: METADATA.openGraph.siteName,
-      locale: locale === "id" ? "id_ID" : "en_US",
-      type: "article",
-      authors: [METADATA.creator],
-    },
-    keywords: project.title,
-    alternates: {
-      canonical: `${process.env.DOMAIN}/${locale}/projects/${params.slug}`,
-    },
-  };
-};
-
-const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
-  const data = await getProjectDetail(params?.slug);
-
+export default async function ProjectDetailPage({ params: { slug, locale } }: Props) {
+  const project = await getProject(slug);
+  const translated = getProjectTranslation(project, locale);
+  const content = loadMdxFiles().find(item => item.slug === slug)?.content;
   return (
     <Container data-aos="fade-up">
-      <BackButton url="/projects" />
-      <PageHeading title={data?.title} description={data?.description} />
-      <ProjectDetail {...data} />
+      <JsonLd data={{
+        "@context": "https://schema.org", "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: locale === "id" ? "Beranda" : "Home", item: pageUrl(locale) },
+          { "@type": "ListItem", position: 2, name: locale === "id" ? "Proyek" : "Projects", item: pageUrl(locale, "projects") },
+          { "@type": "ListItem", position: 3, name: translated.title, item: pageUrl(locale, "projects/" + encodeURIComponent(slug)) },
+        ],
+      }} />
+      <BackButton url={`/${locale}/projects`} />
+      <PageHeading title={translated.title} description={translated.description} />
+      <ProjectDetail {...project} content={content} />
     </Container>
   );
-};
-
-export default ProjectDetailPage;
+}

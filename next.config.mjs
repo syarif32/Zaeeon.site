@@ -10,6 +10,12 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  async redirects() {
+    return [{ source: "/:path*", has: [{ type: "host", value: "najwasyarif.my.id" }], destination: "https://www.najwasyarif.my.id/:path*", permanent: true }];
+  },
+  async headers() {
+    return [{ source: "/api/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] }];
+  },
   images: {
     remotePatterns: [
       {

@@ -1,17 +1,10 @@
-import { Metadata } from "next";
 import Container from "@/common/components/elements/Container";
 import PageHeading from "@/common/components/elements/PageHeading";
-import { METADATA } from "@/common/constants/metadata";
+import { pageMetadata } from "@/common/constants/metadata";
 
-export const metadata: Metadata = {
-  title: `Privacy Policy ${METADATA.exTitle}`,
-  description:
-    "Privacy Policy for Muhammad Najwa Syarif Portfolio App regarding TikTok API integration",
-  keywords: "portfolio frontend developer, privacy policy, tiktok api",
-  alternates: {
-    canonical: `${process.env.DOMAIN}/privacy-policy`,
-  },
-};
+export function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
+  return pageMetadata(locale, "legal/privacy-policy");
+}
 
 const PrivacyPolicyPage = () => {
   return (

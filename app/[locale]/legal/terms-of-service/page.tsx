@@ -1,17 +1,10 @@
-import { Metadata } from "next";
 import Container from "@/common/components/elements/Container";
 import PageHeading from "@/common/components/elements/PageHeading";
-import { METADATA } from "@/common/constants/metadata";
+import { pageMetadata } from "@/common/constants/metadata";
 
-export const metadata: Metadata = {
-  title: `Terms of Service ${METADATA.exTitle}`,
-  description:
-    "Terms of Service for Muhammad Najwa Syarif Portfolio App regarding TikTok API usage",
-  keywords: "portfolio frontend developer, terms of service, tiktok api",
-  alternates: {
-    canonical: `${process.env.DOMAIN}/terms-of-service`,
-  },
-};
+export function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
+  return pageMetadata(locale, "legal/terms-of-service");
+}
 
 const TermsOfServicePage = () => {
   return (

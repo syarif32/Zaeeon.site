@@ -13,7 +13,7 @@ const supabase = createClient(
 export default function InsertProject() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [file, setFile] = useState<File | null>(null); // ✅ STATE UNTUK GAMBAR
+  const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     title_en: "",

@@ -1,6 +1,6 @@
 import Container from "@/common/components/elements/Container";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import React from "react";
 
 const SmartTalk = () => {
@@ -11,9 +11,9 @@ const SmartTalk = () => {
       data-aos="fade-up"
       className="flex h-full flex-col items-center justify-center gap-y-4  transition-all duration-300"
     >
-      <h1 className="text-center text-6xl font-semibold text-neutral-700 dark:text-neutral-300">
+      <h2 className="text-center text-6xl font-semibold text-neutral-700 dark:text-neutral-300">
         Coming Soon
-      </h1>
+      </h2>
       <p className="text-sm text-neutral-600 dark:text-neutral-400">
         {t("title")}
       </p>

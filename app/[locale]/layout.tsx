@@ -11,7 +11,7 @@ import "../globals.css";
 import Layouts from "@/common/components/layouts";
 import ThemeProviderContext from "@/common/stores/theme";
 import NextAuthProvider from "@/SessionProvider";
-import { METADATA } from "@/common/constants/metadata";
+import { METADATA, SITE_URL, PAGE_SEO } from "@/common/constants/metadata";
 import { inter } from "@/common/styles/fonts";
 import SkeletonThemeProvider from "@/SkeletonThemeProvider";
 import { routing } from "@/i18n/routing";
@@ -20,27 +20,15 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:3000"
-      : process.env.DOMAIN || "https://zaeeon-site.vercel.app",
-  ),
-  description: METADATA.description,
-  keywords: METADATA.keyword,
-  creator: METADATA.creator,
-  authors: {
-    name: METADATA.creator,
-    url: METADATA.openGraph.url,
-  },
-  openGraph: {
-    images: METADATA.profile,
-    url: METADATA.openGraph.url,
-    siteName: METADATA.openGraph.siteName,
-    locale: METADATA.openGraph.locale,
-    type: "website",
-  },
-};
+export function generateMetadata({ params: { locale } }: { params: { locale: string } }): Metadata {
+ const [title, description] = PAGE_SEO[""][locale === "id" ? 0 : 1];
+ return {
+  metadataBase: new URL(SITE_URL),
+  title: { default: title, template: "%s | Najwa Syarif — Zaeeon" },
+  description, creator: METADATA.creator, authors: METADATA.authors,
+  robots: { index: true, follow: true },
+ };
+}
 
 interface RootLayoutProps {
   children: React.ReactNode;

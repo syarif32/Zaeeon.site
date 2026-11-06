@@ -1,10 +1,10 @@
+import { pageMetadata } from "@/common/constants/metadata";
 import Terminal from "@/modules/terminal/components/Terminal";
 
-export const metadata = {
-  title: "Terminal | Zaeeon",
-  description: "Interactive terminal portfolio mode.",
-};
+export function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
+  return pageMetadata(locale, "terminal");
+}
 
-export default function TerminalPage() {
-  return <Terminal />;
+export default function TerminalPage({ params: { locale } }: { params: { locale: string } }) {
+  return <><h1 className="sr-only">{locale === "id" ? "Terminal Interaktif Najwa Syarif" : "Najwa Syarif Interactive Terminal"}</h1><Terminal /></>;
 }

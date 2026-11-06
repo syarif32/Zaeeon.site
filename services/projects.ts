@@ -1,3 +1,4 @@
+import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@/common/utils/server";
 
 export const getProjectsData = async () => {
@@ -31,7 +32,7 @@ export const getProjectsDataBySlug = async (slug: string) => {
     .from("projects")
     .select()
     .eq("slug", slug)
-    .single();
+    .maybeSingle();
 
   if (error) throw new Error(error.message);
   if (!data) return null;
@@ -48,3 +49,16 @@ export const getProjectsDataBySlug = async (slug: string) => {
         : imageData.publicUrl,
   };
 };
+
+// Anonymous client: sitemap must never depend on an administrator's session.
+export async function getPublicProjectsForSitemap() {
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { cookies: { getAll: () => [], setAll: () => {} } },
+  );
+  // Select existing row fields so optional timestamps require no schema change.
+  const { data, error } = await supabase.from("projects").select("*").eq("is_show", true);
+  if (error) throw new Error(error.message);
+  return data || [];
+}
