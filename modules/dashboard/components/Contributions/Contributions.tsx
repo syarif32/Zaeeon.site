@@ -31,7 +31,7 @@ const Contributions = ({ endpoint }: ContributionsProps) => {
   if (!is_active) return null;
 
   return (
-    <section className="space-y-2">
+    <section className="min-w-0 space-y-2">
       <SectionHeading title={t("github.title")} icon={<GithubIcon />} />
       <SectionSubHeading>
         <p>{t("github.sub_title")}</p>
@@ -49,7 +49,7 @@ const Contributions = ({ endpoint }: ContributionsProps) => {
       ) : isLoading ? (
         <ContributionsSkeleton />
       ) : (
-        <div className="space-y-3">
+        <div className="min-w-0 space-y-3">
           <Overview data={contributionCalendar} />
           <Calendar data={contributionCalendar} />
         </div>

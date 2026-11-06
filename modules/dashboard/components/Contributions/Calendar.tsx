@@ -65,8 +65,14 @@ const Calendar = ({ data }: CalendarProps) => {
   const contributionColors = ["#dbeafe", "#93c5fd", "#3b82f6", "#1e40af"];
   return (
     <>
-      <div className="relative flex flex-col">
-        <ul className="flex justify-end gap-[3px] overflow-hidden text-xs dark:text-neutral-400 md:justify-start">
+      <div
+        className="w-full min-w-0 overflow-x-auto overscroll-x-contain pb-2"
+        role="region"
+        aria-label={t("title")}
+        tabIndex={0}
+      >
+        <div className="relative flex w-max min-w-full flex-col">
+        <ul className="flex justify-start gap-[3px] text-xs dark:text-neutral-400">
           {months.map((month) => (
             <li
               key={month.firstDay}
@@ -78,9 +84,9 @@ const Calendar = ({ data }: CalendarProps) => {
           ))}
         </ul>
 
-        <div className="flex justify-start gap-[2.9px] overflow-hidden">
+        <div className="flex justify-start gap-[2.9px]">
           {weeks?.map((week) => (
-            <div key={week.firstDay}>
+            <div key={week.firstDay} className="shrink-0">
               {week.contributionDays.map((contribution) => {
                 const colorIndex = data?.colors.indexOf(contribution.color);
                 const customColor =
@@ -121,6 +127,7 @@ const Calendar = ({ data }: CalendarProps) => {
               })}
             </div>
           ))}
+        </div>
         </div>
       </div>
 
