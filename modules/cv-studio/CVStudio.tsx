@@ -6,6 +6,7 @@ import type { ChangeEvent, ReactNode } from "react";
 import { useLocale } from "next-intl";
 import {
   HiOutlineArrowDown,
+  HiOutlineChevronDown,
   HiOutlineArrowUp,
   HiOutlineCheckCircle,
   HiOutlineDocumentArrowDown,
@@ -30,7 +31,7 @@ import type {
 
 const PDFPanel = dynamic(() => import("./PDFPanel"), {
   ssr: false,
-  loading: () => <div className="flex min-h-[112px] items-center justify-center rounded-xl border border-neutral-200 text-sm text-neutral-500 dark:border-neutral-800">Loading PDF preview...</div>,
+  loading: () => <div className="flex min-h-[360px] items-center justify-center rounded-xl border border-neutral-200 text-sm text-neutral-500 dark:border-neutral-800">Loading PDF preview...</div>,
 });
 
 const STORAGE_KEY = "zaeeon-cv-studio-draft-v1";
@@ -67,32 +68,34 @@ function Field({
 
 function CollapsiblePane({
   title,
-  description,
-  defaultOpen = false,
+  desc,
   children,
+  defaultOpen = false,
 }: {
   title: string;
-  description?: string;
-  defaultOpen?: boolean;
+  desc?: string;
   children: ReactNode;
+  defaultOpen?: boolean;
 }) {
   return (
     <details
       defaultOpen={defaultOpen}
-      className="group min-w-0 overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900/40"
+      className="group min-w-0 rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900/40 sm:p-5"
     >
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-4 text-left marker:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-500 sm:px-5 [&::-webkit-details-marker]:hidden">
-        <span className="min-w-0 text-sm font-semibold text-neutral-900 dark:text-neutral-100">{title}</span>
-        <HiOutlineArrowDown
+      <summary className="flex cursor-pointer list-none items-start justify-between gap-3 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-teal-500 [&::-webkit-details-marker]:hidden">
+        <div className="min-w-0 flex-1">
+          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{title}</h3>
+          {desc ? (
+            <p className="mt-1 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">{desc}</p>
+          ) : null}
+        </div>
+        <HiOutlineChevronDown
           aria-hidden="true"
           size={17}
-          className="shrink-0 text-neutral-400 transition-transform duration-200 group-open:rotate-180"
+          className="mt-0.5 shrink-0 text-neutral-500 transition-transform duration-200 group-open:rotate-180 dark:text-neutral-400"
         />
       </summary>
-      <div className="border-t border-neutral-200 px-4 py-4 dark:border-neutral-800 sm:px-5">
-        {description && (
-          <p className="mb-4 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">{description}</p>
-        )}
+      <div className="mt-4 border-t border-neutral-200 pt-4 dark:border-neutral-800">
         {children}
       </div>
     </details>
@@ -123,7 +126,7 @@ export default function CVStudio() {
   const [resume, setResume] = useState<ResumeData>(() => createBlankResume());
   const [preview, setPreview] = useState<ResumeData>(() => createBlankResume());
   const [hydrated, setHydrated] = useState(false);
-  const [editingSection, setEditingSection] = useState<SectionKey | "">("");
+  const [mobilePreview, setMobilePreview] = useState(false);
   const [message, setMessage] = useState("");
   const importRef = useRef<HTMLInputElement>(null);
 
@@ -317,7 +320,6 @@ export default function CVStudio() {
         <p className="max-w-2xl text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
           {isId ? "Buat CV profesional secara gratis, tanpa watermark, tanpa login. Data CV tetap di browsermu." : "Build a professional CV for free. No watermark, no account. Your CV data stays in your browser."}
         </p>
-        <p className="text-xs text-neutral-400 dark:text-neutral-500">Crafted by Muhammad Najwa Syarif · Zaeeon</p>
       </header>
 
       <div className="mb-6 grid gap-3 sm:grid-cols-3">
@@ -341,63 +343,43 @@ export default function CVStudio() {
         ))}
       </div>
 
-      <div className="grid min-w-0 grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
-        {/* Ringkasan PDF berada di atas editor pada layar kecil. */}
-        <section className="order-1 min-w-0 self-start rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900/40 sm:p-5 xl:order-2 xl:sticky xl:top-6">
-          <PDFPanel resume={preview} isId={isId} />
-        </section>
+      <div className="mb-4 flex items-center justify-between gap-2 lg:hidden">
+        <button type="button" onClick={() => setMobilePreview(false)} className={`${SECONDARY_BUTTON} ${mobilePreview ? "" : "border-teal-500 text-teal-600"}`}>{isId ? "Edit CV" : "Edit CV"}</button>
+        <button type="button" onClick={() => setMobilePreview(true)} className={`${SECONDARY_BUTTON} ${mobilePreview ? "border-teal-500 text-teal-600" : ""}`}><HiOutlineEye /> {isId ? "Lihat PDF" : "View PDF"}</button>
+      </div>
 
-        <section className="order-2 min-w-0 space-y-3 xl:order-1">
-          <CollapsiblePane
-            title={isId ? "Pengaturan CV" : "CV settings"}
-            description={isId ? "Pilih bahasa dan kerapatan dokumen tanpa menghapus isi." : "Change the document language and density without losing content."}
-          >
+      <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+        <section className={`min-w-0 space-y-6 ${mobilePreview ? "hidden lg:block" : ""}`}>
+          <CollapsiblePane title={isId ? "Pengaturan CV" : "CV settings"} desc={isId ? "Ganti template tanpa menghapus informasi yang sudah diisi." : "Switch templates without losing your content."} defaultOpen>
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="block space-y-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300">
+              <label className="space-y-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300">
                 <span>{isId ? "Bahasa dokumen" : "Document language"}</span>
                 <select className={INPUT} value={resume.language} onChange={(e) => setResume((old) => ({ ...old, language: e.target.value as ResumeData["language"] }))}>
                   <option value="en">English</option>
                   <option value="id">Bahasa Indonesia</option>
                 </select>
               </label>
-              <label className="block space-y-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300">
+              <label className="space-y-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300">
                 <span>{isId ? "Kerapatan halaman" : "Page density"}</span>
                 <select className={INPUT} value={resume.density} onChange={(e) => setResume((old) => ({ ...old, density: e.target.value as Density }))}>
-                  <option value="normal">Normal</option>
+                  <option value="normal">{isId ? "Normal" : "Normal"}</option>
                   <option value="compact">Compact</option>
                 </select>
               </label>
             </div>
           </CollapsiblePane>
 
-          <CollapsiblePane
-            title={isId ? "Informasi pribadi" : "Personal information"}
-            description={isId ? "Isi hanya informasi yang ingin ditampilkan pada CV." : "Only enter information you want to appear in your CV."}
-            defaultOpen
-          >
-            <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-              {fieldLabels.map((field) => (
-                <Field
-                  key={field.key}
-                  label={isId ? field.id : field.en}
-                  value={resume.profile[field.key]}
-                  onChange={(value) => updateProfile(field.key, value)}
-                  placeholder={field.placeholder}
-                />
-              ))}
+          <CollapsiblePane title={isId ? "Informasi pribadi" : "Personal information"} desc={isId ? "Hanya isi informasi yang ingin ditampilkan pada CV." : "Only enter information you want to appear in your CV."} defaultOpen>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {fieldLabels.map((field) => <Field key={field.key} label={isId ? field.id : field.en} value={resume.profile[field.key]} onChange={(value) => updateProfile(field.key, value)} placeholder={field.placeholder} />)}
             </div>
           </CollapsiblePane>
 
-          <CollapsiblePane
-            title={isId ? "Susun isi CV" : "Arrange CV sections"}
-            description={isId ? "Tampilkan, sembunyikan, dan atur urutan. Bagian kosong tidak ditampilkan pada PDF." : "Show, hide, and reorder sections. Empty sections are omitted from the PDF."}
-          >
+          <CollapsiblePane title={isId ? "Susun isi CV" : "Arrange CV sections"} desc={isId ? "Tampilkan, sembunyikan, atau ubah urutan bagian. Bagian kosong otomatis tidak muncul pada PDF." : "Show, hide, and reorder sections. Empty sections are omitted from the PDF."}>
             <div className="space-y-2">
               {sections.map((section, index) => (
                 <div key={section} className="flex min-w-0 items-center gap-2 rounded-lg border border-neutral-200 px-3 py-2 dark:border-neutral-800">
-                  <span className={`min-w-0 flex-1 truncate text-xs font-medium ${resume.hidden.includes(section) ? "text-neutral-400 line-through" : "text-neutral-700 dark:text-neutral-200"}`}>
-                    {SECTION_TITLES[resume.language][section]}
-                  </span>
+                  <span className={`min-w-0 flex-1 truncate text-xs font-medium ${resume.hidden.includes(section) ? "text-neutral-400 line-through" : "text-neutral-700 dark:text-neutral-200"}`}>{SECTION_TITLES[resume.language][section]}</span>
                   <button type="button" title={isId ? "Naik" : "Move up"} aria-label={`Move ${section} up`} disabled={index === 0} onClick={() => swapSection(index, -1)} className="rounded p-1.5 text-neutral-500 hover:bg-neutral-100 disabled:opacity-20 dark:hover:bg-neutral-800"><HiOutlineArrowUp size={15} /></button>
                   <button type="button" title={isId ? "Turun" : "Move down"} aria-label={`Move ${section} down`} disabled={index === sections.length - 1} onClick={() => swapSection(index, 1)} className="rounded p-1.5 text-neutral-500 hover:bg-neutral-100 disabled:opacity-20 dark:hover:bg-neutral-800"><HiOutlineArrowDown size={15} /></button>
                   <button type="button" title={resume.hidden.includes(section) ? "Show" : "Hide"} aria-label={`Toggle ${section}`} onClick={() => toggleSection(section)} className="rounded p-1.5 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800">{resume.hidden.includes(section) ? <HiOutlineEyeSlash size={15} /> : <HiOutlineEye size={15} />}</button>
@@ -406,46 +388,13 @@ export default function CVStudio() {
             </div>
           </CollapsiblePane>
 
-          <CollapsiblePane
-            title={isId ? "Edit isi CV" : "Edit CV content"}
-            description={isId ? "Pilih satu bagian untuk diedit. Tidak perlu membuka seluruh bagian sekaligus." : "Select one section to edit instead of expanding every editor."}
-          >
-            <div className="space-y-4">
-              <label className="block space-y-1.5">
-                <span className="block text-xs font-medium text-neutral-600 dark:text-neutral-300">
-                  {isId ? "Bagian CV" : "CV section"}
-                </span>
-                <select
-                  className={INPUT}
-                  value={editingSection && resume.hidden.includes(editingSection) ? "" : editingSection}
-                  onChange={(event) => setEditingSection(event.target.value as SectionKey | "")}
-                >
-                  <option value="">{isId ? "Pilih bagian yang ingin diedit..." : "Choose a section to edit..."}</option>
-                  {sections.filter((section) => !resume.hidden.includes(section)).map((section) => (
-                    <option key={section} value={section}>
-                      {SECTION_TITLES[resume.language][section]}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {editingSection && !resume.hidden.includes(editingSection) ? (
-                <div className="min-w-0 space-y-4 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-                  <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                    {SECTION_TITLES[resume.language][editingSection]}
-                  </h4>
-                  {renderSectionEditor(editingSection)}
-                  <button type="button" className={SECONDARY_BUTTON} onClick={() => setEditingSection("")}>
-                    {isId ? "Selesai mengedit" : "Done editing"}
-                  </button>
-                </div>
-              ) : null}
-            </div>
-          </CollapsiblePane>
+          {ALL_SECTIONS.filter((key) => !resume.hidden.includes(key)).map((section) => (
+            <CollapsiblePane key={section} title={SECTION_TITLES[resume.language][section]}>
+              {renderSectionEditor(section)}
+            </CollapsiblePane>
+          ))}
 
-          <CollapsiblePane
-            title={isId ? "Draft dan privasi" : "Draft and privacy"}
-            description={isId ? "Draft otomatis tersimpan di browser ini. Ekspor JSON jika ingin melanjutkan di perangkat lain." : "Drafts auto-save in this browser. Export JSON to continue on another device."}
-          >
+          <CollapsiblePane title={isId ? "Draft dan privasi" : "Draft and privacy"} desc={isId ? "Draft otomatis disimpan hanya di browser ini. Unduh JSON agar bisa dilanjutkan di perangkat lain." : "Drafts auto-save only in this browser. Export JSON to continue on another device."}>
             <div className="flex flex-wrap gap-2">
               <button type="button" className={SECONDARY_BUTTON} onClick={exportDraft}><HiOutlineDocumentArrowDown size={15} /> Export JSON</button>
               <button type="button" className={SECONDARY_BUTTON} onClick={() => importRef.current?.click()}><HiOutlineArrowUpTray size={15} /> Import JSON</button>
@@ -454,8 +403,12 @@ export default function CVStudio() {
               <input ref={importRef} type="file" accept=".json,application/json" className="hidden" onChange={(e) => void importDraft(e)} aria-label="Import CV JSON" />
             </div>
             {message ? <p className="mt-3 text-xs leading-relaxed text-neutral-600 dark:text-neutral-400" role="status">{message}</p> : null}
-            <p className="mt-4 text-xs leading-relaxed text-neutral-400">{isId ? "Hindari menyimpan informasi sensitif pada perangkat bersama." : "Avoid saving sensitive personal details on shared devices."}</p>
+            <p className="mt-4 text-xs leading-relaxed text-neutral-400">{isId ? "Jangan gunakan perangkat bersama untuk menyimpan data pribadi yang sensitif." : "Avoid saving sensitive personal data on shared devices."}</p>
           </CollapsiblePane>
+        </section>
+
+        <section className={`min-w-0 rounded-2xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900/40 sm:p-5 ${mobilePreview ? "" : "hidden lg:block"}`}>
+          <PDFPanel resume={preview} isId={isId} />
         </section>
       </div>
     </main>
