@@ -167,13 +167,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { slug, reaction } = body as {
-    slug?: unknown;
-    reaction?: unknown;
-  };
+  const payload = body as {
+  slug?: unknown;
+  reaction?: unknown;
+};
+
+const slug =
+  typeof payload.slug === "string"
+    ? payload.slug
+    : null;
+
+const reaction = payload.reaction;
 
   if (
-    !validSlug(typeof slug === "string" ? slug : null) ||
+    !validSlug(slug) ||
     (reaction !== null &&
       !REACTIONS.some((item) => item === reaction))
   ) {
