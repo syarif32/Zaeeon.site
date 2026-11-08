@@ -1,9 +1,15 @@
+
 "use client";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import {
+  HiOutlineArrowUpRight,
+  HiOutlineCheckCircle,
+  HiOutlineExclamationCircle,
+} from "react-icons/hi2";
 
 import InputField from "@/common/components/elements/InputField";
 
@@ -13,88 +19,177 @@ interface FormEmail {
   message: string;
 }
 
-const ContactForm = () => {
+type FormStatus = "idle" | "success" | "error";
+
+const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export default function ContactForm() {
+  const t = useTranslations("ContactPage");
+  const locale = useLocale();
+  const isId = locale === "id";
+
+  const [status, setStatus] = useState<FormStatus>("idle");
+
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormEmail>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [buttonText, setButtonText] = useState("Send Email");
-  const [isSuccess, setIsSuccess] = useState(false);
-
-  const t = useTranslations("ContactPage");
-
-  const regexEmail =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   useEffect(() => {
-    setButtonText(isLoading ? "Sending your message..." : "Send Email");
-    if (!isLoading && isSuccess) setButtonText("Your email sent successfully");
-    const timeout = setTimeout(() => {
-      setButtonText("Send Email");
-    }, 5000);
-    return () => clearTimeout(timeout);
-  }, [isLoading, isSuccess]);
+    if (status === "idle") return;
+
+    const timeout = window.setTimeout(() => {
+      setStatus("idle");
+    }, 6000);
+
+    return () => window.clearTimeout(timeout);
+  }, [status]);
 
   const handleFormSubmit = async (payload: FormEmail) => {
-    setIsLoading(true);
+    setStatus("idle");
+
     try {
-      const response = await axios.post("/api/email", payload);
-      if (response.status === 200) setIsSuccess(true);
+      await axios.post("/api/email", payload);
+
       reset();
-      setIsLoading(false);
+      setStatus("success");
     } catch (error) {
-      console.log(error);
-      setIsLoading(false);
+      console.error("Gagal mengirim pesan:", error);
+      setStatus("error");
     }
   };
 
   return (
-    <div className="space-y-4">
-      <h2>{t("form.title")}</h2>
+    <section className="min-w-0 rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900/40 sm:p-6">
+      {/* heading */}
+      <div className="mb-6 space-y-1.5">
+        <h2 className="text-base font-semibold tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-lg">
+          {t("form.title")}
+        </h2>
+
+        <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400 sm:text-sm">
+          {isId
+            ? "Punya pertanyaan atau ingin berkolaborasi? Tinggalkan pesan di sini."
+            : "Have a question or want to collaborate? Leave a message here."}
+        </p>
+      </div>
+
+      {/* form */}
       <form
         onSubmit={handleSubmit(handleFormSubmit)}
-        className="space-y-4 transition-all duration-300"
+        noValidate
+        aria-busy={isSubmitting}
+        className="min-w-0 space-y-4"
       >
-        <div className="flex w-full flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0">
+        {/* nama dan email */}
+        <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="min-w-0">
+            <InputField
+              name="name"
+              rule={{ required: true }}
+              register={register}
+              error={errors}
+            />
+          </div>
+
+          <div className="min-w-0">
+            <InputField
+              name="email"
+              rule={{
+                required: true,
+                pattern: {
+                  value: regexEmail,
+                  message: isId
+                    ? "Masukkan email yang valid"
+                    : "Please enter a valid email",
+                },
+              }}
+              register={register}
+              error={errors}
+            />
+          </div>
+        </div>
+
+        {/* pesan */}
+        <div className="min-w-0">
           <InputField
-            name="name"
+            name="message"
             rule={{ required: true }}
             register={register}
             error={errors}
-          />
-          <InputField
-            name="email"
-            rule={{
-              required: true,
-              pattern: {
-                value: regexEmail,
-                message: "please enter a valid email",
-              },
-            }}
-            register={register}
-            error={errors}
+            isTextArea
           />
         </div>
-        <InputField
-          name="message"
-          rule={{ required: true }}
-          register={register}
-          error={errors}
-          isTextArea
-        />
-        <button
-          disabled={isLoading}
-          type="submit"
-          className="w-full rounded-lg bg-neutral-600 px-4 py-2 text-neutral-50 shadow-md transition-all duration-300 hover:bg-neutral-700 hover:shadow-lg dark:bg-neutral-800 hover:dark:bg-neutral-700"
-        >
-          {buttonText}
-        </button>
-      </form>
-    </div>
-  );
-};
 
-export default ContactForm;
+        {/* status pengiriman */}
+        {status === "success" && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="flex items-start gap-2 rounded-lg bg-emerald-50 px-3 py-2.5 text-xs leading-relaxed text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400"
+          >
+            <HiOutlineCheckCircle
+              size={17}
+              className="shrink-0"
+            />
+            <span>
+              {isId
+                ? "Pesan berhasil dikirim. Terima kasih sudah menghubungi saya!"
+                : "Your message has been sent. Thanks for reaching out!"}
+            </span>
+          </div>
+        )}
+
+        {status === "error" && (
+          <div
+            role="alert"
+            className="flex items-start gap-2 rounded-lg bg-red-50 px-3 py-2.5 text-xs leading-relaxed text-red-700 dark:bg-red-950/30 dark:text-red-400"
+          >
+            <HiOutlineExclamationCircle
+              size={17}
+              className="shrink-0"
+            />
+            <span>
+              {isId
+                ? "Pesan belum berhasil dikirim. Silakan coba lagi."
+                : "Your message couldn't be sent. Please try again."}
+            </span>
+          </div>
+        )}
+
+        {/* tombol */}
+        <div className="pt-1">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-neutral-900 px-5 py-3 text-sm font-medium text-white transition-colors duration-200 hover:bg-teal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-teal-200 sm:w-auto sm:py-2.5"
+          >
+            {isSubmitting ? (
+              <>
+                <span
+                  aria-hidden="true"
+                  className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
+                />
+                <span>
+                  {isId ? "Mengirim..." : "Sending..."}
+                </span>
+              </>
+            ) : (
+              <>
+                <span>
+                  {isId ? "Kirim Pesan" : "Send Message"}
+                </span>
+                <HiOutlineArrowUpRight
+                  size={17}
+                  className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                />
+              </>
+            )}
+          </button>
+        </div>
+      </form>
+    </section>
+  );
+}
