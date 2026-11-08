@@ -64,8 +64,8 @@ const TEMPLATES: {
   {
     id: "professional",
     name: "Professional",
-    hintEn: "Clean and experience-first, based on the Zaeeon CV.",
-    hintId: "Rapi dan fokus pengalaman, mengikuti CV Zaeeon.",
+    hintEn: "Clean and experience-first, based ATS Frendly.",
+    hintId: "Rapi dan fokus pengalaman, format ATS.",
   },
   {
     id: "classic",
@@ -992,21 +992,22 @@ export default function CVStudio() {
   return (
     <main className="mx-auto w-full max-w-7xl min-w-0 px-4 py-8 sm:px-6 lg:px-8">
       <header className="mb-7 space-y-2">
-        <div className="flex items-center gap-2 text-xs font-semibold tracking-widest text-teal-600 dark:text-teal-400">
-          <HiOutlineDocumentText size={17} />
-          ZAEEON / TOOLS
-        </div>
+  <div className="flex items-center gap-2.5">
+    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-500 dark:bg-blue-500/10 dark:text-blue-400">
+      <HiOutlineDocumentText size={19} />
+    </div>
 
-        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-3xl">
-          Zaeeon CV Studio
-        </h1>
+    <h1 className="text-xl font-semibold tracking-tight text-neutral-800 dark:text-neutral-100 sm:text-2xl">
+      {isId ? "Generator CV" : "CV Generator"}
+    </h1>
+  </div>
 
-        <p className="max-w-2xl text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
-          {isId
-            ? "Buat CV profesional secara gratis, tanpa watermark, tanpa login. Data CV tetap di browsermu."
-            : "Build a professional CV for free. No watermark, no account. Your CV data stays in your browser."}
-        </p>
-      </header>
+  <p className="max-w-2xl text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
+    {isId
+      ? "Buat CV profesional dengan mudah, gratis, dan tanpa watermark. Semua data tetap tersimpan di browsermu."
+      : "Create a professional CV with ease, completely free and without watermarks. Your data stays in your browser."}
+  </p>
+</header>
 
       <div className="mb-6 grid gap-3 sm:grid-cols-3">
         {TEMPLATES.map((template) => (
