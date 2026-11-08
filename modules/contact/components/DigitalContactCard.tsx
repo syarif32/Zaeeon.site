@@ -14,10 +14,11 @@ import {
 // ubah informasi berikut sesuai identitas publik kamu
 const CONTACT = {
   firstName: "Muhammad",
-  lastName: "Syarif",
-  displayName: "Muhammad Syarif",
+  lastName: " Najwa Syarif",
+  displayName: "Muhammad Najwa Syarif",
   profession: "Software Developer",
   github: "https://github.com/syarif32",
+  email:"muh.najwa.syarif@gmail.com",
 };
 
 function escapeVCard(value: string) {
@@ -125,7 +126,7 @@ export default function DigitalContactCard() {
                 className="flex items-center gap-2 break-all text-neutral-600 hover:text-teal-600 dark:text-neutral-300 dark:hover:text-teal-400"
               >
                 <HiOutlineEnvelope size={17} />
-                {email}
+                muh.najwa.syarif@gmail.com
               </a>
             )}
 
