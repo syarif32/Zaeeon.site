@@ -6,9 +6,9 @@ import DigitalContactCard from "./DigitalContactCard";
 const Contact = () => {
   return (
     <>
-      <ContactList />
-      <Breakline className="my-6" />
       <DigitalContactCard />
+      <Breakline className="my-6" />
+      <ContactList />
       <Breakline className="my-6" />
       <ContactForm />
     </>
