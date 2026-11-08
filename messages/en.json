@@ -226,7 +226,8 @@
     "Smart Talk": "Smart Talk",
     "AI Assistant": "AI Assistant",
     "Terminal": "Terminal",
-    "Services": "Services"
+    "Services": "Services",
+    "CV Generator": "CV Generator"
   },
   "NotFoundPage": {
     "title": "Page Not Found",
@@ -309,4 +310,5 @@
     "noResponse": "No response from the server",
     "send": "Send message"
   }
+  
 }
