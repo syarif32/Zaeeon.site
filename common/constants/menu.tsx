@@ -12,6 +12,7 @@ import { VscHubot as SmartChatIcon } from "react-icons/vsc";
 import { BiTerminal } from "react-icons/bi"; 
 import { MenuItemProps } from "../types/menu";
 import { HiSparkles } from "react-icons/hi";
+import { HiOutlineDocumentText } from "react-icons/hi2";
 import { HiOutlineBriefcase } from "react-icons/hi2";
 
 const iconSize = 20;
@@ -88,6 +89,21 @@ export const MENU_ITEMS: MenuItemProps[] = [
     isExternal: false,
     eventName: "Pages: Chat Room",
   },
+  
+{
+  title: "CV Generator",
+  href: "/tools/cv-generator",
+  icon: (
+    <HiOutlineDocumentText
+      size={20}
+      className="text-blue-500"
+    />
+  ),
+  isShow: true,
+  isExternal: false,
+  eventName: "Pages: CV Studio",
+},
+
   {
     title: "Contact",
     href: "/contact",

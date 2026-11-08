@@ -10,7 +10,6 @@ import {
   HiOutlineGlobeAlt,
   HiOutlineQrCode,
 } from "react-icons/hi2";
-
 const CONTACT = {
   firstName: "Muhammad",
   lastName: "Najwa Syarif",
@@ -147,7 +146,6 @@ export default function DigitalContactCard() {
               <span>github.com/syarif32</span>
             </a>
           </div>
-
           {/* tombol */}
           <button
             type="button"
@@ -173,7 +171,6 @@ export default function DigitalContactCard() {
               title="QR Contact"
             />
           </div>
-
           <p className="text-center text-xs text-neutral-400 dark:text-neutral-500">
             {isId
               ? "Pindai untuk terhubung"
