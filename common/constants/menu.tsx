@@ -66,6 +66,19 @@ export const MENU_ITEMS: MenuItemProps[] = [
     isExternal: false
   },
   {
+  title: "CV Generator",
+  href: "/tools/cv-generator",
+  icon: (
+    <HiOutlineDocumentText
+      size={20}
+      className="text-blue-500"
+    />
+  ),
+  isShow: true,
+  isExternal: false,
+  eventName: "Pages: CV Studio",
+},
+  {
     title: "Dashboard",
     href: "/dashboard",
     icon: <DashboardIcon size={20} className="text-blue-500" />,
@@ -89,21 +102,6 @@ export const MENU_ITEMS: MenuItemProps[] = [
     isExternal: false,
     eventName: "Pages: Chat Room",
   },
-  
-{
-  title: "CV Generator",
-  href: "/tools/cv-generator",
-  icon: (
-    <HiOutlineDocumentText
-      size={20}
-      className="text-blue-500"
-    />
-  ),
-  isShow: true,
-  isExternal: false,
-  eventName: "Pages: CV Studio",
-},
-
   {
     title: "Contact",
     href: "/contact",
