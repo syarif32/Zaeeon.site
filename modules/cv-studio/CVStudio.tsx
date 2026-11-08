@@ -534,7 +534,7 @@ export default function CVStudio() {
                     onChange={(v) =>
                       updateSkill(item.id, "category", v)
                     }
-                    placeholder="Languages"
+                    placeholder="Hard Skills, Soft Skills"
                   />
 
                   <Field
@@ -990,7 +990,7 @@ export default function CVStudio() {
   ];
 
   return (
-    <main className="mx-auto w-full max-w-7xl min-w-0 px-4 py-8 sm:px-6 lg:px-8">
+    <main className="mx-auto mt-24 w-full max-w-7xl min-w-0 px-4 py-8 sm:px-6 lg:mt-0 lg:px-8">
       <header className="mb-7 space-y-2">
   <div className="flex items-center gap-2.5">
     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-500 dark:bg-blue-500/10 dark:text-blue-400">
