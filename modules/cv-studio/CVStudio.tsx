@@ -163,7 +163,16 @@ export default function CVStudio() {
   }, []);
 
   const changeTemplate = (template: CVTemplate) => {
-    setResume((old) => ({ ...old, template, order: [...DEFAULT_ORDER[template]] }));
+    if (template === resume.template) return;
+    // Pilihan template tidak menambah data apa pun. Hanya jenis template dan urutan bagian.
+    // Preview diperbarui langsung agar PDF template lama tidak tertahan 500 ms.
+    const next: ResumeData = {
+      ...resume,
+      template,
+      order: [...DEFAULT_ORDER[template]],
+    };
+    setResume(next);
+    setPreview(next);
     setMessage(isId ? "Template dipilih. Urutan bagian mengikuti template; isi tetap aman." : "Template selected. Section order reset; your content is preserved.");
   };
 
@@ -303,7 +312,7 @@ export default function CVStudio() {
   const fieldLabels: { key: keyof Profile; en: string; id: string; placeholder?: string }[] = [
     { key: "name", en: "Full name", id: "Nama lengkap", placeholder: "Muhammad Najwa Syarif" },
     { key: "headline", en: "Professional title (optional)", id: "Profesi (opsional)", placeholder: "Software Developer" },
-    { key: "email", en: "Email", id: "Email", placeholder: "alex@example.com" },
+    { key: "email", en: "Email", id: "Email", placeholder: "sarep@example.com" },
     { key: "phone", en: "Phone", id: "Telepon" },
     { key: "location", en: "Location", id: "Lokasi" },
     { key: "linkedin", en: "LinkedIn", id: "LinkedIn", placeholder: "linkedin.com/in/yourname" },
