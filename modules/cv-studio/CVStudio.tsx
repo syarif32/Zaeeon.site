@@ -1152,8 +1152,8 @@ export default function CVStudio() {
       >
         <option value="default">
           {isId
-            ? "Default (sesuai template)"
-            : "Default (template font)"}
+            ? "Default "
+            : "Default "}
         </option>
 
         <option value="helvetica">
