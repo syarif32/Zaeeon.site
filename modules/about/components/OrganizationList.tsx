@@ -83,7 +83,10 @@ export default function OrganizationList() {
   }, []);
 
   return (
-    <section className="space-y-6">
+  <section
+  id="organizations"
+  className="scroll-mt-24 space-y-6"
+>
       <div className="space-y-2">
         <SectionHeading
           title={t("title")}

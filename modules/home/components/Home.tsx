@@ -13,6 +13,7 @@ import Introduction from "./Introduction";
 import SkillList from "./SkillList";
 import FeaturedCareers from "./FeaturedCareers";
 import FeaturedCertificates from "./FeaturedCertificates";
+import FeaturedOrganizations from "./FeaturedOrganizations";
 
 // data pengalaman utama
 const featuredExperiences = [
@@ -86,6 +87,8 @@ const Home = () => {
       {/* sertifikat pilihan */}
       <FeaturedCertificates />
 
+      <Breakline className="my-6" />
+      <FeaturedOrganizations />
       <Breakline className="my-6" />
 
       {/* teknologi yang digunakan */}
