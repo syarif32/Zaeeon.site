@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
-import { HiOutlineBriefcase, HiOutlineAcademicCap, HiOutlineTrophy, HiOutlineQrCode, HiOutlineTrash, HiOutlinePencil } from "react-icons/hi2";
+import { HiOutlineBriefcase, HiOutlineAcademicCap, HiOutlineTrophy, HiOutlineQrCode, HiOutlineTrash, HiOutlinePencil, HiOutlineUserGroup} from "react-icons/hi2";
 import { notFound } from "next/navigation";
 import FeaturedCareersManager from "@/modules/admin/components/FeaturedCareersManager";
 import FeaturedAchievementsManager from "@/modules/admin/components/FeaturedAchievementsManager";
@@ -157,6 +157,18 @@ if (
           <span className="font-semibold dark:text-neutral-200">Sertifikat</span>
         </Link>
       </div>
+      
+{/* MENU TAMBAH / EDIT ORGANISASI */}
+<Link
+  href="/admin/oranizations"
+  className="flex flex-col items-center justify-center p-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all group"
+>
+  <HiOutlineUserGroup className="text-4xl text-neutral-400 group-hover:text-blue-500 mb-3" />
+  <span className="font-semibold dark:text-neutral-200">
+    Organisasi
+  </span>
+</Link>
+
 
       {/* PANEL MANAJEMEN CHAT (BARU) */}
       <h2 className="text-xl font-semibold mb-4 dark:text-neutral-200">Manajemen Ruang Chat</h2>
