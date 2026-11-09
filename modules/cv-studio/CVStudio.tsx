@@ -27,6 +27,7 @@ import {
   isResumeData,
 } from "./model";
 import type {
+  CVFont,
   CVTemplate,
   Density,
   Education,
@@ -1080,69 +1081,103 @@ export default function CVStudio() {
             mobilePreview ? "hidden lg:block" : ""
           }`}
         >
-          <CollapsiblePane
-            title={
-              isId ? "Pengaturan CV" : "CV settings"
-            }
-            desc={
-              isId
-                ? "Ganti template tanpa menghapus informasi yang sudah diisi."
-                : "Switch templates without losing your content."
-            }
-            defaultOpen
-          >
-            <div className="grid gap-3 sm:grid-cols-2">
-              <label className="space-y-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300">
-                <span>
-                  {isId
-                    ? "Bahasa dokumen"
-                    : "Document language"}
-                </span>
+         
+<CollapsiblePane
+  title={isId ? "Pengaturan CV" : "CV settings"}
+  desc={
+    isId
+      ? "Sesuaikan bahasa, kerapatan, dan font CV tanpa menghapus isi."
+      : "Customize language, spacing, and font without losing your content."
+  }
+  defaultOpen
+>
+  <div className="grid gap-3 sm:grid-cols-2">
+    {/* bahasa dokumen */}
+    <label className="space-y-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300">
+      <span>
+        {isId ? "Bahasa dokumen" : "Document language"}
+      </span>
 
-                <select
-                  className={INPUT}
-                  value={resume.language}
-                  onChange={(e) =>
-                    setResume((old) => ({
-                      ...old,
-                      language: e.target.value as ResumeData["language"],
-                    }))
-                  }
-                >
-                  <option value="en">English</option>
-                  <option value="id">
-                    Bahasa Indonesia
-                  </option>
-                </select>
-              </label>
+      <select
+        className={INPUT}
+        value={resume.language}
+        onChange={(e) =>
+          setResume((old) => ({
+            ...old,
+            language: e.target.value as ResumeData["language"],
+          }))
+        }
+      >
+        <option value="en">English</option>
+        <option value="id">Bahasa Indonesia</option>
+      </select>
+    </label>
 
-              <label className="space-y-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300">
-                <span>
-                  {isId
-                    ? "Kerapatan halaman"
-                    : "Page density"}
-                </span>
+    {/* kerapatan halaman */}
+    <label className="space-y-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300">
+      <span>
+        {isId ? "Kerapatan halaman" : "Page density"}
+      </span>
 
-                <select
-                  className={INPUT}
-                  value={resume.density}
-                  onChange={(e) =>
-                    setResume((old) => ({
-                      ...old,
-                      density: e.target.value as Density,
-                    }))
-                  }
-                >
-                  <option value="normal">
-                    {isId ? "Normal" : "Normal"}
-                  </option>
-                  <option value="compact">
-                    Compact
-                  </option>
-                </select>
-              </label>
-            </div>
-          </CollapsiblePane>
+      <select
+        className={INPUT}
+        value={resume.density}
+        onChange={(e) =>
+          setResume((old) => ({
+            ...old,
+            density: e.target.value as Density,
+          }))
+        }
+      >
+        <option value="normal">Normal</option>
+        <option value="compact">Compact</option>
+      </select>
+    </label>
+
+    {/* pilihan font */}
+    <label className="space-y-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300 sm:col-span-2">
+      <span>
+        {isId ? "Jenis huruf" : "Font family"}
+      </span>
+
+      <select
+        className={INPUT}
+        value={resume.font ?? "default"}
+        onChange={(e) =>
+          setResume((old) => ({
+            ...old,
+            font: e.target.value as CVFont,
+          }))
+        }
+      >
+        <option value="default">
+          {isId
+            ? "Default "
+            : "Default "}
+        </option>
+
+        <option value="helvetica">
+          Helvetica — Modern
+        </option>
+
+        <option value="times">
+          Times Roman — Formal
+        </option>
+
+        <option value="courier">
+          Courier — Monospace
+        </option>
+      </select>
+    </label>
+  </div>
+
+  <p className="mt-3 text-xs leading-relaxed text-neutral-400 dark:text-neutral-500">
+    {isId
+      ? "Perubahan font otomatis diterapkan pada pratinjau dan PDF. Font berbeda dapat memengaruhi jumlah halaman."
+      : "Font changes automatically update the preview and PDF. Different fonts may affect the page count."}
+  </p>
+</CollapsiblePane>
+
 
           <CollapsiblePane
             title={

@@ -4,7 +4,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useState } from "react";
 import { BsArrowRightShort as ExternalLinkIcon } from "react-icons/bs";
-import { useSelectedLayoutSegment } from "next/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
 import { MenuItemProps } from "@/common/types/menu";
@@ -26,9 +26,9 @@ const MenuItem = ({
   const isExternalUrl = href?.includes("http");
   const isHashLink = href === "#";
 
-  const selectedLayoutSegment = useSelectedLayoutSegment();
-  const pathname = selectedLayoutSegment ? `/${selectedLayoutSegment}` : "/";
-  const isActive = pathname === href;
+  const pathname = usePathname();
+  const isActive =
+    pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
   const t = useTranslations("Navigation");
 
   const activeClasses = `${
@@ -40,7 +40,7 @@ const MenuItem = ({
         hover:text-neutral-900 hover:dark:text-neutral-300 
         rounded-lg group 
       ${
-        pathname === href
+        isActive
           ? "bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:!text-neutral-200"
           : "hover:dark:lg:bg-neutral-800 hover:dark:!text-neutral-300 hover:lg:bg-neutral-200 hover:lg:rounded-lg lg:hover:scale-105 lg:transition-all lg:duration-300"
       }`
@@ -65,8 +65,6 @@ const MenuItem = ({
     onMouseLeave: handleMouseLeave,
   };
 
-  const isActiveRoute = pathname === href;
-
   const itemComponent = () => {
     return (
       <div {...elementProps}>
@@ -75,14 +73,14 @@ const MenuItem = ({
             <div
               className={clsx(
                 "transition-all duration-300 group-hover:-rotate-12",
-                isActiveRoute && "animate-pulse",
+                isActive && "animate-pulse",
               )}
             >
               {icon}
             </div>
             <div className="flex-grow">{t(title)}</div>
             {children && <>{children}</>}
-            {isActiveRoute && (
+            {isActive && (
               <ExternalLinkIcon
                 size={22}
                 className="animate-pulse text-gray-500"
@@ -100,7 +98,7 @@ const MenuItem = ({
             <div
               className={clsx(
                 "transition-all duration-300 group-hover:-rotate-12",
-                isActiveRoute && "animate-pulse",
+                isActive && "animate-pulse",
               )}
             >
               {icon}
