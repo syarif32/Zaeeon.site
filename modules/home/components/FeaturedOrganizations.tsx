@@ -1,7 +1,7 @@
 
 import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import {
   HiOutlineArrowRight,
@@ -74,6 +74,8 @@ export default async function FeaturedOrganizations() {
 
   const locale = await getLocale();
   const isId = locale === "id";
+  const t = await getTranslations("HomePage.organization");
+  const aboutHref = `/${locale}/about#organizations`;
 
   const supabase = createClient();
 
@@ -89,8 +91,6 @@ export default async function FeaturedOrganizations() {
       "Gagal membaca pengaturan organisasi unggulan:",
       settingsError.message
     );
-
-    return null;
   }
 
   // Urutan sesuai pilihan admin
@@ -107,18 +107,21 @@ export default async function FeaturedOrganizations() {
         .slice(0, 3)
     : [];
 
-  // Jika belum dipilih, jangan tampilkan section kosong
-  if (selectedIds.length === 0) {
-    return null;
-  }
-
-  const { data, error } = await supabase
+  const query = supabase
     .from("organizations")
     .select(
       "id,name,role,role_en,period,location,location_en,description,description_en,logo_url,photos"
     )
-    .eq("is_show", true)
-    .in("id", selectedIds);
+    .eq("is_show", true);
+
+  // Gunakan organisasi publik dari About jika belum ada pilihan admin.
+  const { data, error } =
+    selectedIds.length > 0
+      ? await query.in("id", selectedIds)
+      : await query
+          .order("sort_order", { ascending: true })
+          .order("id", { ascending: false })
+          .limit(3);
 
   if (error) {
     console.error(
@@ -135,12 +138,15 @@ export default async function FeaturedOrganizations() {
     rows.map((item) => [item.id, item])
   );
 
-  const organizations = selectedIds
-    .map((id) => byId.get(id))
-    .filter(
-      (item): item is FeaturedOrganization =>
-        Boolean(item)
-    );
+  const organizations =
+    selectedIds.length === 0
+      ? rows
+      : selectedIds
+          .map((id) => byId.get(id))
+          .filter(
+            (item): item is FeaturedOrganization =>
+              Boolean(item)
+          );
 
   if (organizations.length === 0) {
     return null;
@@ -159,19 +165,15 @@ export default async function FeaturedOrganizations() {
           </div>
 
           <h2 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-2xl">
-            {isId
-              ? "Organisasi Pilihan"
-              : "Featured Organizations"}
+            {t("title")}
           </h2>
         </div>
 
         <Link
-          href="/about#organizations"
+          href={aboutHref}
           className="group inline-flex w-fit items-center gap-1.5 text-sm font-medium text-neutral-500 transition-colors hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400"
         >
-          {isId
-            ? "Lihat Selengkapnya"
-            : "View All"}
+          {t("view_all")}
 
           <HiOutlineArrowRight
             size={16}
@@ -205,7 +207,7 @@ export default async function FeaturedOrganizations() {
           return (
             <Link
               key={organization.id}
-              href="/about#organizations"
+              href={aboutHref}
               className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-colors duration-300 hover:border-blue-400 dark:border-neutral-800 dark:bg-neutral-900/50 dark:hover:border-blue-700"
             >
               {/* cover dokumentasi kegiatan */}
@@ -214,11 +216,7 @@ export default async function FeaturedOrganizations() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={cover}
-                    alt={`${organization.name} - ${
-                      isId
-                        ? "Dokumentasi kegiatan"
-                        : "Event documentation"
-                    }`}
+                    alt={`${organization.name} - ${t("documentation_alt")}`}
                     loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -256,9 +254,7 @@ export default async function FeaturedOrganizations() {
                 )}
 
                 <div className="mt-5 flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400">
-                  {isId
-                    ? "Lihat dokumentasi"
-                    : "View documentation"}
+                  {t("view_documentation")}
 
                   <HiOutlineArrowRight
                     size={15}

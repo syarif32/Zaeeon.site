@@ -11,6 +11,12 @@
       "title": "Keahlian",
       "sub_title": "Keahlian teknis dan profesional saya."
     },
+    "organization": {
+      "title": "Organisasi Pilihan",
+      "view_all": "Lihat Selengkapnya",
+      "view_documentation": "Lihat dokumentasi",
+      "documentation_alt": "Dokumentasi kegiatan"
+    },
     "bento": {
       "title": "Bagian Unggulan",
       "sub_title": "Jelajahi karya, kontribusi, dan pencapaian yang telah saya raih."
@@ -34,6 +40,13 @@
     "education": {
       "title": "Pendidikan",
       "sub_title": "Latar belakang akademik saya."
+    },
+    "organization": {
+      "title": "Organisasi & Komunitas",
+      "sub_title": "Kegiatan komunitas, pengalaman organisasi, dan dokumentasi perjalanan saya.",
+      "loading": "Memuat organisasi...",
+      "error": "Organisasi belum dapat dimuat.",
+      "empty": "Belum ada organisasi yang ditampilkan."
     },
     "resume_download_button": "Unduh Resume",
     "portfolio_download_button": "Unduh Portofolio",
@@ -309,14 +322,5 @@
     "error": "Maaf, sistem sedang sibuk.",
     "noResponse": "Tidak ada respons dari server",
     "send": "Kirim pesan"
-  },
-  
-"organization": {
-  "title": "Organisasi & Komunitas",
-  "sub_title": "Kegiatan komunitas, pengalaman organisasi, dan dokumentasi perjalanan saya.",
-  "loading": "Memuat organisasi...",
-  "error": "Organisasi belum dapat dimuat.",
-  "empty": "Belum ada organisasi yang ditampilkan."
-}
-
+  }
 }
