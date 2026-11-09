@@ -309,5 +309,14 @@
     "error": "Maaf, sistem sedang sibuk.",
     "noResponse": "Tidak ada respons dari server",
     "send": "Kirim pesan"
-  }
+  },
+  
+"organization": {
+  "title": "Organisasi & Komunitas",
+  "sub_title": "Kegiatan komunitas, pengalaman organisasi, dan dokumentasi perjalanan saya.",
+  "loading": "Memuat organisasi...",
+  "error": "Organisasi belum dapat dimuat.",
+  "empty": "Belum ada organisasi yang ditampilkan."
+}
+
 }

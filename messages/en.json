@@ -309,6 +309,14 @@
     "error": "Sorry, the system is busy. Please try again.",
     "noResponse": "No response from the server",
     "send": "Send message"
-  }
+  },
+"organization": {
+  "title": "Organizations & Communities",
+  "sub_title": "Communities, leadership, and moments documented along the way.",
+  "loading": "Loading organizations...",
+  "error": "Organizations could not be loaded.",
+  "empty": "No organizations to display yet."
+}
+
   
 }
