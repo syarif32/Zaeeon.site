@@ -13,6 +13,7 @@ import OrganizationCard from "./OrganizationCard";
 
 export default function OrganizationList() {
   const t = useTranslations("AboutPage.organization");
+
   const [items, setItems] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -22,11 +23,16 @@ export default function OrganizationList() {
 
     async function load() {
       try {
-        const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+        const url =
+          process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+        const key =
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
         if (!url || !key) {
-          throw new Error("Supabase belum dikonfigurasi");
+          throw new Error(
+            "Supabase belum dikonfigurasi"
+          );
         }
 
         const db = createClient(url, key);
@@ -34,22 +40,38 @@ export default function OrganizationList() {
         const result = await db
           .from("organizations")
           .select(
-            "id,name,role,period,location,description,logo_url,photos,is_show,sort_order"
+            "id,name,role,role_en,period,location,location_en,description,description_en,logo_url,photos,is_show,sort_order"
           )
           .eq("is_show", true)
-          .order("sort_order", { ascending: true })
-          .order("id", { ascending: false });
+          .order("sort_order", {
+            ascending: true,
+          })
+          .order("id", {
+            ascending: false,
+          });
 
-        if (result.error) throw result.error;
+        if (result.error) {
+          throw result.error;
+        }
 
         if (active) {
-          setItems((result.data ?? []) as Organization[]);
+          setItems(
+            (result.data ?? []) as Organization[]
+          );
         }
       } catch (cause) {
-        console.error("Gagal memuat organisasi:", cause);
-        if (active) setError(true);
+        console.error(
+          "Gagal memuat organisasi:",
+          cause
+        );
+
+        if (active) {
+          setError(true);
+        }
       } finally {
-        if (active) setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
@@ -67,6 +89,7 @@ export default function OrganizationList() {
           title={t("title")}
           icon={<HiOutlineUserGroup />}
         />
+
         <SectionSubHeading>
           <p>{t("sub_title")}</p>
         </SectionSubHeading>

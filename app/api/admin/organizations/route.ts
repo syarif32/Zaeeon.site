@@ -48,6 +48,26 @@ function safeString(
   return value.trim();
 }
 
+// undefined berarti input tidak valid
+// null berarti terjemahan opsional dikosongkan
+function optionalTranslation(
+  value: unknown,
+  maxLength: number
+): string | null | undefined {
+  if (value === undefined || value === null) {
+    return null;
+  }
+
+  if (
+    typeof value !== "string" ||
+    value.length > maxLength
+  ) {
+    return undefined;
+  }
+
+  return value.trim() || null;
+}
+
 function parseInput(
   raw: unknown
 ): OrganizationInput | null {
@@ -68,6 +88,17 @@ function parseInput(
   const description = safeString(x.description, 3000);
   const logo_url = safeString(x.logo_url, 1000);
 
+  // Terjemahan English
+  const role_en = optionalTranslation(x.role_en, 120);
+  const description_en = optionalTranslation(
+    x.description_en,
+    3000
+  );
+  const location_en = optionalTranslation(
+    x.location_en,
+    120
+  );
+
   if (
     !name ||
     !role ||
@@ -75,7 +106,10 @@ function parseInput(
     location === null ||
     description === null ||
     logo_url === null ||
-    !validImageUrl(logo_url)
+    !validImageUrl(logo_url) ||
+    role_en === undefined ||
+    description_en === undefined ||
+    location_en === undefined
   ) {
     return null;
   }
@@ -90,23 +124,39 @@ function parseInput(
   const photos: OrganizationPhoto[] = [];
 
   for (const item of x.photos) {
-    if (!item || typeof item !== "object") {
+    if (
+      !item ||
+      typeof item !== "object" ||
+      Array.isArray(item)
+    ) {
       return null;
     }
 
     const p = item as Record<string, unknown>;
+
     const url = safeString(p.url, 1000);
     const caption = safeString(p.caption, 300);
+
+    // Caption English opsional, foto lama tetap didukung
+    const caption_en = optionalTranslation(
+      p.caption_en,
+      300
+    );
 
     if (
       !url ||
       caption === null ||
+      caption_en === undefined ||
       !validImageUrl(url)
     ) {
       return null;
     }
 
-    photos.push({ url, caption });
+    photos.push({
+      url,
+      caption,
+      caption_en,
+    });
   }
 
   const sort_order = x.sort_order;
@@ -123,9 +173,12 @@ function parseInput(
   return {
     name,
     role,
+    role_en,
     period,
     location,
+    location_en,
     description,
+    description_en,
     logo_url,
     photos,
     is_show: x.is_show,
@@ -141,21 +194,16 @@ function parseId(raw: unknown): number | null {
       ? (raw as { id: unknown }).id
       : null;
 
-  return (
-    typeof id === "number" &&
+  return typeof id === "number" &&
     Number.isSafeInteger(id) &&
     id > 0
-  )
     ? id
     : null;
 }
 
-async function requireAdmin(request: NextRequest) {
-  return isOrganizationAdmin(request);
-}
-
+// GET: mengambil seluruh organisasi untuk dashboard admin
 export async function GET(request: NextRequest) {
-  if (!(await requireAdmin(request))) {
+  if (!(await isOrganizationAdmin(request))) {
     return notFound();
   }
 
@@ -163,8 +211,12 @@ export async function GET(request: NextRequest) {
     const { data, error } = await organizationAdminDb()
       .from("organizations")
       .select("*")
-      .order("sort_order", { ascending: true })
-      .order("id", { ascending: false });
+      .order("sort_order", {
+        ascending: true,
+      })
+      .order("id", {
+        ascending: false,
+      });
 
     if (error) throw error;
 
@@ -186,8 +238,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// POST: menambahkan organisasi baru
 export async function POST(request: NextRequest) {
-  if (!(await requireAdmin(request))) {
+  if (!(await isOrganizationAdmin(request))) {
     return notFound();
   }
 
@@ -227,8 +280,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// PUT: memperbarui organisasi beserta terjemahannya
 export async function PUT(request: NextRequest) {
-  if (!(await requireAdmin(request))) {
+  if (!(await isOrganizationAdmin(request))) {
     return notFound();
   }
 
@@ -270,10 +324,9 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-export async function DELETE(
-  request: NextRequest
-) {
-  if (!(await requireAdmin(request))) {
+// DELETE: menghapus record organisasi
+export async function DELETE(request: NextRequest) {
+  if (!(await isOrganizationAdmin(request))) {
     return notFound();
   }
 

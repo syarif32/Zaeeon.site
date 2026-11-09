@@ -1,8 +1,14 @@
 
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+
 import { notFound } from "next/navigation";
+
 import type {
   ChangeEvent,
   FormEvent,
@@ -17,9 +23,12 @@ import type {
 const EMPTY: OrganizationInput = {
   name: "",
   role: "",
+  role_en: "",
   period: "",
   location: "",
+  location_en: "",
   description: "",
+  description_en: "",
   logo_url: "",
   photos: [],
   is_show: true,
@@ -38,6 +47,7 @@ export default function OrganizationsAdminPage() {
   >("checking");
 
   const [items, setItems] = useState<Organization[]>([]);
+
   const [editingId, setEditingId] = useState<number | null>(
     null
   );
@@ -64,9 +74,7 @@ export default function OrganizationsAdminPage() {
       }
 
       if (!response.ok) {
-        throw new Error(
-          "Tidak dapat memuat organisasi"
-        );
+        throw new Error("Tidak dapat memuat organisasi");
       }
 
       const data = (await response.json()) as {
@@ -95,18 +103,25 @@ export default function OrganizationsAdminPage() {
     }));
   }
 
+  // Edit termasuk terjemahan dan caption foto lama
   function edit(item: Organization) {
     setEditingId(item.id);
 
     setDraft({
       name: item.name,
       role: item.role,
+      role_en: item.role_en ?? "",
       period: item.period,
       location: item.location,
+      location_en: item.location_en ?? "",
       description: item.description,
+      description_en: item.description_en ?? "",
       logo_url: item.logo_url,
       photos: Array.isArray(item.photos)
-        ? item.photos
+        ? item.photos.map((photo) => ({
+            ...photo,
+            caption_en: photo.caption_en ?? "",
+          }))
         : [],
       is_show: item.is_show,
       sort_order: item.sort_order,
@@ -122,13 +137,16 @@ export default function OrganizationsAdminPage() {
 
   function reset() {
     setEditingId(null);
+
     setDraft({
       ...EMPTY,
       photos: [],
     });
+
     setMessage("");
   }
 
+  // Upload foto tidak berubah dari sistem sebelumnya
   async function uploadPhotos(
     event: ChangeEvent<HTMLInputElement>
   ) {
@@ -141,9 +159,7 @@ export default function OrganizationsAdminPage() {
     if (!files.length) return;
 
     if (files.length + draft.photos.length > 20) {
-      setMessage(
-        "Maksimal 20 foto per organisasi."
-      );
+      setMessage("Maksimal 20 foto per organisasi.");
       return;
     }
 
@@ -179,6 +195,7 @@ export default function OrganizationsAdminPage() {
         added.push({
           url: result.url,
           caption: "",
+          caption_en: "",
         });
       }
 
@@ -203,6 +220,7 @@ export default function OrganizationsAdminPage() {
     }
   }
 
+  // Insert dan update memakai payload yang sama
   async function save(
     event: FormEvent<HTMLFormElement>
   ) {
@@ -221,11 +239,25 @@ export default function OrganizationsAdminPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(
-            editingId
-              ? { ...draft, id: editingId }
-              : draft
-          ),
+          body: JSON.stringify({
+            ...draft,
+
+            // Sama seperti Project: English kosong = null
+            role_en: draft.role_en?.trim() || null,
+            location_en: draft.location_en?.trim() || null,
+            description_en:
+              draft.description_en?.trim() || null,
+
+            photos: draft.photos.map((photo) => ({
+              ...photo,
+              caption_en:
+                photo.caption_en?.trim() || null,
+            })),
+
+            ...(editingId
+              ? { id: editingId }
+              : {}),
+          }),
         }
       );
 
@@ -240,9 +272,7 @@ export default function OrganizationsAdminPage() {
       }
 
       reset();
-      setMessage(
-        "Organisasi berhasil disimpan."
-      );
+      setMessage("Organisasi berhasil disimpan.");
 
       await load();
     } catch (cause) {
@@ -353,6 +383,7 @@ export default function OrganizationsAdminPage() {
             : "Tambah organisasi"}
         </h2>
 
+        {/* Data utama bahasa Indonesia */}
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="space-y-1.5 text-sm">
             Nama organisasi *
@@ -463,13 +494,73 @@ export default function OrganizationsAdminPage() {
           </label>
         </div>
 
+        {/* English Translation mengikuti pola Admin Project */}
+        <div className="space-y-4 rounded-xl border border-neutral-200 bg-neutral-50 p-5 dark:border-neutral-700 dark:bg-neutral-800/40">
+          <div>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+              English Translation
+            </h3>
+
+            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+              Untuk halaman /en/about. Kosongkan untuk memakai
+              teks bahasa utama.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="space-y-1.5 text-sm">
+              Position / Role (English)
+              <input
+                maxLength={120}
+                className={fieldClass}
+                value={draft.role_en ?? ""}
+                onChange={(e) =>
+                  setField("role_en", e.target.value)
+                }
+                placeholder="Active Member"
+              />
+            </label>
+
+            <label className="space-y-1.5 text-sm">
+              Location (English)
+              <input
+                maxLength={120}
+                className={fieldClass}
+                value={draft.location_en ?? ""}
+                onChange={(e) =>
+                  setField("location_en", e.target.value)
+                }
+                placeholder="Semarang, Indonesia"
+              />
+            </label>
+
+            <label className="space-y-1.5 text-sm sm:col-span-2">
+              Description (English)
+              <textarea
+                maxLength={3000}
+                rows={4}
+                className={`${fieldClass} resize-y`}
+                value={draft.description_en ?? ""}
+                onChange={(e) =>
+                  setField(
+                    "description_en",
+                    e.target.value
+                  )
+                }
+                placeholder="Describe your actual responsibilities and activities..."
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* Galeri dokumentasi dan caption multibahasa */}
         <div className="space-y-3 border-t border-neutral-200 pt-4 dark:border-neutral-800">
           <h3 className="text-sm font-semibold">
             Foto dokumentasi ({draft.photos.length}/20)
           </h3>
 
           <p className="text-xs text-neutral-500">
-            JPG, PNG, WebP; maksimal 6 MB per foto.
+            JPG, PNG, WebP; maksimal 4 MB per foto.
             Foto pertama menjadi cover galeri.
           </p>
 
@@ -500,7 +591,7 @@ export default function OrganizationsAdminPage() {
           {draft.photos.map((photo, index) => (
             <div
               key={`${photo.url}-${index}`}
-              className="flex items-center gap-3 rounded-xl border border-neutral-200 p-2 dark:border-neutral-800"
+              className="flex items-start gap-3 rounded-xl border border-neutral-200 p-2 dark:border-neutral-800"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -509,25 +600,49 @@ export default function OrganizationsAdminPage() {
                 className="h-16 w-20 shrink-0 rounded-lg object-cover"
               />
 
-              <input
-                className={fieldClass}
-                maxLength={300}
-                placeholder="Caption: nama kegiatan / tahun"
-                value={photo.caption}
-                onChange={(e) =>
-                  setDraft((old) => ({
-                    ...old,
-                    photos: old.photos.map((p, i) =>
-                      i === index
-                        ? {
-                            ...p,
-                            caption: e.target.value,
-                          }
-                        : p
-                    ),
-                  }))
-                }
-              />
+              <div className="min-w-0 flex-1 space-y-2">
+                <input
+                  className={fieldClass}
+                  maxLength={300}
+                  aria-label={`Caption foto ${index + 1} Indonesia`}
+                  placeholder="Caption Indonesia: nama kegiatan / tahun"
+                  value={photo.caption}
+                  onChange={(e) =>
+                    setDraft((old) => ({
+                      ...old,
+                      photos: old.photos.map((p, i) =>
+                        i === index
+                          ? {
+                              ...p,
+                              caption: e.target.value,
+                            }
+                          : p
+                      ),
+                    }))
+                  }
+                />
+
+                <input
+                  className={fieldClass}
+                  maxLength={300}
+                  aria-label={`Photo caption ${index + 1} English`}
+                  placeholder="English caption (optional)"
+                  value={photo.caption_en ?? ""}
+                  onChange={(e) =>
+                    setDraft((old) => ({
+                      ...old,
+                      photos: old.photos.map((p, i) =>
+                        i === index
+                          ? {
+                              ...p,
+                              caption_en: e.target.value,
+                            }
+                          : p
+                      ),
+                    }))
+                  }
+                />
+              </div>
 
               <button
                 type="button"
@@ -595,8 +710,7 @@ export default function OrganizationsAdminPage() {
               </p>
 
               <p className="text-xs text-neutral-500">
-                {item.role} ·{" "}
-                {item.photos?.length ?? 0} foto ·{" "}
+                {item.role} · {item.photos?.length ?? 0} foto ·{" "}
                 {item.is_show
                   ? "Tampil"
                   : "Disembunyikan"}
