@@ -9,6 +9,7 @@ import {
 } from "react-icons/hi2";
 
 import { createClient } from "@/common/utils/server";
+import { localizeOrganizationPeriod } from "@/common/utils/organizationPeriod";
 
 type FeaturedOrganization = {
   id: number;
@@ -230,7 +231,7 @@ export default async function FeaturedOrganizations() {
               {/* detail organisasi */}
               <div className="flex flex-1 flex-col p-5">
                 <p className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                  {organization.period}
+                  {localizeOrganizationPeriod(organization.period, locale)}
                 </p>
 
                 <h3 className="mt-2 break-words text-base font-semibold leading-snug text-neutral-800 transition-colors group-hover:text-blue-600 dark:text-neutral-100 dark:group-hover:text-blue-400">
