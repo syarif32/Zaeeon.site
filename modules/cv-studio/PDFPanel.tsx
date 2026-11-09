@@ -39,25 +39,30 @@ export default function PDFPanel({ resume, isId }: Props) {
   const fullscreenButtonRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
-
-  // gunakan viewer browser pada laptop/desktop
-  // pertahankan canvas pdf.js pada hp
   useEffect(() => {
-    const media = window.matchMedia(
-      "(min-width: 1024px) and (hover: hover)"
+  const media = window.matchMedia(
+    "(hover: hover) and (pointer: fine)"
+  );
+
+  const updateViewer = () => {
+    const isTouchDevice =
+      window.matchMedia("(pointer: coarse)").matches ||
+      navigator.maxTouchPoints > 0;
+    setUseDesktopViewer(
+      media.matches && !isTouchDevice
     );
+  };
 
-    const update = () => {
-      setUseDesktopViewer(media.matches);
-    };
+  updateViewer();
 
-    update();
-    media.addEventListener("change", update);
+  media.addEventListener("change", updateViewer);
+  window.addEventListener("resize", updateViewer);
 
-    return () => {
-      media.removeEventListener("change", update);
-    };
-  }, []);
+  return () => {
+    media.removeEventListener("change", updateViewer);
+    window.removeEventListener("resize", updateViewer);
+  };
+}, []);
 
   const fileName = `${
     (resume.profile.name.trim() || "CV")
@@ -293,7 +298,7 @@ export default function PDFPanel({ resume, isId }: Props) {
       </div>
 
       {/* preview pada halaman utama */}
-      {isPreviewOpen && (
+      {isPreviewOpen && !isFullscreen && (
         <div
           className={`h-[650px] rounded-xl border border-neutral-200 bg-neutral-200 dark:border-neutral-800 dark:bg-neutral-950 ${
             useDesktopViewer
@@ -458,6 +463,16 @@ export default function PDFPanel({ resume, isId }: Props) {
                           : "pointer-events-none opacity-50"
                       }`}
                     >
+                      {fileUrl && !loading && !error && (
+  <a
+    href={fileUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-flex items-center justify-center rounded-lg border border-neutral-200 px-3 py-2 text-xs font-medium text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
+  >
+    {isId ? "Buka PDF" : "Open PDF"}
+  </a>
+)}
                       <HiOutlineArrowDownTray size={16} />
                       <span className="hidden sm:inline">
                         {isId ? "Unduh" : "Download"}
