@@ -1119,19 +1119,36 @@ export default function CVStudio() {
         {isId ? "Kerapatan halaman" : "Page density"}
       </span>
 
-      <select
-        className={INPUT}
-        value={resume.density}
-        onChange={(e) =>
-          setResume((old) => ({
-            ...old,
-            density: e.target.value as Density,
-          }))
-        }
-      >
-        <option value="normal">Normal</option>
-        <option value="compact">Compact</option>
-      </select>
+      
+<select
+  className={INPUT}
+  value={
+    resume.density === "normal"
+      ? "balanced"
+      : resume.density
+  }
+  onChange={(event) =>
+    setResume((old) => ({
+      ...old,
+      density: event.target.value as Density,
+    }))
+  }
+>
+  <option value="compact">
+    {isId ? "Ringkas" : "Compact"}
+  </option>
+
+  <option value="balanced">
+    {isId
+      ? "Seimbang (disarankan)"
+      : "Balanced (recommended)"}
+  </option>
+
+  <option value="spacious">
+    {isId ? "Lega" : "Spacious"}
+  </option>
+</select>
+
     </label>
 
     {/* pilihan font */}

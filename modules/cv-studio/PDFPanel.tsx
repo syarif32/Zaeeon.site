@@ -4,14 +4,19 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { pdf } from "@react-pdf/renderer";
+
 import {
   HiOutlineArrowsPointingOut,
   HiOutlineArrowDownTray,
+  HiOutlineArrowTopRightOnSquare,
   HiOutlineXMark,
 } from "react-icons/hi2";
 
 import PDFCanvasPreview from "./PDFCanvasPreview";
 import ResumeDocument from "./ResumeDocument";
+import DocxDownloadButton from "./DocxDownloadButton";
+import CVPageAlert from "./CVPageAlert";
+
 import type { ResumeData } from "./model";
 
 type GeneratedPdf = {
@@ -24,54 +29,102 @@ type Props = {
   isId: boolean;
 };
 
-export default function PDFPanel({ resume, isId }: Props) {
+// tipe minimal untuk membaca jumlah halaman melalui PDF.js
+type PdfJsModule = {
+  GlobalWorkerOptions: {
+    workerSrc: string;
+  };
+  getDocument: (options: {
+    data: Uint8Array;
+  }) => {
+    promise: Promise<{
+      numPages: number;
+    }>;
+    destroy: () => Promise<void>;
+  };
+};
+
+export default function PDFPanel({
+  resume,
+  isId,
+}: Props) {
+  // status pratinjau
   const [isPreviewOpen, setIsPreviewOpen] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [useDesktopViewer, setUseDesktopViewer] = useState(false);
+
+  // menentukan viewer desktop atau canvas mobile
+  const [useDesktopViewer, setUseDesktopViewer] =
+    useState(false);
+
+  // zoom pada mobile fullscreen
   const [zoom, setZoom] = useState(1);
-  const [pdfFile, setPdfFile] = useState<GeneratedPdf | null>(null);
+
+  // data PDF yang sudah dihasilkan
+  const [pdfFile, setPdfFile] =
+    useState<GeneratedPdf | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [pageCount, setPageCount] = useState<number | null>(null);
 
-  const latestPdfRef = useRef<GeneratedPdf | null>(null);
+  // jumlah halaman PDF sebenarnya
+  const [pageCount, setPageCount] =
+    useState<number | null>(null);
+
+  // referensi untuk pengelolaan PDF
+  const latestPdfRef =
+    useRef<GeneratedPdf | null>(null);
+
   const renderVersionRef = useRef(0);
-  const fullscreenButtonRef = useRef<HTMLButtonElement>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
-  const closeRef = useRef<HTMLButtonElement>(null);
+
+  // referensi fullscreen
+  const fullscreenButtonRef =
+    useRef<HTMLButtonElement>(null);
+
+  const modalRef =
+    useRef<HTMLDivElement>(null);
+
+  const closeRef =
+    useRef<HTMLButtonElement>(null);
+
+  // deteksi perangkat
+  // mobile dengan mode desktop tetap menggunakan canvas
   useEffect(() => {
-  const media = window.matchMedia(
-    "(hover: hover) and (pointer: fine)"
-  );
-
-  const updateViewer = () => {
-    const isTouchDevice =
-      window.matchMedia("(pointer: coarse)").matches ||
-      navigator.maxTouchPoints > 0;
-    setUseDesktopViewer(
-      media.matches && !isTouchDevice
+    const media = window.matchMedia(
+      "(hover: hover) and (pointer: fine)"
     );
-  };
 
-  updateViewer();
+    const updateViewer = () => {
+      const isTouchDevice =
+        window.matchMedia("(pointer: coarse)").matches ||
+        navigator.maxTouchPoints > 0;
 
-  media.addEventListener("change", updateViewer);
-  window.addEventListener("resize", updateViewer);
+      setUseDesktopViewer(
+        media.matches && !isTouchDevice
+      );
+    };
 
-  return () => {
-    media.removeEventListener("change", updateViewer);
-    window.removeEventListener("resize", updateViewer);
-  };
-}, []);
+    updateViewer();
 
-  const fileName = `${
+    media.addEventListener("change", updateViewer);
+    window.addEventListener("resize", updateViewer);
+
+    return () => {
+      media.removeEventListener("change", updateViewer);
+      window.removeEventListener("resize", updateViewer);
+    };
+  }, []);
+
+  // membuat nama file berdasarkan nama pengguna
+  const safeName =
     (resume.profile.name.trim() || "CV")
       .replace(/[^a-z0-9 _-]/gi, "")
       .trim()
-      .replace(/\s+/g, "-") || "CV"
-  }-${resume.template}.pdf`;
+      .replace(/\s+/g, "-") || "CV";
 
-  // buat pdf ketika data berubah
+  const fileName =
+    `${safeName}-${resume.template}.pdf`;
+
+  // membuat PDF setiap kali data CV berubah
   useEffect(() => {
     const version = ++renderVersionRef.current;
     let cancelled = false;
@@ -86,6 +139,7 @@ export default function PDFPanel({ resume, isId }: Props) {
           <ResumeDocument resume={resume} />
         ).toBlob();
 
+        // abaikan hasil dari render sebelumnya
         if (
           cancelled ||
           version !== renderVersionRef.current
@@ -96,18 +150,25 @@ export default function PDFPanel({ resume, isId }: Props) {
         const url = URL.createObjectURL(blob);
         const previous = latestPdfRef.current;
 
-        const next = { blob, url };
+        const next: GeneratedPdf = {
+          blob,
+          url,
+        };
 
         latestPdfRef.current = next;
         setPdfFile(next);
 
+        // hapus URL lama agar tidak bocor memori
         if (previous) {
           URL.revokeObjectURL(previous.url);
         }
 
         setLoading(false);
       } catch (cause) {
-        if (!cancelled) {
+        if (
+          !cancelled &&
+          version === renderVersionRef.current
+        ) {
           console.error(
             "CV PDF generation failed:",
             cause
@@ -126,7 +187,70 @@ export default function PDFPanel({ resume, isId }: Props) {
     };
   }, [resume]);
 
-  // bersihkan object url saat komponen dilepas
+  // menghitung jumlah halaman PDF pada semua perangkat
+  // sehingga desktop tidak bergantung pada PDFCanvasPreview
+  useEffect(() => {
+    if (!pdfFile) return;
+
+    let cancelled = false;
+
+    async function countPdfPages() {
+      let task:
+        | ReturnType<PdfJsModule["getDocument"]>
+        | undefined;
+
+      try {
+        // menggunakan PDF.js yang sudah tersedia
+        // di folder public proyek CV Studio
+        const modulePath =
+          "/pdfjs/v5.4.624/pdf.min.mjs";
+
+        const pdfjs = (await import(
+          /* webpackIgnore: true */ modulePath
+        )) as PdfJsModule;
+
+        pdfjs.GlobalWorkerOptions.workerSrc =
+          "/pdfjs/v5.4.624/pdf.worker.min.mjs";
+
+        const buffer =
+          await pdfFile!.blob.arrayBuffer();
+
+        if (cancelled) return;
+
+        task = pdfjs.getDocument({
+          data: new Uint8Array(buffer),
+        });
+
+        const document = await task.promise;
+
+        if (
+          !cancelled &&
+          latestPdfRef.current?.blob === pdfFile!.blob
+        ) {
+          setPageCount(document.numPages);
+        }
+      } catch (cause) {
+        if (!cancelled) {
+          console.error(
+            "Could not determine PDF page count:",
+            cause
+          );
+        }
+      } finally {
+        if (task) {
+          await task.destroy().catch(() => undefined);
+        }
+      }
+    }
+
+    void countPdfPages();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pdfFile]);
+
+  // hapus object URL ketika komponen dilepas
   useEffect(() => {
     return () => {
       const current = latestPdfRef.current;
@@ -145,6 +269,7 @@ export default function PDFPanel({ resume, isId }: Props) {
       document.body.style.overflow;
 
     document.body.style.overflow = "hidden";
+
     closeRef.current?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -153,7 +278,10 @@ export default function PDFPanel({ resume, isId }: Props) {
         return;
       }
 
-      if (event.key !== "Tab" || !modalRef.current) {
+      if (
+        event.key !== "Tab" ||
+        !modalRef.current
+      ) {
         return;
       }
 
@@ -186,12 +314,19 @@ export default function PDFPanel({ resume, isId }: Props) {
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow =
+        previousOverflow;
+
+      window.removeEventListener(
+        "keydown",
+        onKeyDown
+      );
+
       fullscreenButtonRef.current?.focus();
     };
   }, [isFullscreen]);
 
+  // download hanya aktif jika PDF sudah siap
   const canDownload =
     Boolean(pdfFile) && !loading && !error;
 
@@ -203,9 +338,20 @@ export default function PDFPanel({ resume, isId }: Props) {
     ? "Unduh PDF gratis"
     : "Download free PDF";
 
+  // callback untuk PDFCanvasPreview mobile
+  const handlePageCount = (count: number) => {
+    if (
+      !loading &&
+      !error &&
+      count > 0
+    ) {
+      setPageCount(count);
+    }
+  };
+
   return (
     <div className="space-y-3">
-      {/* header preview */}
+      {/* HEADER PRATINJAU */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
@@ -215,8 +361,9 @@ export default function PDFPanel({ resume, isId }: Props) {
           </h2>
 
           <p className="text-xs text-neutral-500 dark:text-neutral-400">
-            A4 · PDF · {resume.template}
-            {pageCount
+            A4 · {resume.template.toUpperCase()}
+
+            {pageCount !== null
               ? ` · ${pageCount} ${
                   isId
                     ? "halaman"
@@ -228,8 +375,9 @@ export default function PDFPanel({ resume, isId }: Props) {
           </p>
         </div>
 
+        {/* TOMBOL PENGATURAN DAN DOWNLOAD */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* minimize */}
+          {/* MINIMIZE */}
           <button
             type="button"
             aria-expanded={isPreviewOpen}
@@ -247,7 +395,7 @@ export default function PDFPanel({ resume, isId }: Props) {
               : "Show CV"}
           </button>
 
-          {/* fullscreen */}
+          {/* FULLSCREEN */}
           <button
             ref={fullscreenButtonRef}
             type="button"
@@ -263,12 +411,13 @@ export default function PDFPanel({ resume, isId }: Props) {
             className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-neutral-200 px-3 py-2 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
           >
             <HiOutlineArrowsPointingOut size={16} />
+
             <span>
               {isId ? "Layar penuh" : "Fullscreen"}
             </span>
           </button>
 
-          {/* download */}
+          {/* DOWNLOAD PDF */}
           <a
             href={fileUrl}
             download={fileName}
@@ -278,12 +427,14 @@ export default function PDFPanel({ resume, isId }: Props) {
                 event.preventDefault();
               }
             }}
-            className={`inline-flex items-center justify-center rounded-xl bg-neutral-900 px-4 py-2.5 text-sm font-semibold text-white dark:bg-neutral-100 dark:text-neutral-900 ${
+            className={`inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-4 py-2.5 text-sm font-semibold text-white dark:bg-neutral-100 dark:text-neutral-900 ${
               canDownload
                 ? "hover:bg-neutral-700 dark:hover:bg-neutral-300"
                 : "pointer-events-none opacity-50"
             }`}
           >
+            <HiOutlineArrowDownTray size={16} />
+
             {loading
               ? isId
                 ? "Menyiapkan..."
@@ -294,10 +445,24 @@ export default function PDFPanel({ resume, isId }: Props) {
                 : "PDF error"
               : downloadLabel}
           </a>
+
+          {/* DOWNLOAD DOCX */}
+          <DocxDownloadButton
+            resume={resume}
+            isId={isId}
+          />
         </div>
       </div>
 
-      {/* preview pada halaman utama */}
+      {/* PERINGATAN JUMLAH HALAMAN */}
+      {/* hanya muncul jika lebih dari 2 halaman */}
+      {/* tidak memblokir PDF atau DOCX */}
+      <CVPageAlert
+        pageCount={loading ? null : pageCount}
+        isId={isId}
+      />
+
+      {/* PREVIEW PADA HALAMAN UTAMA */}
       {isPreviewOpen && !isFullscreen && (
         <div
           className={`h-[650px] rounded-xl border border-neutral-200 bg-neutral-200 dark:border-neutral-800 dark:bg-neutral-950 ${
@@ -338,21 +503,23 @@ export default function PDFPanel({ resume, isId }: Props) {
                 key={pdfFile.url}
                 blob={pdfFile.blob}
                 isId={isId}
-                onPageCount={setPageCount}
+                onPageCount={handlePageCount}
               />
             )
           ) : null}
         </div>
       )}
 
+      {/* INFORMASI PRIVASI */}
       <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
         {isId
-          ? "Pratinjau dan PDF unduhan menggunakan dokumen yang sama. Semua proses dilakukan di browsermu."
-          : "Preview and download use the same PDF. Everything is processed in your browser."}
+          ? "PDF dan DOCX dibuat langsung di browsermu. Data CV tidak dikirim ke server."
+          : "PDF and DOCX are generated in your browser. Your CV data is not sent to a server."}
       </p>
 
-      {/* modal layar penuh */}
-      {isFullscreen && typeof document !== "undefined"
+      {/* MODAL FULLSCREEN */}
+      {isFullscreen &&
+      typeof document !== "undefined"
         ? createPortal(
             <div
               className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-2 backdrop-blur-sm sm:p-5"
@@ -372,7 +539,7 @@ export default function PDFPanel({ resume, isId }: Props) {
                 aria-labelledby="cv-fullscreen-title"
                 className="flex h-[95dvh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-950 shadow-2xl"
               >
-                {/* modal header */}
+                {/* HEADER MODAL */}
                 <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-neutral-800 px-3 py-3 sm:px-5">
                   <div className="min-w-0">
                     <h2
@@ -386,11 +553,22 @@ export default function PDFPanel({ resume, isId }: Props) {
 
                     <p className="text-xs text-neutral-400">
                       A4 · {resume.template}
+
+                      {pageCount !== null
+                        ? ` · ${pageCount} ${
+                            isId
+                              ? "halaman"
+                              : pageCount === 1
+                              ? "page"
+                              : "pages"
+                          }`
+                        : ""}
                     </p>
                   </div>
 
+                  {/* TOOLBAR MODAL */}
                   <div className="flex flex-wrap items-center gap-2">
-                    {/* zoom khusus canvas pada hp */}
+                    {/* ZOOM KHUSUS MOBILE */}
                     {!useDesktopViewer && (
                       <>
                         <button
@@ -448,6 +626,28 @@ export default function PDFPanel({ resume, isId }: Props) {
                       </>
                     )}
 
+                    {/* BUKA PDF DI TAB BARU */}
+                    {/* terpisah dari tombol unduh */}
+                    {fileUrl && (
+                      <a
+                        href={fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-neutral-700 px-3 text-xs font-medium text-neutral-200 hover:bg-neutral-800"
+                      >
+                        <HiOutlineArrowTopRightOnSquare
+                          size={15}
+                        />
+
+                        <span className="hidden sm:inline">
+                          {isId
+                            ? "Buka PDF"
+                            : "Open PDF"}
+                        </span>
+                      </a>
+                    )}
+
+                    {/* DOWNLOAD PDF FULLSCREEN */}
                     <a
                       href={fileUrl}
                       download={fileName}
@@ -463,22 +663,16 @@ export default function PDFPanel({ resume, isId }: Props) {
                           : "pointer-events-none opacity-50"
                       }`}
                     >
-                      {fileUrl && !loading && !error && (
-  <a
-    href={fileUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="inline-flex items-center justify-center rounded-lg border border-neutral-200 px-3 py-2 text-xs font-medium text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
-  >
-    {isId ? "Buka PDF" : "Open PDF"}
-  </a>
-)}
-                      <HiOutlineArrowDownTray size={16} />
+                      <HiOutlineArrowDownTray
+                        size={16}
+                      />
+
                       <span className="hidden sm:inline">
-                        {isId ? "Unduh" : "Download"}
+                        {isId ? "Unduh PDF" : "Download PDF"}
                       </span>
                     </a>
 
+                    {/* TUTUP FULLSCREEN */}
                     <button
                       ref={closeRef}
                       type="button"
@@ -497,7 +691,7 @@ export default function PDFPanel({ resume, isId }: Props) {
                   </div>
                 </div>
 
-                {/* isi modal */}
+                {/* ISI MODAL */}
                 <div
                   className={`min-h-0 flex-1 bg-neutral-800 ${
                     useDesktopViewer
@@ -535,7 +729,7 @@ export default function PDFPanel({ resume, isId }: Props) {
                         blob={pdfFile.blob}
                         zoom={zoom}
                         isId={isId}
-                        onPageCount={setPageCount}
+                        onPageCount={handlePageCount}
                       />
                     )
                   ) : null}

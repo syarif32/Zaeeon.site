@@ -2,13 +2,14 @@
 import {
   Document,
   Page,
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
 } from "@react-pdf/renderer";
 
+import type { ReactNode } from "react";
+
 import type {
-  CVFont,
   ResumeData,
   SectionKey,
 } from "./model";
@@ -19,484 +20,276 @@ import {
   splitLines,
 } from "./model";
 
-// font bawaan react-pdf, tanpa instalasi tambahan
-type PDFFontFamily = {
-  regular: string;
-  bold: string;
-  italic: string;
-};
+import {
+  getResumeFonts,
+  getResumeLayout,
+  mmToPt,
+} from "./layoutConfig";
 
-const FONT_FAMILIES: Record<
-  Exclude<CVFont, "default">,
-  PDFFontFamily
-> = {
-  helvetica: {
-    regular: "Helvetica",
-    bold: "Helvetica-Bold",
-    italic: "Helvetica-Oblique",
-  },
-  times: {
-    regular: "Times-Roman",
-    bold: "Times-Bold",
-    italic: "Times-Italic",
-  },
-  courier: {
-    regular: "Courier",
-    bold: "Courier-Bold",
-    italic: "Courier-Oblique",
-  },
-};
+export default function ResumeDocument({
+  resume: cv,
+}: {
+  resume: ResumeData;
+}) {
+  const layout = getResumeLayout(cv);
+  const fonts = getResumeFonts(cv);
 
-// pilih font bawaan sesuai template jika masih default
-function getPdfFonts(cv: ResumeData): PDFFontFamily {
-  const selected = cv.font ?? "default";
+  const titleColor =
+    cv.template === "classic"
+      ? "#263B50"
+      : "#161616";
 
-  const resolved: Exclude<CVFont, "default"> =
-    selected === "default"
-      ? cv.template === "professional"
-        ? "helvetica"
-        : "times"
-      : selected;
+  const lineColor =
+    cv.template === "classic"
+      ? "#9CA9B6"
+      : "#606060";
 
-  return FONT_FAMILIES[resolved];
-}
+  const styles = StyleSheet.create({
+    page: {
+      paddingTop: mmToPt(layout.marginMm),
+      paddingBottom: mmToPt(layout.marginMm),
+      paddingLeft: mmToPt(layout.marginMm),
+      paddingRight: mmToPt(layout.marginMm),
 
-const s = StyleSheet.create({
-  page: {
-    paddingTop: 42,
-    paddingBottom: 44,
-    paddingHorizontal: 42,
-    fontFamily: "Helvetica",
-    fontSize: 10.4,
-    lineHeight: 1.27,
-    color: "#141414",
-    backgroundColor: "#FFFFFF",
-  },
+      fontFamily: fonts.pdf.regular,
+      fontSize: layout.bodyPt,
+      lineHeight: layout.lineHeight,
 
-  pageCompact: {
-    paddingTop: 33,
-    paddingBottom: 34,
-    paddingHorizontal: 38,
-    fontSize: 9.6,
-  },
+      color: "#171717",
+      backgroundColor: "#FFFFFF",
+    },
 
-  pageClassic: {
-    paddingTop: 34,
-    paddingBottom: 34,
-    paddingHorizontal: 40,
-    fontFamily: "Times-Roman",
-    fontSize: 10,
-    lineHeight: 1.18,
-  },
+    header: {
+      alignItems:
+        cv.template === "classic"
+          ? "flex-start"
+          : "center",
 
-  pageAcademic: {
-    fontFamily: "Times-Roman",
-    fontSize: 10.3,
-    lineHeight: 1.25,
-  },
+      marginBottom: layout.headerGapPt,
 
-  professionalHeader: {
-    alignItems: "center",
-    marginBottom: 13,
-  },
+      paddingBottom:
+        cv.template === "classic" ? 6 : 0,
 
-  professionalName: {
-    fontFamily: "Helvetica-Bold",
-    fontSize: 18,
-    textAlign: "center",
-    marginBottom: 7,
-  },
+      borderBottomWidth:
+        cv.template === "classic" ? 0.9 : 0,
 
-  professionalContact: {
-    fontSize: 9.5,
-    textAlign: "center",
-    lineHeight: 1.38,
-  },
+      borderBottomColor: lineColor,
+    },
 
-  classicHeader: {
-    marginBottom: 10,
-    paddingBottom: 8,
-    borderBottomWidth: 1.2,
-    borderBottomColor: "#263B50",
-  },
+    topline: {
+      fontFamily: fonts.pdf.regular,
+      fontSize: 9,
+      marginBottom: 4,
+      letterSpacing: 1.1,
+    },
 
-  classicName: {
-    fontFamily: "Times-Bold",
-    fontSize: 22,
-    lineHeight: 1.25,
-    marginBottom: 6,
-    color: "#263B50",
-  },
+    name: {
+      fontFamily: fonts.pdf.bold,
+      fontSize: layout.namePt,
 
-  classicSubtitle: {
-    fontFamily: "Times-Italic",
-    fontSize: 10.5,
-    lineHeight: 1.3,
-    marginBottom: 5,
-    color: "#525E6A",
-  },
+      textAlign:
+        cv.template === "classic"
+          ? "left"
+          : "center",
 
-  classicContact: {
-    fontSize: 8.6,
-    lineHeight: 1.3,
-    color: "#4C5662",
-  },
+      color: titleColor,
+      marginBottom: layout.nameGapPt,
+      lineHeight: 1.08,
+    },
 
-  academicHeader: {
-    alignItems: "center",
-    marginBottom: 18,
-    paddingBottom: 11,
-    borderBottomWidth: 0.9,
-    borderBottomColor: "#444444",
-  },
+    subtitle: {
+      fontFamily: fonts.pdf.italic,
+      fontSize: layout.bodyPt,
 
-  academicTopline: {
-    fontFamily: "Times-Roman",
-    fontSize: 9,
-    letterSpacing: 1.6,
-    marginBottom: 7,
-  },
+      textAlign:
+        cv.template === "classic"
+          ? "left"
+          : "center",
 
-  academicName: {
-    fontFamily: "Times-Bold",
-    fontSize: 19,
-    textAlign: "center",
-  },
+      color: "#444444",
+      marginBottom: 2,
+    },
 
-  academicContact: {
-    fontFamily: "Times-Roman",
-    fontSize: 9.5,
-    marginTop: 6,
-    textAlign: "center",
-  },
+    contact: {
+      fontSize: layout.contactPt,
 
-  section: {
-    marginTop: 10,
-  },
+      textAlign:
+        cv.template === "classic"
+          ? "left"
+          : "center",
 
-  sectionCompact: {
-    marginTop: 6,
-  },
+      lineHeight: 1.22,
+      color: "#303030",
+    },
 
-  sectionClassic: {
-    marginTop: 7,
-  },
+    sectionHeading: {
+      marginBottom: layout.headingGapPt,
+      borderBottomWidth: 0.65,
+      borderBottomColor: lineColor,
+      paddingBottom: 2,
+    },
 
-  headingProfessional: {
-    fontFamily: "Helvetica-Bold",
-    fontSize: 11.4,
-    paddingBottom: 2,
-    marginBottom: 6,
-    borderBottomWidth: 0.85,
-    borderBottomColor: "#171717",
-  },
+    sectionTitle: {
+      fontFamily: fonts.pdf.bold,
+      fontSize: layout.headingPt,
+      color: titleColor,
+      lineHeight: 1.1,
+    },
 
-  headingClassic: {
-    fontFamily: "Times-Bold",
-    color: "#263B50",
-    fontSize: 10.8,
-    lineHeight: 1.2,
-    paddingBottom: 2,
-    marginBottom: 4,
-    borderBottomWidth: 0.6,
-    borderBottomColor: "#B2BAC4",
-  },
+    entryTitle: {
+      fontFamily: fonts.pdf.bold,
+      fontSize: layout.bodyPt,
+      lineHeight: layout.lineHeight,
+    },
 
-  headingAcademic: {
-    fontFamily: "Times-Bold",
-    fontSize: 11.4,
-    paddingBottom: 3,
-    marginBottom: 6,
-    borderBottomWidth: 0.65,
-    borderBottomColor: "#575757",
-  },
+    detail: {
+      fontFamily: fonts.pdf.regular,
+      marginTop: layout.detailGapPt,
+      color: "#414141",
+    },
 
-  body: {
-    marginBottom: 3,
-    textAlign: "left",
-  },
+    bulletRow: {
+      flexDirection: "row",
+      marginTop: layout.bulletGapPt,
+      paddingLeft: 1,
+    },
 
-  entry: {
-    marginBottom: 7,
-  },
+    bulletGlyph: {
+      width: layout.bulletIndentPt,
+      fontFamily: fonts.pdf.regular,
+      fontSize: layout.bodyPt,
+    },
 
-  entryCompact: {
-    marginBottom: 4,
-  },
+    bulletText: {
+      flex: 1,
+      fontSize: layout.bodyPt,
+      lineHeight: layout.lineHeight,
+    },
+  });
 
-  entryClassic: {
-    marginBottom: 4,
-  },
-
-  entryTitle: {
-    fontFamily: "Helvetica-Bold",
-    fontSize: 10.4,
-  },
-
-  entryTitleSerif: {
-    fontFamily: "Times-Bold",
-    fontSize: 10.3,
-  },
-
-  detail: {
-    fontSize: 9.6,
-    marginTop: 2,
-    color: "#414141",
-  },
-
-  bullet: {
-    marginLeft: 15,
-    marginBottom: 2,
-  },
-
-  skillsRow: {
-    marginBottom: 3,
-  },
-});
-
-function Header({ cv }: { cv: ResumeData }) {
-  const fonts = getPdfFonts(cv);
-
-  const parts = [
+  const contact = [
     cv.profile.phone,
     cv.profile.email,
     cv.profile.location,
     cv.profile.linkedin,
     cv.profile.website,
   ]
-    .map((x) => x.trim())
-    .filter(Boolean);
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .join("  |  ");
 
-  const contact = parts.join("  |  ");
+  const visible = [...new Set(cv.order)].filter(
+    (section) =>
+      !cv.hidden.includes(section) &&
+      hasSectionContent(cv, section)
+  );
 
-  const name =
-    cv.profile.name.trim() ||
-    (cv.language === "id"
-      ? "NAMA LENGKAP"
-      : "YOUR NAME");
-
-  if (cv.template === "classic") {
+  // Menampilkan satu bullet untuk setiap baris.
+  function Bullets({ value }: { value: string }) {
     return (
-      <View style={s.classicHeader} wrap={false}>
-        <Text
-          style={[
-            s.classicName,
-            { fontFamily: fonts.bold },
-          ]}
-        >
-          {name}
-        </Text>
-
-        {cv.profile.headline.trim() ? (
-          <Text
-            style={[
-              s.classicSubtitle,
-              { fontFamily: fonts.italic },
-            ]}
+      <>
+        {splitLines(value).map((line, index) => (
+          <View
+            key={`${index}-${line.slice(0, 20)}`}
+            style={styles.bulletRow}
           >
-            {cv.profile.headline.trim()}
-          </Text>
-        ) : null}
+            <Text style={styles.bulletGlyph}>
+              {"•"}
+            </Text>
 
-        {contact ? (
-          <Text style={s.classicContact}>
-            {contact}
-          </Text>
-        ) : null}
+            <Text
+              style={styles.bulletText}
+              orphans={2}
+              widows={2}
+            >
+              {line}
+            </Text>
+          </View>
+        ))}
+      </>
+    );
+  }
+
+  // Menjaga judul entri dekat dengan isi berikutnya.
+  function EntryHeader({
+    children,
+  }: {
+    children: ReactNode;
+  }) {
+    return (
+      <View minPresenceAhead={layout.bodyPt * 2.4}>
+        <Text>{children}</Text>
       </View>
     );
   }
 
-  if (cv.template === "academic") {
-    return (
-      <View style={s.academicHeader} wrap={false}>
-        <Text
-          style={[
-            s.academicTopline,
-            { fontFamily: fonts.regular },
-          ]}
-        >
-          {cv.language === "id"
-            ? "DAFTAR RIWAYAT HIDUP AKADEMIK"
-            : "ACADEMIC CURRICULUM VITAE"}
-        </Text>
-
-        <Text
-          style={[
-            s.academicName,
-            { fontFamily: fonts.bold },
-          ]}
-        >
-          {name.toUpperCase()}
-        </Text>
-
-        {cv.profile.headline.trim() ? (
-          <Text
-            style={[
-              s.academicContact,
-              { fontFamily: fonts.regular },
-            ]}
-          >
-            {cv.profile.headline.trim()}
+  function Content({
+    section,
+  }: {
+    section: SectionKey;
+  }) {
+    switch (section) {
+      case "summary":
+        return (
+          <Text orphans={2} widows={2}>
+            {cv.summary.trim()}
           </Text>
-        ) : null}
+        );
 
-        {contact ? (
-          <Text
-            style={[
-              s.academicContact,
-              { fontFamily: fonts.regular },
-            ]}
-          >
-            {contact}
-          </Text>
-        ) : null}
-      </View>
-    );
-  }
+      case "skills": {
+        const items = cv.skills.filter(
+          (item) =>
+            item.category.trim() ||
+            item.values.trim()
+        );
 
-  return (
-    <View
-      style={s.professionalHeader}
-      wrap={false}
-    >
-      <Text
-        style={[
-          s.professionalName,
-          { fontFamily: fonts.bold },
-        ]}
-      >
-        {name.toUpperCase()}
-      </Text>
-
-      {contact ? (
-        <Text style={s.professionalContact}>
-          {contact}
-        </Text>
-      ) : null}
-    </View>
-  );
-}
-
-function SectionHeading({
-  cv,
-  section,
-}: {
-  cv: ResumeData;
-  section: SectionKey;
-}) {
-  const fonts = getPdfFonts(cv);
-
-  const style =
-    cv.template === "academic"
-      ? s.headingAcademic
-      : cv.template === "classic"
-      ? s.headingClassic
-      : s.headingProfessional;
-
-  return (
-    <View style={style} minPresenceAhead={24}>
-      <Text style={{ fontFamily: fonts.bold }}>
-        {SECTION_TITLES[cv.language][section].toUpperCase()}
-      </Text>
-    </View>
-  );
-}
-
-function BulletLines({ value }: { value: string }) {
-  return (
-    <>
-      {splitLines(value).map((line, index) => (
-        <Text
-          style={s.bullet}
-          key={`${index}-${line.slice(0, 12)}`}
-        >
-          {"•  "}
-          {line}
-        </Text>
-      ))}
-    </>
-  );
-}
-
-function SectionContent({
-  cv,
-  section,
-}: {
-  cv: ResumeData;
-  section: SectionKey;
-}) {
-  const fonts = getPdfFonts(cv);
-
-  const titleStyle =
-    cv.template === "professional"
-      ? s.entryTitle
-      : s.entryTitleSerif;
-
-  const entryStyle =
-    cv.density === "compact"
-      ? s.entryCompact
-      : cv.template === "classic"
-      ? s.entryClassic
-      : s.entry;
-
-  const boldTitleStyle = [
-    titleStyle,
-    { fontFamily: fonts.bold },
-  ];
-
-  switch (section) {
-    case "summary":
-      return (
-        <Text style={s.body}>
-          {cv.summary.trim()}
-        </Text>
-      );
-
-    case "skills":
-      return (
-        <>
-          {cv.skills
-            .filter(
-              (x) =>
-                x.category.trim() ||
-                x.values.trim()
-            )
-            .map((group) => (
+        return (
+          <>
+            {items.map((item, index) => (
               <Text
-                key={group.id}
-                style={s.skillsRow}
+                key={item.id}
+                style={{
+                  marginBottom:
+                    index < items.length - 1
+                      ? layout.bulletGapPt
+                      : 0,
+                }}
               >
-                {group.category.trim() ? (
-                  <Text style={boldTitleStyle}>
-                    {group.category.trim()}:
-                    {" "}
+                {item.category.trim() ? (
+                  <Text style={styles.entryTitle}>
+                    {item.category.trim()}:{" "}
                   </Text>
                 ) : null}
 
-                {group.values.trim()}
+                {item.values.trim()}
               </Text>
             ))}
-        </>
-      );
+          </>
+        );
+      }
 
-    case "experience":
-      return (
-        <>
-          {cv.experience
-            .filter(
-              (x) =>
-                x.role.trim() ||
-                x.organization.trim() ||
-                x.details.trim()
-            )
-            .map((item) => (
+      case "experience": {
+        const items = cv.experience.filter(
+          (item) =>
+            item.role.trim() ||
+            item.organization.trim() ||
+            item.details.trim()
+        );
+
+        return (
+          <>
+            {items.map((item, index) => (
               <View
                 key={item.id}
-                style={entryStyle}
+                style={{
+                  marginBottom:
+                    index < items.length - 1
+                      ? layout.entryGapPt
+                      : 0,
+                }}
               >
-                <Text>
-                  <Text style={boldTitleStyle}>
+                <EntryHeader>
+                  <Text style={styles.entryTitle}>
                     {[
                       item.organization.trim(),
                       item.role.trim(),
@@ -508,30 +301,36 @@ function SectionContent({
                   {item.period.trim()
                     ? ` | ${item.period.trim()}`
                     : ""}
-                </Text>
+                </EntryHeader>
 
-                <BulletLines value={item.details} />
+                <Bullets value={item.details} />
               </View>
             ))}
-        </>
-      );
+          </>
+        );
+      }
 
-    case "education":
-      return (
-        <>
-          {cv.education
-            .filter(
-              (x) =>
-                x.institution.trim() ||
-                x.degree.trim()
-            )
-            .map((item) => (
+      case "education": {
+        const items = cv.education.filter(
+          (item) =>
+            item.institution.trim() ||
+            item.degree.trim()
+        );
+
+        return (
+          <>
+            {items.map((item, index) => (
               <View
                 key={item.id}
-                style={entryStyle}
+                style={{
+                  marginBottom:
+                    index < items.length - 1
+                      ? layout.entryGapPt
+                      : 0,
+                }}
               >
-                <Text>
-                  <Text style={boldTitleStyle}>
+                <EntryHeader>
+                  <Text style={styles.entryTitle}>
                     {item.institution.trim()}
                   </Text>
 
@@ -542,123 +341,134 @@ function SectionContent({
                   {item.period.trim()
                     ? ` | ${item.period.trim()}`
                     : ""}
-                </Text>
+                </EntryHeader>
 
                 {item.details.trim() ? (
-                  <Text style={s.detail}>
+                  <Text
+                    style={styles.detail}
+                    orphans={2}
+                    widows={2}
+                  >
                     {item.details.trim()}
                   </Text>
                 ) : null}
               </View>
             ))}
-        </>
-      );
+          </>
+        );
+      }
 
-    case "projects":
-      return (
-        <>
-          {cv.projects
-            .filter(
-              (x) =>
-                x.name.trim() ||
-                x.details.trim()
-            )
-            .map((item) => (
+      case "projects": {
+        const items = cv.projects.filter(
+          (item) =>
+            item.name.trim() ||
+            item.details.trim()
+        );
+
+        return (
+          <>
+            {items.map((item, index) => (
               <View
                 key={item.id}
-                style={entryStyle}
+                style={{
+                  marginBottom:
+                    index < items.length - 1
+                      ? layout.entryGapPt
+                      : 0,
+                }}
               >
-                <Text>
-                  <Text style={boldTitleStyle}>
+                <EntryHeader>
+                  <Text style={styles.entryTitle}>
                     {item.name.trim()}
                   </Text>
 
                   {item.period.trim()
                     ? ` | ${item.period.trim()}`
                     : ""}
-                </Text>
+                </EntryHeader>
 
                 {item.details.trim() ? (
-                  <Text style={s.detail}>
+                  <Text
+                    style={styles.detail}
+                    orphans={2}
+                    widows={2}
+                  >
                     {item.details.trim()}
                   </Text>
                 ) : null}
               </View>
             ))}
-        </>
-      );
+          </>
+        );
+      }
 
-    default:
-      return (
-        <BulletLines value={cv[section]} />
-      );
+      default:
+        return <Bullets value={cv[section]} />;
+    }
   }
-}
-
-export default function ResumeDocument({
-  resume: cv,
-}: {
-  resume: ResumeData;
-}) {
-  const compact = cv.density === "compact";
-
-  const fonts = getPdfFonts(cv);
-
-  // cegah section duplikat tanpa mengubah urutan asli
-  const visible = Array.from(new Set(cv.order)).filter(
-    (section) =>
-      !cv.hidden.includes(section) &&
-      hasSectionContent(cv, section)
-  );
 
   return (
     <Document
       title={`${cv.profile.name.trim() || "My"} - CV`}
       author={
-        cv.profile.name.trim() ||
-        "Zaeeon CV Studio"
+        cv.profile.name.trim() || "Zaeeon CV Studio"
       }
       subject="Resume generated with Zaeeon CV Studio"
     >
-      <Page
-        size="A4"
-        style={[
-          s.page,
-          ...(cv.template === "classic"
-            ? [s.pageClassic]
-            : []),
-          ...(cv.template === "academic"
-            ? [s.pageAcademic]
-            : []),
-          ...(compact ? [s.pageCompact] : []),
+      <Page size="A4" style={styles.page} wrap>
+        <View style={styles.header} wrap={false}>
+          {cv.template === "academic" ? (
+            <Text style={styles.topline}>
+              {cv.language === "id"
+                ? "DAFTAR RIWAYAT HIDUP AKADEMIK"
+                : "ACADEMIC CURRICULUM VITAE"}
+            </Text>
+          ) : null}
 
-          // font pilihan terakhir menimpa font bawaan template
-          { fontFamily: fonts.regular },
-        ]}
-        wrap
-      >
-        <Header cv={cv} />
+          <Text style={styles.name}>
+            {(
+              cv.profile.name.trim() ||
+              (cv.language === "id"
+                ? "NAMA LENGKAP"
+                : "YOUR NAME")
+            ).toUpperCase()}
+          </Text>
 
-        {visible.map((section) => (
+          {cv.profile.headline.trim() ? (
+            <Text style={styles.subtitle}>
+              {cv.profile.headline.trim()}
+            </Text>
+          ) : null}
+
+          {contact ? (
+            <Text style={styles.contact}>
+              {contact}
+            </Text>
+          ) : null}
+        </View>
+
+        {visible.map((section, index) => (
           <View
             key={section}
-            style={
-              compact
-                ? s.sectionCompact
-                : cv.template === "classic"
-                ? s.sectionClassic
-                : s.section
-            }
+            style={{
+              marginTop:
+                index === 0
+                  ? 0
+                  : layout.sectionGapPt,
+            }}
           >
-            <SectionHeading
-              cv={cv}
-              section={section}
-            />
+            <View
+              style={styles.sectionHeading}
+              minPresenceAhead={layout.bodyPt * 2.7}
+            >
+              <Text style={styles.sectionTitle}>
+                {SECTION_TITLES[cv.language][
+                  section
+                ].toUpperCase()}
+              </Text>
+            </View>
 
-            <SectionContent
-              cv={cv}
-              section={section}
-            />
+            <Content section={section} />
           </View>
         ))}
       </Page>

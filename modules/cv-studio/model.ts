@@ -1,7 +1,14 @@
 
 export type CVTemplate = "professional" | "classic" | "academic";
 export type CVLanguage = "en" | "id";
-export type Density = "normal" | "compact";
+
+// pilihan kepadatan CV
+// normal tetap didukung agar draft lama tidak rusak
+export type Density =
+  | "normal"
+  | "compact"
+  | "balanced"
+  | "spacious";
 
 // pilihan font dokumen
 export type CVFont = "default" | "helvetica" | "times" | "courier";
@@ -96,19 +103,42 @@ export const ALL_SECTIONS: SectionKey[] = [
 
 export const DEFAULT_ORDER: Record<CVTemplate, SectionKey[]> = {
   professional: [
-    "summary", "skills", "experience", "education",
-    "awards", "leadership", "certifications", "projects",
-    "research", "publications",
+    "summary",
+    "skills",
+    "experience",
+    "education",
+    "awards",
+    "leadership",
+    "certifications",
+    "projects",
+    "research",
+    "publications",
   ],
+
   classic: [
-    "summary", "experience", "education", "skills",
-    "projects", "leadership", "awards", "certifications",
-    "research", "publications",
+    "summary",
+    "experience",
+    "education",
+    "skills",
+    "projects",
+    "leadership",
+    "awards",
+    "certifications",
+    "research",
+    "publications",
   ],
+
   academic: [
-    "education", "research", "publications", "projects",
-    "experience", "awards", "certifications", "leadership",
-    "skills", "summary",
+    "education",
+    "research",
+    "publications",
+    "projects",
+    "experience",
+    "awards",
+    "certifications",
+    "leadership",
+    "skills",
+    "summary",
   ],
 };
 
@@ -128,6 +158,7 @@ export const SECTION_TITLES: Record<
     research: "Research Interests",
     publications: "Publications",
   },
+
   id: {
     summary: "Ringkasan Profesional",
     skills: "Keahlian",
@@ -142,13 +173,17 @@ export const SECTION_TITLES: Record<
   },
 };
 
+// membuat data CV kosong
 export function createBlankResume(): ResumeData {
   return {
     version: 1,
     template: "professional",
     language: "en",
-    density: "normal",
+
+    // default tata letak seimbang
+    density: "balanced",
     font: "default",
+
     profile: {
       name: "",
       headline: "",
@@ -158,6 +193,7 @@ export function createBlankResume(): ResumeData {
       linkedin: "",
       website: "",
     },
+
     summary: "",
     skills: [],
     experience: [],
@@ -168,14 +204,17 @@ export function createBlankResume(): ResumeData {
     certifications: "",
     research: "",
     publications: "",
+
     order: [...DEFAULT_ORDER.professional],
     hidden: [],
   };
 }
 
+// membuat data CV contoh
 export function createSampleResume(): ResumeData {
   return {
     ...createBlankResume(),
+
     profile: {
       name: "Najwa Syarif",
       headline: "Software Developer",
@@ -185,8 +224,10 @@ export function createSampleResume(): ResumeData {
       linkedin: "linkedin.com/in/",
       website: "example.com",
     },
+
     summary:
       "Software developer focused on building reliable digital products, improving workflows, and creating practical solutions for people.",
+
     skills: [
       {
         id: "sample-skill-1",
@@ -199,6 +240,7 @@ export function createSampleResume(): ResumeData {
         values: "Next.js, React, PostgreSQL, Git",
       },
     ],
+
     experience: [
       {
         id: "sample-exp-1",
@@ -209,6 +251,7 @@ export function createSampleResume(): ResumeData {
           "Built responsive applications for small businesses.\nReduced repetitive administrative work by introducing automated workflows.",
       },
     ],
+
     education: [
       {
         id: "sample-edu-1",
@@ -219,6 +262,7 @@ export function createSampleResume(): ResumeData {
           "Relevant coursework: databases, software engineering, web development.",
       },
     ],
+
     projects: [
       {
         id: "sample-project-1",
@@ -228,16 +272,22 @@ export function createSampleResume(): ResumeData {
           "Designed an offline-first application to help people understand daily spending.",
       },
     ],
+
     awards: "Finalist — Student Software Competition (2025)",
+
     leadership:
       "Media Team Coordinator — Student Organization (2024–2025)",
+
     certifications:
       "Web Development Certificate — Example Academy (2025)",
+
     research: "Human-centered software; digital inclusion",
+
     publications: "",
   };
 }
 
+// memisahkan teks berdasarkan baris
 export function splitLines(value: string): string[] {
   return value
     .split(/\r?\n/)
@@ -245,6 +295,7 @@ export function splitLines(value: string): string[] {
     .filter(Boolean);
 }
 
+// mengecek apakah bagian CV memiliki isi
 export function hasSectionContent(
   resume: ResumeData,
   key: SectionKey
@@ -283,47 +334,80 @@ export function hasSectionContent(
   return Boolean(resume[key].trim());
 }
 
+// memvalidasi draft CV sebelum dipakai
 export function isResumeData(value: unknown): value is ResumeData {
-  if (!value || typeof value !== "object") return false;
+  if (!value || typeof value !== "object") {
+    return false;
+  }
 
   const v = value as Partial<ResumeData>;
   const p = v.profile as Partial<Profile> | undefined;
 
   const templates: CVTemplate[] = [
-    "professional", "classic", "academic",
+    "professional",
+    "classic",
+    "academic",
   ];
 
   const languages: CVLanguage[] = ["en", "id"];
 
+  const densities: Density[] = [
+    "normal",
+    "compact",
+    "balanced",
+    "spacious",
+  ];
+
   const fonts: CVFont[] = [
-    "default", "helvetica", "times", "courier",
+    "default",
+    "helvetica",
+    "times",
+    "courier",
   ];
 
   return (
     v.version === 1 &&
-    templates.includes(v.template as CVTemplate) &&
-    languages.includes(v.language as CVLanguage) &&
-    (v.density === "normal" || v.density === "compact") &&
 
-    // font lama yang belum tersimpan dianggap default
+    // validasi pilihan template
+    templates.includes(v.template as CVTemplate) &&
+
+    // validasi bahasa dokumen
+    languages.includes(v.language as CVLanguage) &&
+
+    // validasi semua pilihan kepadatan
+    densities.includes(v.density as Density) &&
+
+    // font draft lama yang belum tersimpan dianggap default
     (v.font === undefined || fonts.includes(v.font)) &&
 
+    // validasi profil
     !!p &&
     [
-      "name", "headline", "email", "phone",
-      "location", "linkedin", "website",
+      "name",
+      "headline",
+      "email",
+      "phone",
+      "location",
+      "linkedin",
+      "website",
     ].every(
       (k) => typeof p[k as keyof Profile] === "string"
     ) &&
 
+    // validasi bagian teks
     [
-      "summary", "awards", "leadership",
-      "certifications", "research", "publications",
+      "summary",
+      "awards",
+      "leadership",
+      "certifications",
+      "research",
+      "publications",
     ].every(
       (k) =>
         typeof v[k as keyof ResumeData] === "string"
     ) &&
 
+    // validasi keahlian
     Array.isArray(v.skills) &&
     v.skills.every(
       (x) =>
@@ -333,6 +417,7 @@ export function isResumeData(value: unknown): value is ResumeData {
         typeof x.values === "string"
     ) &&
 
+    // validasi pengalaman
     Array.isArray(v.experience) &&
     v.experience.every(
       (x) =>
@@ -343,6 +428,7 @@ export function isResumeData(value: unknown): value is ResumeData {
         )
     ) &&
 
+    // validasi pendidikan
     Array.isArray(v.education) &&
     v.education.every(
       (x) =>
@@ -353,6 +439,7 @@ export function isResumeData(value: unknown): value is ResumeData {
         )
     ) &&
 
+    // validasi proyek
     Array.isArray(v.projects) &&
     v.projects.every(
       (x) =>
@@ -363,11 +450,13 @@ export function isResumeData(value: unknown): value is ResumeData {
         )
     ) &&
 
+    // validasi urutan section
     Array.isArray(v.order) &&
     v.order.length === ALL_SECTIONS.length &&
     new Set(v.order).size === ALL_SECTIONS.length &&
     v.order.every((k) => ALL_SECTIONS.includes(k)) &&
 
+    // validasi section yang disembunyikan
     Array.isArray(v.hidden) &&
     v.hidden.every((k) => ALL_SECTIONS.includes(k))
   );
