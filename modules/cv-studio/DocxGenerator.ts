@@ -588,13 +588,11 @@ export async function generateResumeDocx(
         properties: {
           page: {
             size: {
-            //   width:
-            //     convertMillimetersToTwip(210),
+              width:
+                convertMillimetersToTwip(210),
                 
-            //   height:
-            //     convertMillimetersToTwip(297),
-             width: "210mm",
-    height: "297mm",
+              height:
+                convertMillimetersToTwip(297),
             },
 
             margin: {
