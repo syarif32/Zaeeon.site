@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 import { useLocale } from "next-intl";
+import CVAnalyzer from "./CVAnalyzer";
 import {
   HiOutlineArrowDown,
   HiOutlineChevronDown,
@@ -1075,7 +1076,7 @@ export default function CVStudio() {
         </button>
       </div>
 
-      <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+     <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-6">
         <section
           className={`min-w-0 space-y-6 ${
             mobilePreview ? "hidden lg:block" : ""
@@ -1409,18 +1410,57 @@ export default function CVStudio() {
           </CollapsiblePane>
         </section>
 
-        <section
-          className={`min-w-0 rounded-2xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900/40 sm:p-5 ${
-            mobilePreview
-              ? ""
-              : "hidden lg:block"
-          }`}
-        >
-          <PDFPanel
-            resume={preview}
-            isId={isId}
-          />
-        </section>
+        
+{/* KOLOM KANAN: PDF PREVIEW DAN CV ANALYZER */}
+<div
+  className={`
+    min-w-0 space-y-4
+    ${mobilePreview ? "block" : "hidden lg:block"}
+
+    lg:sticky
+    lg:top-24
+    lg:self-start
+    lg:max-h-[calc(100dvh-7rem)]
+    lg:overflow-y-auto
+    lg:overscroll-contain
+    lg:pr-1
+    lg:[scrollbar-width:thin]
+  `}
+>
+  {/* PDF PREVIEW */}
+  <section
+    aria-label={
+      isId ? "Pratinjau CV" : "CV preview"
+    }
+    className="
+      min-w-0
+      rounded-2xl
+      border border-neutral-200
+      bg-white
+      p-3
+      dark:border-neutral-800
+      dark:bg-neutral-900/40
+      sm:p-5
+    "
+  >
+    <PDFPanel
+      resume={preview}
+      isId={isId}
+    />
+  </section>
+
+  {/* CV QUALITY SCORE DAN KEYWORD ANALYSIS */}
+  <div
+    id="cv-analysis"
+    className="min-w-0"
+  >
+    <CVAnalyzer
+      resume={resume}
+      isId={isId}
+    />
+  </div>
+</div>
+
       </div>
     </main>
   );
