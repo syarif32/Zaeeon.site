@@ -7,6 +7,7 @@ import {
   Packer,
   Paragraph,
   TextRun,
+  PageOrientation,
   convertMillimetersToTwip,
 } from "docx";
 
@@ -587,11 +588,13 @@ export async function generateResumeDocx(
         properties: {
           page: {
             size: {
-              width:
-                convertMillimetersToTwip(210),
-
-              height:
-                convertMillimetersToTwip(297),
+            //   width:
+            //     convertMillimetersToTwip(210),
+                
+            //   height:
+            //     convertMillimetersToTwip(297),
+             width: "210mm",
+    height: "297mm",
             },
 
             margin: {
