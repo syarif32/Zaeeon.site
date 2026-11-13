@@ -512,27 +512,61 @@ export default function CoverLetterStudio() {
             </div>
           </Section>
 
-          <Section
-            title={isId ? "2. Informasi pelamar" : "2. Applicant information"}
-            description={isId ? "Nama dan kontak otomatis diambil dari draft CV Studio saat pertama dibuka. Kamu tetap bisa mengeditnya." : "Name and contact details are prefilled from CV Studio on first use. You can edit them anytime."}
-          >
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
-                {cvFound ? <HiOutlineCheckCircle className="h-4 w-4 text-teal-600" /> : <HiOutlineInformationCircle className="h-4 w-4" />}
-                {cvFound ? (isId ? "Draft CV ditemukan" : "CV draft found") : (isId ? "Belum ada draft CV lokal" : "No local CV draft")}
-              </span>
-              <button type="button" className={SECONDARY} onClick={importContact}>
-                <HiOutlineArrowPath className="h-4 w-4" />
-                {isId ? "Sinkronkan dari CV" : "Sync from CV"}
-              </button>
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label={isId ? "Nama lengkap" : "Full name"} value={form.name} onChange={(v) => updateForm("name", v)} placeholder={isId ? "Nama kamu" : "Your name"} />
-              <Field type="email" label="Email" value={form.email} onChange={(v) => updateForm("email", v)} placeholder="name@example.com" />
-              <Field type="tel" label={isId ? "Telepon" : "Phone"} value={form.phone} onChange={(v) => updateForm("phone", v)} placeholder="+62 ..." />
-              <Field label={isId ? "Domisili" : "Location"} value={form.location} onChange={(v) => updateForm("location", v)} placeholder="Semarang, Indonesia" />
-            </div>
-          </Section>
+         <Section
+  title={isId ? "Draft dan privasi" : "Draft and privacy"}
+  description={
+    isId
+      ? "Draft otomatis disimpan hanya di browser ini. Unduh JSON agar bisa dilanjutkan di perangkat lain."
+      : "Drafts auto-save only in this browser. Export JSON to continue on another device."
+  }
+  defaultOpen={false}
+>
+  <div className="flex flex-wrap gap-2">
+    <button
+      type="button"
+      className={SECONDARY}
+      onClick={exportDraft}
+    >
+      <HiOutlineArrowDownTray className="h-4 w-4" />
+      Export JSON
+    </button>
+
+    <button
+      type="button"
+      className={SECONDARY}
+      onClick={() => importRef.current?.click()}
+    >
+      <HiOutlineArrowUpTray className="h-4 w-4" />
+      Import JSON
+    </button>
+
+    <button
+      type="button"
+      className={`${SECONDARY} text-red-600 dark:text-red-400`}
+      onClick={resetDraft}
+    >
+      <HiOutlineTrash className="h-4 w-4" />
+      {isId ? "Hapus draft" : "Clear draft"}
+    </button>
+
+    <input
+      ref={importRef}
+      type="file"
+      accept=".json,application/json"
+      className="hidden"
+      onChange={(event) => void importDraft(event)}
+      aria-label={
+        isId ? "Pilih file draft JSON" : "Choose JSON draft file"
+      }
+    />
+  </div>
+
+  <p className="mt-4 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+    {isId
+      ? "Hindari menyimpan data pribadi sensitif di perangkat bersama."
+      : "Avoid saving sensitive personal data on shared devices."}
+  </p>
+</Section>
 
           <Section
             title={isId ? "3. Cerita dan pengalaman" : "3. Motivation and experience"}
