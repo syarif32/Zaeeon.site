@@ -419,7 +419,7 @@ export default function CoverLetterStudio() {
           </div>
           <span className="text-xs text-neutral-400">A4 · Portrait</span>
         </div>
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
           {(Object.keys(LETTER_PRESETS) as LetterTemplate[]).map((key) => {
             const preset = LETTER_PRESETS[key];
             const selected = draft.template === key;
@@ -429,13 +429,13 @@ export default function CoverLetterStudio() {
                 type="button"
                 aria-pressed={selected}
                 onClick={() => updateTemplate(key)}
-                className={`flex min-w-0 items-center gap-3 rounded-2xl border p-3 text-left transition-colors sm:p-4 ${selected
+                className={`flex min-w-0 flex-col items-start gap-2.5 rounded-2xl border p-3 text-left sm:flex-row sm:items-center sm:gap-3 transition-colors sm:p-4 ${selected
                   ? "border-teal-600 bg-teal-50/70 ring-1 ring-teal-600/20 dark:border-teal-500 dark:bg-teal-950/20"
                   : "border-neutral-200 bg-white hover:border-neutral-400 dark:border-neutral-800 dark:bg-neutral-950/40 dark:hover:border-neutral-600"
                 }`}
               >
                 <TemplateMiniature template={key} />
-                <span className="min-w-0">
+                <span className="min-w-0 w-full flex-1">
                   <span className="flex items-center gap-1.5 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                     {preset.label}
                     {selected ? <HiOutlineCheckCircle className="h-4 w-4 shrink-0 text-teal-600" /> : null}
@@ -479,16 +479,16 @@ export default function CoverLetterStudio() {
       {status ? <p role="status" aria-live="polite" className="mb-4 text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">{status}</p> : null}
 
       <div className="mb-5 grid grid-cols-2 gap-2 lg:hidden" role="tablist" aria-label={isId ? "Mode tampilan" : "View mode"}>
-        <button type="button" role="tab" aria-selected={!mobilePreview} onClick={() => setMobilePreview(false)} className={`inline-flex items-center justify-center gap-2 rounded-lg px-3 py-3 text-sm font-medium ${!mobilePreview ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900" : "border border-neutral-200 text-neutral-700 dark:border-neutral-700 dark:text-neutral-200"}`}>
+        <button type="button" role="tab" aria-controls="cover-letter-editor" aria-selected={!mobilePreview} onClick={() => setMobilePreview(false)} className={`inline-flex items-center justify-center gap-2 rounded-lg px-3 py-3 text-sm font-medium ${!mobilePreview ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900" : "border border-neutral-200 text-neutral-700 dark:border-neutral-700 dark:text-neutral-200"}`}>
           <HiOutlinePencilSquare className="h-4 w-4" /> {isId ? "Edit Surat" : "Edit Letter"}
         </button>
-        <button type="button" role="tab" aria-selected={mobilePreview} onClick={() => setMobilePreview(true)} className={`inline-flex items-center justify-center gap-2 rounded-lg px-3 py-3 text-sm font-medium ${mobilePreview ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900" : "border border-neutral-200 text-neutral-700 dark:border-neutral-700 dark:text-neutral-200"}`}>
+        <button type="button" role="tab" aria-controls="cover-letter-preview" aria-selected={mobilePreview} onClick={() => setMobilePreview(true)} className={`inline-flex items-center justify-center gap-2 rounded-lg px-3 py-3 text-sm font-medium ${mobilePreview ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900" : "border border-neutral-200 text-neutral-700 dark:border-neutral-700 dark:text-neutral-200"}`}>
           <HiOutlineEye className="h-4 w-4" /> {isId ? "Lihat PDF" : "View PDF"}
         </button>
       </div>
 
       <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-6">
-        <div className={`min-w-0 space-y-5 ${mobilePreview ? "hidden lg:block" : ""}`}>
+        <div id="cover-letter-editor" role="tabpanel" aria-label={isId ? "Editor surat" : "Letter editor"} className={`min-w-0 space-y-5 lg:h-[calc(100dvh-7rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-2 lg:[scrollbar-width:thin] ${mobilePreview ? "hidden lg:block" : ""}`}>
           <Section
             title={isId ? "1. Tujuan lamaran" : "1. Application details"}
             description={isId ? "Isi posisi dan perusahaan yang benar. Tidak perlu menuliskan alamat perusahaan jika tidak diketahui." : "Enter the correct role and company. A physical address is optional."}
@@ -593,8 +593,8 @@ export default function CoverLetterStudio() {
           </Section>
         </div>
 
-        <div className={`min-w-0 ${!mobilePreview ? "hidden lg:block" : ""}`}>
-          <div className="space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto lg:pr-1">
+        <div id="cover-letter-preview" role="tabpanel" aria-label={isId ? "Pratinjau surat" : "Letter preview"} className={`min-w-0 ${!mobilePreview ? "hidden lg:block" : ""}`}>
+          <div className="space-y-4 lg:h-[calc(100dvh-7rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-2 lg:[scrollbar-width:thin]">
             {missing.length ? (
               <p role="status" className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-800 dark:border-amber-900/70 dark:bg-amber-950/20 dark:text-amber-300">
                 {isId ? `Periksa sebelum melamar: ${missing.join(", ")} belum diisi. Unduhan tetap tersedia.` : `Check before applying: missing ${missing.join(", ")}. Downloads remain available.`}

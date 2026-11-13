@@ -1076,32 +1076,6 @@ export default function CVStudio() {
         </button>
       </div>
 
-{/* pintasan ke cover letter generator */}
-<div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3 dark:border-neutral-800 dark:bg-neutral-900/40">
-  <div className="min-w-0">
-    <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-      {isId
-        ? "CV sudah siap? Buat surat lamaran."
-        : "CV ready? Create your cover letter."}
-    </p>
-
-    <p className="mt-1 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-      {isId
-        ? "Gunakan informasi CV untuk menyusun surat lamaran yang bisa diedit."
-        : "Use your CV details to create an editable cover letter."}
-    </p>
-  </div>
-
-  <Link
-    href={`/${locale}/tools/cover-letter`}
-    className="inline-flex shrink-0 items-center justify-center rounded-lg bg-neutral-900 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
-  >
-    {isId
-      ? "Buat Surat Lamaran"
-      : "Create Cover Letter"}
-  </Link>
-</div>
-
 {/* layout utama: editor kiri, PDF dan analyzer kanan */}
 <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-6">
   <section
@@ -1490,6 +1464,33 @@ export default function CVStudio() {
 </div>
 
       </div>
+
+      {/* CTA ditempatkan setelah seluruh editor dan pratinjau CV */}
+      {/* pintasan ke cover letter generator */}
+<div className="mt-7 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3 dark:border-neutral-800 dark:bg-neutral-900/40">
+  <div className="min-w-0">
+    <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+      {isId
+        ? "CV sudah siap? Buat surat lamaran."
+        : "CV ready? Create your cover letter."}
+    </p>
+
+    <p className="mt-1 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+      {isId
+        ? "Gunakan informasi CV untuk menyusun surat lamaran yang bisa diedit."
+        : "Use your CV details to create an editable cover letter."}
+    </p>
+  </div>
+
+  <Link
+    href={`/${locale}/tools/cover-letter`}
+    className="inline-flex shrink-0 items-center justify-center rounded-lg bg-neutral-900 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
+  >
+    {isId
+      ? "Buat Surat Lamaran"
+      : "Create Cover Letter"}
+  </Link>
+</div>
     </main>
   );
 }

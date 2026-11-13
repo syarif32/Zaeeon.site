@@ -218,7 +218,7 @@ export default function CoverLetterPreview({
 
   function documentViewer(inModal: boolean) {
     return (
-      <div className={`${inModal ? "h-full" : "h-[650px]"} ${(isUpdating || loading) ? "pointer-events-none" : ""} min-w-0 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-200 dark:border-neutral-800 dark:bg-neutral-950`}>
+      <div className={`${inModal ? "h-full" : "h-[min(68dvh,650px)] min-h-[320px] sm:h-[650px]"} ${(isUpdating || loading) ? "pointer-events-none" : ""} min-w-0 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-200 dark:border-neutral-800 dark:bg-neutral-950`}>
         {failed ? (
           <p role="alert" className="p-5 text-center text-sm text-red-600 dark:text-red-400">
             {isId ? "PDF gagal dibuat. Periksa data surat lalu coba ubah salah satu isian." : "PDF generation failed. Review the letter and try updating a field."}
