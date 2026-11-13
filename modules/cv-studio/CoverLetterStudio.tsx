@@ -48,6 +48,7 @@ const CoverLetterPreview = dynamic(() => import("./CoverLetterPreview"), {
 
 const INPUT = "block w-full min-w-0 rounded-lg border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 outline-none transition-colors placeholder:text-neutral-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 dark:border-neutral-700 dark:bg-neutral-950/50 dark:text-neutral-100 dark:placeholder:text-neutral-500";
 const SECONDARY = "inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-200 px-3 py-2.5 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-100 disabled:opacity-40 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800";
+const DRAFT_BUTTON = "inline-flex items-center justify-center gap-1.5 rounded-lg border border-neutral-200 px-3 py-2 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-30 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800";
 const PRIMARY = "inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-900 px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300";
 
 // Komponen field wajib di tingkat modul: tidak remount dan tidak kehilangan fokus per karakter.
@@ -343,7 +344,7 @@ export default function CoverLetterStudio() {
     setStatus(isId ? "Nama dan kontak diperbarui dari CV Studio." : "Contact details updated from CV Studio.");
   }
 
-  function useCVExample(example: CVExample) {
+  function applyCVExample(example: CVExample) {
     if (draft.form.experience.trim() && !window.confirm(isId
       ? "Ganti pengalaman yang sudah kamu tulis dengan poin dari CV?"
       : "Replace the experience you wrote with this CV detail?")) return;
@@ -409,7 +410,7 @@ export default function CoverLetterStudio() {
         </p>
       </header>
 
-      <div className="mb-5 rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900/40 sm:p-5">
+      <div className="mb-6">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{isId ? "Pilih gaya surat" : "Choose a letter layout"}</h2>
@@ -419,7 +420,7 @@ export default function CoverLetterStudio() {
           </div>
           <span className="text-xs text-neutral-400">A4 · Portrait</span>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {(Object.keys(LETTER_PRESETS) as LetterTemplate[]).map((key) => {
             const preset = LETTER_PRESETS[key];
             const selected = draft.template === key;
@@ -429,16 +430,16 @@ export default function CoverLetterStudio() {
                 type="button"
                 aria-pressed={selected}
                 onClick={() => updateTemplate(key)}
-                className={`flex min-w-0 flex-col items-start gap-2.5 rounded-2xl border p-3 text-left sm:flex-row sm:items-center sm:gap-3 transition-colors sm:p-4 ${selected
-                  ? "border-teal-600 bg-teal-50/70 ring-1 ring-teal-600/20 dark:border-teal-500 dark:bg-teal-950/20"
-                  : "border-neutral-200 bg-white hover:border-neutral-400 dark:border-neutral-800 dark:bg-neutral-950/40 dark:hover:border-neutral-600"
+                className={`flex min-w-0 items-center gap-4 rounded-2xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-950 ${selected
+                  ? "border-teal-500 bg-teal-50/60 dark:bg-teal-950/20"
+                  : "border-neutral-200 bg-white hover:border-neutral-400 dark:border-neutral-800 dark:bg-neutral-900/40"
                 }`}
               >
                 <TemplateMiniature template={key} />
                 <span className="min-w-0 w-full flex-1">
                   <span className="flex items-center gap-1.5 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                     {preset.label}
-                    {selected ? <HiOutlineCheckCircle className="h-4 w-4 shrink-0 text-teal-600" /> : null}
+                    {selected ? <HiOutlineCheckCircle className="h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" /> : null}
                   </span>
                   <span className="mt-1 block text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">{isId ? preset.idHint : preset.enHint}</span>
                 </span>
@@ -453,29 +454,6 @@ export default function CoverLetterStudio() {
         </p>
       </div>
 
-      {/* Backup JSON sengaja bersifat lokal, mengikuti pola CV Generator. */}
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3 dark:border-neutral-800 dark:bg-neutral-900/40">
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-            {isId ? "Kelola draft surat" : "Manage letter draft"}
-          </p>
-          <p className="mt-1 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-            {isId ? "Tersimpan otomatis di browser. Simpan cadangan JSON untuk digunakan kembali." : "Automatically saved in your browser. Keep a JSON backup for later."}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <button type="button" className={SECONDARY} onClick={exportDraft}>
-            <HiOutlineArrowDownTray className="h-4 w-4" /> {isId ? "Export JSON" : "Export JSON"}
-          </button>
-          <button type="button" className={SECONDARY} onClick={() => importRef.current?.click()}>
-            <HiOutlineArrowUpTray className="h-4 w-4" /> {isId ? "Import JSON" : "Import JSON"}
-          </button>
-          <button type="button" className={`${SECONDARY} text-red-600 dark:text-red-400`} onClick={resetDraft}>
-            <HiOutlineTrash className="h-4 w-4" /> {isId ? "Reset" : "Reset"}
-          </button>
-          <input type="file" ref={importRef} accept="application/json,.json" onChange={(event) => void importDraft(event)} className="hidden" aria-label={isId ? "Pilih file draft JSON" : "Choose JSON draft file"} />
-        </div>
-      </div>
       {status ? <p role="status" aria-live="polite" className="mb-4 text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">{status}</p> : null}
 
       <div className="mb-5 grid grid-cols-2 gap-2 lg:hidden" role="tablist" aria-label={isId ? "Mode tampilan" : "View mode"}>
@@ -512,62 +490,6 @@ export default function CoverLetterStudio() {
             </div>
           </Section>
 
-         <Section
-  title={isId ? "Draft dan privasi" : "Draft and privacy"}
-  description={
-    isId
-      ? "Draft otomatis disimpan hanya di browser ini. Unduh JSON agar bisa dilanjutkan di perangkat lain."
-      : "Drafts auto-save only in this browser. Export JSON to continue on another device."
-  }
-  defaultOpen={false}
->
-  <div className="flex flex-wrap gap-2">
-    <button
-      type="button"
-      className={SECONDARY}
-      onClick={exportDraft}
-    >
-      <HiOutlineArrowDownTray className="h-4 w-4" />
-      Export JSON
-    </button>
-
-    <button
-      type="button"
-      className={SECONDARY}
-      onClick={() => importRef.current?.click()}
-    >
-      <HiOutlineArrowUpTray className="h-4 w-4" />
-      Import JSON
-    </button>
-
-    <button
-      type="button"
-      className={`${SECONDARY} text-red-600 dark:text-red-400`}
-      onClick={resetDraft}
-    >
-      <HiOutlineTrash className="h-4 w-4" />
-      {isId ? "Hapus draft" : "Clear draft"}
-    </button>
-
-    <input
-      ref={importRef}
-      type="file"
-      accept=".json,application/json"
-      className="hidden"
-      onChange={(event) => void importDraft(event)}
-      aria-label={
-        isId ? "Pilih file draft JSON" : "Choose JSON draft file"
-      }
-    />
-  </div>
-
-  <p className="mt-4 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-    {isId
-      ? "Hindari menyimpan data pribadi sensitif di perangkat bersama."
-      : "Avoid saving sensitive personal data on shared devices."}
-  </p>
-</Section>
-
           <Section
             title={isId ? "3. Cerita dan pengalaman" : "3. Motivation and experience"}
             description={isId ? "Gunakan fakta dari pengalamanmu sendiri. Tulis secukupnya, tidak perlu mengarang pencapaian." : "Use facts from your actual experience. Keep it focused; do not invent achievements."}
@@ -582,7 +504,7 @@ export default function CoverLetterStudio() {
                   </p>
                   <div className="max-h-44 space-y-2 overflow-y-auto">
                     {cvExamples.slice(0, 12).map((example) => (
-                      <button key={example.id} type="button" onClick={() => useCVExample(example)} className="block w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-left transition hover:border-teal-400 dark:border-neutral-700 dark:bg-neutral-900">
+                      <button key={example.id} type="button" onClick={() => applyCVExample(example)} className="block w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-left transition hover:border-teal-400 dark:border-neutral-700 dark:bg-neutral-900">
                         <span className="block truncate text-[11px] font-semibold text-neutral-500 dark:text-neutral-400">{example.label}</span>
                         <span className="mt-1 block text-xs leading-relaxed text-neutral-700 dark:text-neutral-200">{example.text}</span>
                       </button>
@@ -624,6 +546,62 @@ export default function CoverLetterStudio() {
                 </span>
               ) : null}
             </div>
+          </Section>
+
+          <Section
+            title={isId ? "Draft dan privasi" : "Draft and privacy"}
+            description={
+              isId
+                ? "Draft otomatis disimpan hanya di browser ini. Unduh JSON agar bisa dilanjutkan di perangkat lain."
+                : "Drafts auto-save only in this browser. Export JSON to continue on another device."
+            }
+            defaultOpen={false}
+          >
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                className={DRAFT_BUTTON}
+                onClick={exportDraft}
+              >
+                <HiOutlineArrowDownTray className="h-4 w-4" />
+                Export JSON
+              </button>
+
+              <button
+                type="button"
+                className={DRAFT_BUTTON}
+                onClick={() => importRef.current?.click()}
+              >
+                <HiOutlineArrowUpTray className="h-4 w-4" />
+                Import JSON
+              </button>
+
+              <button
+                type="button"
+                className={`${DRAFT_BUTTON} text-red-500 dark:text-red-400`}
+                onClick={resetDraft}
+              >
+                <HiOutlineTrash className="h-4 w-4" />
+                {isId ? "Hapus draft" : "Clear draft"}
+              </button>
+
+              <input
+                ref={importRef}
+                type="file"
+                accept=".json,application/json"
+                className="hidden"
+                onChange={(event) => void importDraft(event)}
+                aria-label={
+                  isId ? "Pilih file draft JSON" : "Choose JSON draft file"
+                }
+              />
+            </div>
+
+            <p className="mt-4 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+              {isId
+                ? "Hindari menyimpan data pribadi sensitif di perangkat bersama."
+                : "Avoid saving sensitive personal data on shared devices."}
+            </p>
           </Section>
         </div>
 
