@@ -9,7 +9,7 @@ import { IoPhonePortraitOutline as ContentIcon } from "react-icons/io5";
 import { PiChatTeardropDotsBold as ChatRoomIcon } from "react-icons/pi";
 import { PiCertificate as AchievementIcon } from "react-icons/pi";
 import { VscHubot as SmartChatIcon } from "react-icons/vsc";
-import { BiTerminal } from "react-icons/bi"; 
+import { BiTerminal } from "react-icons/bi";
 import { MenuItemProps } from "../types/menu";
 import { HiSparkles } from "react-icons/hi";
 import { HiOutlineDocumentText } from "react-icons/hi2";
@@ -61,23 +61,18 @@ export const MENU_ITEMS: MenuItemProps[] = [
   {
     title: "Services",
     href: "/layanan",
-    icon: <HiOutlineBriefcase size={20} className="text-blue-500" />, 
+    icon: <HiOutlineBriefcase size={20} className="text-blue-500" />,
     isShow: true,
-    isExternal: false
+    isExternal: false,
   },
   {
-  title: "CV Generator",
-  href: "/tools/cv-generator",
-  icon: (
-    <HiOutlineDocumentText
-      size={20}
-      className="text-blue-500"
-    />
-  ),
-  isShow: true,
-  isExternal: false,
-  eventName: "Pages: CV Studio",
-},
+    title: "CV Generator",
+    href: "/tools/cv-generator",
+    icon: <HiOutlineDocumentText size={20} className="text-blue-500" />,
+    isShow: true,
+    isExternal: false,
+    eventName: "Pages: CV Studio",
+  },
   {
     title: "Dashboard",
     href: "/dashboard",
@@ -89,7 +84,7 @@ export const MENU_ITEMS: MenuItemProps[] = [
   {
     title: "AI Assistant",
     href: "/assistant",
-    icon: <HiSparkles size={20} className="text-blue-500" />, 
+    icon: <HiSparkles size={20} className="text-blue-500" />,
     isShow: true,
     isExternal: false,
     eventName: "Pages: AI Assistant",

@@ -11,6 +11,12 @@
       "title": "Skills",
       "sub_title": "My technical proficiency and professional toolkit."
     },
+    "organization": {
+      "title": "Featured Organizations",
+      "view_all": "View All",
+      "view_documentation": "View documentation",
+      "documentation_alt": "Event documentation"
+    },
     "bento": {
       "title": "Featured Sections",
       "sub_title": "Explore my crafted works, open-source contributions, and professional milestones."
@@ -34,6 +40,13 @@
     "education": {
       "title": "Education",
       "sub_title": "My academic background."
+    },
+    "organization": {
+      "title": "Organizations & Communities",
+      "sub_title": "Communities, leadership, and moments documented along the way.",
+      "loading": "Loading organizations...",
+      "error": "Organizations could not be loaded.",
+      "empty": "No organizations to display yet."
     },
     "resume_download_button": "Download Resume",
     "portfolio_download_button": "Download Portfolio",
@@ -310,5 +323,4 @@
     "noResponse": "No response from the server",
     "send": "Send message"
   }
-  
 }

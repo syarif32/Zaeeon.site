@@ -26,10 +26,25 @@ export default function PDFCanvasPreview({
     if (!host) return;
 
     const measure = () => {
-      setContainerWidth(
-        Math.max(220, host.clientWidth - 24)
-      );
-    };
+  const actualWidth = Math.floor(
+    host.getBoundingClientRect().width
+  );
+
+  // jangan render saat container tersembunyi
+  if (actualWidth < 100) return;
+
+  const nextWidth = Math.max(
+    160,
+    actualWidth - 24
+  );
+
+  // hindari render ulang untuk perubahan ukuran sangat kecil
+  setContainerWidth((previous) => {
+    return Math.abs(previous - nextWidth) >= 16
+      ? nextWidth
+      : previous;
+  });
+};
 
     measure();
 
@@ -103,9 +118,9 @@ export default function PDFCanvasPreview({
           Math.min(containerWidth, 820) * zoom;
 
         const pixelRatio = Math.min(
-          window.devicePixelRatio || 1,
-          1.7
-        );
+  window.devicePixelRatio || 1,
+  1.25
+);
 
         for (
           let index = 1;

@@ -38,6 +38,7 @@ import type {
   SectionKey,
   SkillGroup,
 } from "./model";
+import CVAnalyzer from "./CVAnalyzer";
 
 const PDFPanel = dynamic(() => import("./PDFPanel"), {
   ssr: false,
@@ -1101,13 +1102,14 @@ export default function CVStudio() {
   </Link>
 </div>
 
-
-      <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
-        <section
-          className={`min-w-0 space-y-6 ${
-            mobilePreview ? "hidden lg:block" : ""
-          }`}
-        >
+{/* layout utama: editor kiri, PDF dan analyzer kanan */}
+<div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-6">
+  <section
+    className={`min-w-0 space-y-6 ${
+      mobilePreview ? "hidden lg:block" : ""
+    }`}
+  >
+    {/* pertahankan seluruh isi editor CV yang sudah ada */}
          
 <CollapsiblePane
   title={isId ? "Pengaturan CV" : "CV settings"}
@@ -1146,19 +1148,36 @@ export default function CVStudio() {
         {isId ? "Kerapatan halaman" : "Page density"}
       </span>
 
-      <select
-        className={INPUT}
-        value={resume.density}
-        onChange={(e) =>
-          setResume((old) => ({
-            ...old,
-            density: e.target.value as Density,
-          }))
-        }
-      >
-        <option value="normal">Normal</option>
-        <option value="compact">Compact</option>
-      </select>
+      
+<select
+  className={INPUT}
+  value={
+    resume.density === "normal"
+      ? "balanced"
+      : resume.density
+  }
+  onChange={(event) =>
+    setResume((old) => ({
+      ...old,
+      density: event.target.value as Density,
+    }))
+  }
+>
+  <option value="compact">
+    {isId ? "Ringkas" : "Compact"}
+  </option>
+
+  <option value="balanced">
+    {isId
+      ? "Seimbang (disarankan)"
+      : "Balanced (recommended)"}
+  </option>
+
+  <option value="spacious">
+    {isId ? "Lega" : "Spacious"}
+  </option>
+</select>
+
     </label>
 
     {/* pilihan font */}
@@ -1419,18 +1438,57 @@ export default function CVStudio() {
           </CollapsiblePane>
         </section>
 
-        <section
-          className={`min-w-0 rounded-2xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900/40 sm:p-5 ${
-            mobilePreview
-              ? ""
-              : "hidden lg:block"
-          }`}
-        >
-          <PDFPanel
-            resume={preview}
-            isId={isId}
-          />
-        </section>
+        
+{/* KOLOM KANAN: PDF PREVIEW DAN CV ANALYZER */}
+<div
+  className={`
+    min-w-0 space-y-4
+    ${mobilePreview ? "block" : "hidden lg:block"}
+
+    lg:sticky
+    lg:top-24
+    lg:self-start
+    lg:max-h-[calc(100dvh-7rem)]
+    lg:overflow-y-auto
+    lg:overscroll-contain
+    lg:pr-1
+    lg:[scrollbar-width:thin]
+  `}
+>
+  {/* PDF PREVIEW */}
+  <section
+    aria-label={
+      isId ? "Pratinjau CV" : "CV preview"
+    }
+    className="
+      min-w-0
+      rounded-2xl
+      border border-neutral-200
+      bg-white
+      p-3
+      dark:border-neutral-800
+      dark:bg-neutral-900/40
+      sm:p-5
+    "
+  >
+    <PDFPanel
+      resume={preview}
+      isId={isId}
+    />
+  </section>
+
+  {/* CV QUALITY SCORE DAN KEYWORD ANALYSIS */}
+  <div
+    id="cv-analysis"
+    className="min-w-0"
+  >
+    <CVAnalyzer
+      resume={resume}
+      isId={isId}
+    />
+  </div>
+</div>
+
       </div>
     </main>
   );
