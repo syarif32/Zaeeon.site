@@ -1,11 +1,13 @@
 # File Tree: Zaeeon.site
 
-**Generated:** 11/2/2026, 11:29:19 AM
+**Generated:** 11/13/2026, 9:50:47 AM
 **Root Path:** `c:\Users\IT Prog 1\Documents\Sarep\project\Zaeeon.site`
 
 ```
 ├── app
 │   ├── [locale]
+│   │   ├── [...rest]
+│   │   │   └── page.tsx
 │   │   ├── about
 │   │   │   └── page.tsx
 │   │   ├── achievements
@@ -29,12 +31,15 @@
 │   │   │   │   │       └── page.tsx
 │   │   │   │   └── insert-educations
 │   │   │   │       └── page.tsx
+│   │   │   ├── oranizations
+│   │   │   │   └── page.tsx
 │   │   │   ├── project
 │   │   │   │   ├── edit
 │   │   │   │   │   └── [id]
 │   │   │   │   │       └── page.tsx
 │   │   │   │   └── insert-project
 │   │   │   │       └── page.tsx
+│   │   │   ├── layout.tsx
 │   │   │   └── page.tsx
 │   │   ├── assistant
 │   │   │   └── page.tsx
@@ -47,6 +52,7 @@
 │   │   ├── dashboard
 │   │   │   └── page.tsx
 │   │   ├── layanan
+│   │   │   ├── layout.tsx
 │   │   │   └── page.tsx
 │   │   ├── legal
 │   │   │   ├── privacy-policy
@@ -55,12 +61,18 @@
 │   │   │       └── page.tsx
 │   │   ├── projects
 │   │   │   ├── [slug]
+│   │   │   │   ├── layout.tsx
 │   │   │   │   └── page.tsx
 │   │   │   └── page.tsx
 │   │   ├── smart-talk
 │   │   │   └── page.tsx
 │   │   ├── terminal
 │   │   │   └── page.tsx
+│   │   ├── tools
+│   │   │   ├── cover-letter
+│   │   │   │   └── page.tsx
+│   │   │   └── cv-generator
+│   │   │       └── page.tsx
 │   │   ├── layout.tsx
 │   │   ├── not-found.tsx
 │   │   └── page.tsx
@@ -71,6 +83,17 @@
 │   │   │   ├── types
 │   │   │   │   └── route.ts
 │   │   │   └── route.ts
+│   │   ├── admin
+│   │   │   ├── featured-achievements
+│   │   │   │   └── route.ts
+│   │   │   ├── featured-careers
+│   │   │   │   └── route.ts
+│   │   │   ├── featured-organizations
+│   │   │   │   └── route.ts
+│   │   │   └── organizations
+│   │   │       ├── upload
+│   │   │       │   └── route.ts
+│   │   │       └── route.ts
 │   │   ├── auth
 │   │   │   └── [...nextauth]
 │   │   │       └── route.ts
@@ -86,11 +109,19 @@
 │   │   │   └── route.ts
 │   │   ├── codewars
 │   │   │   └── route.ts
+│   │   ├── development-pulse
+│   │   │   └── route.ts
 │   │   ├── email
 │   │   │   └── route.ts
 │   │   ├── github
+│   │   │   ├── languages
+│   │   │   │   └── route.ts
+│   │   │   ├── repos
+│   │   │   │   └── route.ts
 │   │   │   └── route.ts
 │   │   ├── monkeytype
+│   │   │   └── route.ts
+│   │   ├── project-reactions
 │   │   │   └── route.ts
 │   │   ├── projects
 │   │   │   ├── [slug]
@@ -102,9 +133,11 @@
 │   │   │   └── route.ts
 │   │   └── umami
 │   │       └── route.ts
-│   ├── favicon.ico
 │   ├── global.d.ts
-│   └── globals.css
+│   ├── globals.css
+│   ├── icon.svg
+│   ├── robots.ts
+│   └── sitemap.ts
 ├── common
 │   ├── components
 │   │   ├── elements
@@ -113,9 +146,11 @@
 │   │   │   ├── BackButton.tsx
 │   │   │   ├── Breakline.tsx
 │   │   │   ├── Button.tsx
+│   │   │   ├── CVPreview.tsx
 │   │   │   ├── Card.tsx
 │   │   │   ├── ClickSpark.tsx
 │   │   │   ├── CodeBlock.tsx
+│   │   │   ├── CommandSearch.tsx
 │   │   │   ├── Container.tsx
 │   │   │   ├── Copyright.tsx
 │   │   │   ├── CountUp.tsx
@@ -141,6 +176,7 @@
 │   │   │   ├── ScrollStack.tsx
 │   │   │   ├── SectionHeading.tsx
 │   │   │   ├── SectionSubHeading.tsx
+│   │   │   ├── SeoJsonLd.tsx
 │   │   │   ├── ShinyText.tsx
 │   │   │   ├── SkeletonLoader.tsx
 │   │   │   ├── SpotlightCard.tsx
@@ -183,6 +219,7 @@
 │   ├── helpers
 │   │   └── index.ts
 │   ├── libs
+│   │   ├── authOptions.ts
 │   │   ├── clsxm.ts
 │   │   ├── firebase.ts
 │   │   └── mdx.ts
@@ -204,6 +241,7 @@
 │   │   ├── mdx.ts
 │   │   ├── menu.ts
 │   │   ├── monkeytype.ts
+│   │   ├── organizations.ts
 │   │   ├── projects.ts
 │   │   ├── service.ts
 │   │   ├── socialMedia.ts
@@ -213,6 +251,9 @@
 │       ├── apiResponse.ts
 │       ├── client.ts
 │       ├── middleware.ts
+│       ├── organizationAdmin.ts
+│       ├── organizationPeriod.ts
+│       ├── projectLocale.ts
 │       └── server.ts
 ├── contents
 │   └── projects
@@ -237,6 +278,8 @@
 │   │   │   ├── CareerList.tsx
 │   │   │   ├── EducationCard.tsx
 │   │   │   ├── EducationList.tsx
+│   │   │   ├── OrganizationCard.tsx
+│   │   │   ├── OrganizationList.tsx
 │   │   │   ├── Portfolio.tsx
 │   │   │   ├── Resume.tsx
 │   │   │   └── Story.tsx
@@ -250,6 +293,11 @@
 │   │   │   ├── FilterHeader.tsx
 │   │   │   └── InputSearch.tsx
 │   │   └── index.ts
+│   ├── admin
+│   │   └── components
+│   │       ├── FeaturedAchievementsManager.tsx
+│   │       ├── FeaturedCareersManager.tsx
+│   │       └── FeaturedOrganizationsManager.tsx
 │   ├── assistant
 │   │   └── components
 │   │       ├── AIAssistant.tsx
@@ -275,7 +323,8 @@
 │   │   │   ├── Contact.tsx
 │   │   │   ├── ContactCard.tsx
 │   │   │   ├── ContactForm.tsx
-│   │   │   └── ContactList.tsx
+│   │   │   ├── ContactList.tsx
+│   │   │   └── DigitalContactCard.tsx
 │   │   └── index.ts
 │   ├── contents
 │   │   ├── ProfileHeader.tsx
@@ -283,6 +332,22 @@
 │   │   ├── TiktokSkeleton.tsx
 │   │   ├── VideoCard.tsx
 │   │   └── VideoList.tsx
+│   ├── cv-studio
+│   │   ├── CVAnalyzer.tsx
+│   │   ├── CVPageAlert.tsx
+│   │   ├── CVStudio.tsx
+│   │   ├── CoverLetterPreview.tsx
+│   │   ├── CoverLetterStudio.tsx
+│   │   ├── DocxDownloadButton.tsx
+│   │   ├── DocxGenerator.ts
+│   │   ├── PDFCanvasPreview.tsx
+│   │   ├── PDFPanel.tsx
+│   │   ├── ResumeDocument.tsx
+│   │   ├── coverLetterExport.tsx
+│   │   ├── coverLetterModel.ts
+│   │   ├── cvAnalysis.ts
+│   │   ├── layoutConfig.ts
+│   │   └── model.ts
 │   ├── dashboard
 │   │   ├── components
 │   │   │   ├── Codewars
@@ -306,6 +371,8 @@
 │   │   │   │   ├── Overview.tsx
 │   │   │   │   ├── OverviewItem.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── DevelopmentPulse
+│   │   │   │   └── DevelopmentPulse.tsx
 │   │   │   ├── Monkeytype
 │   │   │   │   ├── Leaderboard.tsx
 │   │   │   │   ├── Monkeytype.tsx
@@ -314,6 +381,11 @@
 │   │   │   │   ├── OverviewItem.tsx
 │   │   │   │   ├── Profile.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── RepositoryObservatory
+│   │   │   │   ├── RepositoryObservatory.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── TechnologyFootprint
+│   │   │   │   └── TechnologyFootprint.tsx
 │   │   │   ├── Umami
 │   │   │   │   ├── ComboBoxFilter.tsx
 │   │   │   │   ├── Overview.tsx
@@ -322,10 +394,14 @@
 │   │   │   │   ├── Umami.tsx
 │   │   │   │   ├── UmamiSkeleton.tsx
 │   │   │   │   └── index.ts
-│   │   │   └── Dashboard.tsx
+│   │   │   ├── Dashboard.tsx
+│   │   │   └── Dashboardold.tsx
 │   │   └── index.ts
 │   ├── home
 │   │   ├── components
+│   │   │   ├── FeaturedCareers.tsx
+│   │   │   ├── FeaturedCertificates.tsx
+│   │   │   ├── FeaturedOrganizations.tsx
 │   │   │   ├── Hexagon.tsx
 │   │   │   ├── Home.tsx
 │   │   │   ├── Introduction.tsx
@@ -335,9 +411,13 @@
 │   │   └── index.ts
 │   ├── projects
 │   │   ├── components
+│   │   │   ├── ArchitectureExplorer
+│   │   │   │   ├── ArchitectureExplorer.tsx
+│   │   │   │   └── architectureData.ts
 │   │   │   ├── ProjectCard.tsx
 │   │   │   ├── ProjectDetail.tsx
 │   │   │   ├── ProjectLink.tsx
+│   │   │   ├── ProjectReactions.tsx
 │   │   │   ├── ProjectSkeleton.tsx
 │   │   │   └── Projects.tsx
 │   │   └── index.ts
@@ -349,6 +429,8 @@
 │       └── components
 │           └── Terminal.tsx
 ├── public
+│   ├── cv
+│   │   └── cv.pdf
 │   ├── images
 │   │   ├── careers
 │   │   │   ├── ai.webp
@@ -357,13 +439,16 @@
 │   │   │   ├── inai.webp
 │   │   │   ├── mnjp.webp
 │   │   │   ├── mobile.pdf
+│   │   │   ├── mobile.webp
 │   │   │   ├── py.webp
 │   │   │   ├── sertif-aiethicgg.pdf
-│   │   │   └── web.pdf
+│   │   │   ├── web.pdf
+│   │   │   └── web.webp
 │   │   ├── eco.webp
 │   │   ├── hbd.png
 │   │   ├── lapak-siswa.webp
-│   │   ├── najwa.jpg
+│   │   ├── najwa.png
+│   │   ├── najwa12.jpg
 │   │   ├── piku.png
 │   │   ├── placeholder.webp
 │   │   ├── porto.png
@@ -372,11 +457,19 @@
 │   │   ├── tiktok.png
 │   │   ├── {6BD4E505-9FED-437D-AE2A-BB773BC70B11}.png
 │   │   └── {808F8F05-1C12-4778-82DE-5F591C87A037}.png
+│   ├── pdfjs
+│   │   └── v5.4.624
+│   │       ├── pdf.min.mjs
+│   │       └── pdf.worker.min.mjs
+│   ├── google4c8749bda6cdc5eb.html
 │   ├── image.png
+│   ├── logo.png
 │   ├── next.svg
 │   ├── tiktok27uMsbuuu6yXQEoJMMIuDZJtI6Mh1WFl.txt
 │   ├── tiktokRiLZS4IEy8bPp4erwUesNoapkVhVNfcL.txt
 │   └── vercel.svg
+├── scripts
+│   └── copy-cv-pdfjs.mjs
 ├── services
 │   ├── achievements.ts
 │   ├── codewars.ts
@@ -393,6 +486,8 @@
 ├── SessionProvider.tsx
 ├── SkeletonThemeProvider.tsx
 ├── bun.lockb
+├── favicon.svg
+├── logo.png
 ├── middleware.ts
 ├── next.config.mjs
 ├── package-lock.json
@@ -400,6 +495,7 @@
 ├── postcss.config.js
 ├── prettier.config.js
 ├── tailwind.config.ts
+├── tree
 └── tsconfig.json
 ```
 

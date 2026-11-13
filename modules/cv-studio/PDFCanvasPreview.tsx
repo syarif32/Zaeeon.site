@@ -8,6 +8,7 @@ type Props = {
   zoom?: number;
   isId: boolean;
   onPageCount?: (count: number) => void;
+  documentLabel?: string;
 };
 
 export default function PDFCanvasPreview({
@@ -15,6 +16,7 @@ export default function PDFCanvasPreview({
   zoom = 1,
   isId,
   onPageCount,
+  documentLabel = "CV",
 }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -159,7 +161,7 @@ export default function PDFCanvasPreview({
 
           canvas.setAttribute(
             "aria-label",
-            `CV page ${index}`
+            `${documentLabel} page ${index}`
           );
 
           const pageWrapper =
@@ -243,6 +245,7 @@ export default function PDFCanvasPreview({
     zoom,
     isId,
     onPageCount,
+    documentLabel,
   ]);
 
   return (
