@@ -221,6 +221,7 @@ export default function CoverLetterStudio() {
   const [draft, setDraft] = useState<LetterDraft>(() => defaultLetterDraft(language));
   const [hydrated, setHydrated] = useState(false);
   const [mobilePreview, setMobilePreview] = useState(false);
+  const [showAllTemplates, setShowAllTemplates] = useState(false);
   const [cvExamples, setCvExamples] = useState<CVExample[]>([]);
   const [cvFound, setCvFound] = useState(false);
   const [status, setStatus] = useState("");
@@ -420,17 +421,18 @@ export default function CoverLetterStudio() {
           </div>
           <span className="text-xs text-neutral-400">A4 · Portrait</span>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {(Object.keys(LETTER_PRESETS) as LetterTemplate[]).map((key) => {
+        <div id="cover-letter-templates" className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {(Object.keys(LETTER_PRESETS) as LetterTemplate[]).map((key, index) => {
             const preset = LETTER_PRESETS[key];
             const selected = draft.template === key;
             return (
               <button
                 key={key}
                 type="button"
+                hidden={!showAllTemplates && index >= 3}
                 aria-pressed={selected}
                 onClick={() => updateTemplate(key)}
-                className={`flex min-w-0 items-center gap-4 rounded-2xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-950 ${selected
+                className={`${!showAllTemplates && index >= 3 ? "hidden" : "flex"} min-w-0 items-center gap-3 rounded-2xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-950 sm:p-4 ${selected
                   ? "border-teal-500 bg-teal-50/60 dark:bg-teal-950/20"
                   : "border-neutral-200 bg-white hover:border-neutral-400 dark:border-neutral-800 dark:bg-neutral-900/40"
                 }`}
@@ -447,6 +449,16 @@ export default function CoverLetterStudio() {
             );
           })}
         </div>
+        <button
+          type="button"
+          aria-expanded={showAllTemplates}
+          aria-controls="cover-letter-templates"
+          onClick={() => setShowAllTemplates((expanded) => !expanded)}
+          className="mt-3 inline-flex items-center gap-2 rounded-md px-1 py-2 text-xs font-medium text-neutral-600 transition-colors hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:text-neutral-400 dark:hover:text-teal-400"
+        >
+          {showAllTemplates ? "Less template" : "More template"}
+          <HiOutlineChevronDown aria-hidden="true" className={`h-4 w-4 transition-transform duration-200 ${showAllTemplates ? "rotate-180" : ""}`} />
+        </button>
         <p className="mt-3 text-[11px] leading-relaxed text-neutral-500 dark:text-neutral-400">
           {isId
             ? "Nama gaya terinspirasi panduan karier universitas; bukan template resmi atau produk yang berafiliasi dengan universitas tersebut."
