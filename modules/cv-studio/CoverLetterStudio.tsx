@@ -503,7 +503,7 @@ export default function CoverLetterStudio() {
           </Section>
 
           <Section
-            title={isId ? "3. Cerita dan pengalaman" : "3. Motivation and experience"}
+            title={isId ? "2. Cerita dan pengalaman" : "2. Motivation and experience"}
             description={isId ? "Gunakan fakta dari pengalamanmu sendiri. Tulis secukupnya, tidak perlu mengarang pencapaian." : "Use facts from your actual experience. Keep it focused; do not invent achievements."}
           >
             <div className="space-y-4">
@@ -537,7 +537,7 @@ export default function CoverLetterStudio() {
           </Section>
 
           <Section
-            title={isId ? "4. Edit isi surat" : "4. Edit letter body"}
+            title={isId ? "3. Edit isi surat" : "3. Edit letter body"}
             description={isId ? "Hasil dapat diedit sepenuhnya. Perubahan manual tidak akan hilang saat kamu mengganti gaya surat." : "Edit every sentence freely. Your edits remain intact when switching layouts."}
           >
             <div className="space-y-3">
@@ -561,7 +561,7 @@ export default function CoverLetterStudio() {
           </Section>
 
           <Section
-            title={isId ? "Draft dan privasi" : "Draft and privacy"}
+            title={isId ? "4. Draft dan privasi" : "4. Draft and privacy"}
             description={
               isId
                 ? "Draft otomatis disimpan hanya di browser ini. Unduh JSON agar bisa dilanjutkan di perangkat lain."
