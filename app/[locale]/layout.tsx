@@ -2,7 +2,8 @@ import NextTopLoader from "nextjs-toploader";
 import Script from "next/script";
 import { getServerSession } from "next-auth";
 import { Analytics } from "@vercel/analytics/react";
-import { NextIntlClientProvider, hasLocale } from "next-intl";
+import { NextIntlClientProvider, hasLocale, } from "next-intl";
+import SiteOnboarding from "@/common/components/elements/SiteOnboarding";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -77,8 +78,11 @@ const RootLayout = async ({
           <NextAuthProvider session={session}>
             <ThemeProviderContext>
               <SkeletonThemeProvider>
-                <Layouts>{children}</Layouts>
-              </SkeletonThemeProvider>
+  <Layouts>
+    {children}
+    <SiteOnboarding />
+  </Layouts>
+</SkeletonThemeProvider>
             </ThemeProviderContext>
           </NextAuthProvider>
         </NextIntlClientProvider>
