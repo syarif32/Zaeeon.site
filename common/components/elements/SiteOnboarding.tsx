@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
-import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import {
   HiOutlineArrowLeft,
@@ -107,17 +106,7 @@ function sameRect(a: Rectangle | null, b: Rectangle | null): boolean {
     Math.abs(a.width - b.width) < 1 && Math.abs(a.height - b.height) < 1;
 }
 
-function translatedPath(pathname: string, lang: Language): string {
-  const normalized = pathname || "/";
-  if (/^\/(en|id)(?=\/|$)/.test(normalized)) {
-    return normalized.replace(/^\/(en|id)(?=\/|$)/, `/${lang}`);
-  }
-  return `/${lang}${normalized === "/" ? "" : normalized}`;
-}
-
 export default function SiteOnboarding() {
-  const router = useRouter();
-  const pathname = usePathname();
   const locale = useLocale();
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -136,11 +125,11 @@ export default function SiteOnboarding() {
       setIsMobile(media.matches);
       if (!media.matches) return;
       const pending = safeRead("sessionStorage", PENDING_KEY);
-      if (pending === "tour:en" || pending === "tour:id") {
-        safeRemove("sessionStorage", PENDING_KEY);
-        setLanguage(pending === "tour:id" ? "id" : "en");
+      const progress = pending?.match(/^tour:(en|id)(?::([0-2]))?$/);
+      if (progress) {
+        setLanguage(progress[1] === "id" ? "id" : "en");
         setPhase("tour");
-        setStepIndex(0);
+        setStepIndex(Number(progress[2] ?? 0));
         return;
       }
       if (!safeRead("localStorage", SEEN_KEY)) setPhase("welcome");
@@ -156,16 +145,11 @@ export default function SiteOnboarding() {
     };
   }, []);
 
-  useEffect(() => {
-    if (phase === "tour" && locale === language) {
-      safeRemove("sessionStorage", PENDING_KEY);
-    }
-  }, [phase, locale, language]);
-
   // Optional: place data-onboarding-reopen on a help button/menu item.
   useEffect(() => {
     const reopen = () => {
       if (!window.matchMedia(MOBILE_QUERY).matches) return;
+      safeRemove("sessionStorage", PENDING_KEY);
       setLanguage(locale === "id" ? "id" : "en");
       setStepIndex(0);
       setPhase("welcome");
@@ -188,16 +172,16 @@ export default function SiteOnboarding() {
   };
 
   const start = () => {
-    safeWrite("localStorage", SEEN_KEY, "1");
+    // Choosing the guide language must not navigate away from the active tour.
+    // Keep progress until Finish/Skip so a page change or reload can resume it.
+    safeWrite("sessionStorage", PENDING_KEY, `tour:${language}:0`);
     setStepIndex(0);
     setPhase("tour");
-    const current = locale === "id" ? "id" : "en";
-    if (current !== language) {
-      // Session storage bridges a locale change if Next.js remounts the layout.
-      safeWrite("sessionStorage", PENDING_KEY, `tour:${language}`);
-      const nextPath = translatedPath(pathname, language);
-      router.replace(`${nextPath}${window.location.search}${window.location.hash}`);
-    }
+  };
+
+  const goToStep = (index: number) => {
+    safeWrite("sessionStorage", PENDING_KEY, `tour:${language}:${index}`);
+    setStepIndex(index);
   };
 
   useEffect(() => {
@@ -303,8 +287,8 @@ export default function SiteOnboarding() {
             <div className="mt-4 flex items-center justify-between gap-3">
               <button type="button" onClick={close} className="text-xs text-neutral-500 hover:underline dark:text-neutral-400">{copy.skip}</button>
               <div className="flex gap-2">
-                {stepIndex > 0 && <button type="button" onClick={() => setStepIndex((i) => i - 1)} className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-neutral-200 px-3 text-xs font-medium text-neutral-700 dark:border-neutral-700 dark:text-neutral-200"><HiOutlineArrowLeft className="h-3.5 w-3.5" />{copy.back}</button>}
-                <button type="button" onClick={() => stepIndex === STEPS.length - 1 ? close() : setStepIndex((i) => i + 1)} className="inline-flex min-h-9 items-center gap-1 rounded-lg bg-neutral-900 px-3 text-xs font-semibold text-white dark:bg-neutral-100 dark:text-neutral-900">
+                {stepIndex > 0 && <button type="button" onClick={() => goToStep(stepIndex - 1)} className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-neutral-200 px-3 text-xs font-medium text-neutral-700 dark:border-neutral-700 dark:text-neutral-200"><HiOutlineArrowLeft className="h-3.5 w-3.5" />{copy.back}</button>}
+                <button type="button" onClick={() => stepIndex === STEPS.length - 1 ? close() : goToStep(stepIndex + 1)} className="inline-flex min-h-9 items-center gap-1 rounded-lg bg-neutral-900 px-3 text-xs font-semibold text-white dark:bg-neutral-100 dark:text-neutral-900">
                   {stepIndex === STEPS.length - 1 ? copy.finish : copy.next}
                   {stepIndex < STEPS.length - 1 && <HiOutlineArrowRight className="h-3.5 w-3.5" />}
                 </button>
