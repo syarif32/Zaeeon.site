@@ -27,7 +27,7 @@ function labels(letter: LetterOutput) {
   const recipient = letter.form.recipient.trim() || (id ? "Tim Rekrutmen" : "Hiring Manager");
   return {
     recipient,
-    address: id ? `Kepada Yth. ${recipient}` : recipient,
+    address: id ? `Yth. ${recipient}` : recipient,
     greeting: id ? "Dengan hormat," : `Dear ${recipient},`,
     subject: id
       ? `Perihal: Lamaran${letter.form.position.trim() ? ` ${letter.form.position.trim()}` : " kerja"}`
