@@ -33,6 +33,12 @@ export async function generateResumeDocx(
 ): Promise<Blob> {
   const layout = getResumeLayout(cv);
   const fonts = getResumeFonts(cv);
+  const alignBody =
+    cv.textAlign === "right"
+      ? AlignmentType.RIGHT
+      : cv.textAlign === "justify"
+        ? AlignmentType.JUSTIFIED
+        : AlignmentType.LEFT;
 
   const titleColor =
     cv.template === "classic" ? "263B50" : "161616";
@@ -92,7 +98,7 @@ export async function generateResumeDocx(
       children: parts,
 
       alignment:
-        options.align ?? AlignmentType.LEFT,
+        options.align ?? alignBody,
 
       keepNext:
         options.keepNext ?? false,
@@ -135,6 +141,7 @@ export async function generateResumeDocx(
   ) {
     return new Paragraph({
       children: [run(text)],
+      alignment: alignBody,
 
       bullet: {
         level: 0,
@@ -297,6 +304,7 @@ const visible = Array.from(new Set(cv.order)).filter(
 
           keepNext: true,
           borderBottom: true,
+          align: AlignmentType.LEFT,
         }
       )
     );
