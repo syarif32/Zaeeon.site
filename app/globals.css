@@ -141,3 +141,30 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+/* Keep idle mobile skills out of separate 3D rendering contexts.
+   Retain 3D for the full 300ms exit transition as well as hover. */
+@media (max-width: 1023px) {
+  [data-responsive-skills] > [data-responsive-skill] {
+    perspective: none;
+    transform-style: flat;
+    animation: skill-release-3d 300ms step-end;
+  }
+
+  [data-responsive-skills] > [data-responsive-skill]:hover {
+    perspective: 24em;
+    transform-style: preserve-3d;
+    animation: none;
+  }
+}
+
+@keyframes skill-release-3d {
+  from {
+    perspective: 24em;
+    transform-style: preserve-3d;
+  }
+  to {
+    perspective: none;
+    transform-style: flat;
+  }
+}
