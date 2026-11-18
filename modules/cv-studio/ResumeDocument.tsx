@@ -130,6 +130,7 @@ export default function ResumeDocument({
     },
 
     sectionTitle: {
+      textAlign: "left",
       fontFamily: fonts.pdf.bold,
       fontSize: layout.headingPt,
       color: titleColor,
@@ -453,6 +454,7 @@ const visible = Array.from(new Set(cv.order)).filter(
           <View
             key={section}
             style={{
+              textAlign: cv.textAlign ?? "left",
               marginTop:
                 index === 0
                   ? 0

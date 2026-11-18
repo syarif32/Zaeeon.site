@@ -12,6 +12,7 @@ export type Density =
 
 // pilihan font dokumen
 export type CVFont = "default" | "helvetica" | "times" | "courier";
+export type CVTextAlign = "left" | "right" | "justify";
 
 export type SectionKey =
   | "summary"
@@ -72,6 +73,7 @@ export type ResumeData = {
 
   // opsional agar draft versi lama tetap kompatibel
   font?: CVFont;
+  textAlign?: CVTextAlign;
 
   profile: Profile;
   summary: string;
@@ -379,6 +381,9 @@ export function isResumeData(value: unknown): value is ResumeData {
 
     // font draft lama yang belum tersimpan dianggap default
     (v.font === undefined || fonts.includes(v.font)) &&
+
+    (v.textAlign === undefined ||
+      (["left", "right", "justify"] as CVTextAlign[]).includes(v.textAlign)) &&
 
     // validasi profil
     !!p &&

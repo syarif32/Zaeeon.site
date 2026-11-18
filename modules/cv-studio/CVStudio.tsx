@@ -1155,7 +1155,7 @@ export default function CVStudio() {
     </label>
 
     {/* pilihan font */}
-    <label className="space-y-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300 sm:col-span-2">
+    <label className="space-y-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300">
       <span>
         {isId ? "Jenis huruf" : "Font family"}
       </span>
@@ -1187,6 +1187,24 @@ export default function CVStudio() {
         <option value="courier">
           Courier — Monospace
         </option>
+      </select>
+    </label>
+
+    <label className="space-y-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300">
+      <span>{isId ? "Perataan teks" : "Text alignment"}</span>
+      <select
+        className={INPUT}
+        value={resume.textAlign ?? "left"}
+        onChange={(e) =>
+          setResume((old) => ({
+            ...old,
+            textAlign: e.target.value as ResumeData["textAlign"],
+          }))
+        }
+      >
+        <option value="left">{isId ? "Rata kiri" : "Align left"}</option>
+        <option value="right">{isId ? "Rata kanan" : "Align right"}</option>
+        <option value="justify">{isId ? "Rata kanan-kiri" : "Justify"}</option>
       </select>
     </label>
   </div>
