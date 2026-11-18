@@ -213,81 +213,133 @@ export function createBlankResume(): ResumeData {
 }
 
 // membuat data CV contoh
+
 export function createSampleResume(): ResumeData {
   return {
     ...createBlankResume(),
 
+    template: "professional",
+    language: "en",
+    density: "balanced",
+
     profile: {
-      name: "Najwa Syarif",
-      headline: "Software Developer",
-      email: "najwasyarif@example.com",
+      name: "Alex Morgan",
+      headline: "Full Stack Web Developer",
+      email: "alex.morgan@example.com",
       phone: "+62 812 0000 0000",
-      location: "Indonesia",
-      linkedin: "linkedin.com/in/",
-      website: "example.com",
+      location: "Semarang, Indonesia",
+      linkedin: "linkedin.com/in/alexmorgan",
+      website: "alexmorgan.dev",
     },
 
     summary:
-      "Software developer focused on building reliable digital products, improving workflows, and creating practical solutions for people.",
+      "Full Stack Web Developer with experience building web applications using Laravel, React, and Next.js. Skilled in developing REST APIs, managing databases, and creating responsive interfaces. Interested in solving real-world problems through practical and user-friendly digital solutions.",
 
     skills: [
       {
         id: "sample-skill-1",
-        category: "Languages",
-        values: "JavaScript, TypeScript, SQL",
+        category: "Programming Languages",
+        values: "PHP, JavaScript, TypeScript, SQL, HTML, CSS",
       },
       {
         id: "sample-skill-2",
-        category: "Frameworks & Tools",
-        values: "Next.js, React, PostgreSQL, Git",
+        category: "Frameworks & Databases",
+        values: "Laravel, Next.js, React, Tailwind CSS, MySQL, PostgreSQL",
+      },
+      {
+        id: "sample-skill-3",
+        category: "Tools & Technologies",
+        values: "Git, GitHub, Docker, Postman, REST API, Figma",
       },
     ],
 
     experience: [
       {
         id: "sample-exp-1",
-        role: "Full Stack Developer",
+        role: "Full Stack Developer Intern",
         organization: "Example Digital Studio",
-        period: "2024 – Present",
-        details:
-          "Built responsive applications for small businesses.\nReduced repetitive administrative work by introducing automated workflows.",
+        period: "Jan 2026 – Jun 2026",
+        details: [
+          "Developed 10+ features for a Laravel-based management system, including user authentication, dashboards, and reporting.",
+          "Built REST APIs and integrated PostgreSQL to support data management and application functionality.",
+          "Collaborated with developers to fix bugs, improve code quality, and deliver responsive interfaces.",
+        ].join("\n"),
       },
-    ],
-
-    education: [
       {
-        id: "sample-edu-1",
-        institution: "Example University",
-        degree: "Diploma in Informatics",
-        period: "2023 – 2026",
-        details:
-          "Relevant coursework: databases, software engineering, web development.",
+        id: "sample-exp-2",
+        role: "Frontend Developer Intern",
+        organization: "Example Creative Agency",
+        period: "Jul 2025 – Dec 2025",
+        details: [
+          "Built responsive website interfaces using React, Next.js, and Tailwind CSS.",
+          "Translated Figma designs into reusable components with consistent layouts across devices.",
+          "Improved page performance and accessibility through component optimization and testing.",
+        ].join("\n"),
       },
     ],
 
     projects: [
       {
         id: "sample-project-1",
-        name: "Personal Finance App",
+        name: "Personal Finance Management App",
         period: "2026",
         details:
-          "Designed an offline-first application to help people understand daily spending.",
+          "Developed a personal finance application with transaction tracking, budgeting, and financial summaries using Flutter and SQLite.",
+      },
+      {
+        id: "sample-project-2",
+        name: "Small Business Management System",
+        period: "2025",
+        details:
+          "Built a Laravel-based system for inventory management, sales transactions, and automated reporting for small businesses.",
       },
     ],
 
-    awards: "Finalist — Student Software Competition (2025)",
+    education: [
+      {
+        id: "sample-edu-1",
+        institution: "Universitas Dian Nuswantoro",
+        degree: "Diploma in Informatics Engineering",
+        period: "2023 – 2026",
+        details:
+          "GPA: 3.75/4.00 | Relevant coursework: Software Engineering, Database Systems, Web Development.",
+      },
+    ],
 
-    leadership:
-      "Media Team Coordinator — Student Organization (2024–2025)",
+    leadership: [
+      "Media Division Coordinator – Student Association (2024–2025). Led a team of 12 members and coordinated digital content.",
+      "Member – Google Developer Groups (2024–2026). Participated in technology workshops and developer events.",
+    ].join("\n"),
 
-    certifications:
-      "Web Development Certificate — Example Academy (2025)",
+    awards:
+      "2nd Place – University Web Development Competition (2025)",
 
-    research: "Human-centered software; digital inclusion",
+    certifications: [
+      "Web Developer Certification – Example Academy (2025)",
+      "Full Stack Web Development – Example Learning Platform (2026)",
+    ].join("\n"),
 
+    research: "",
     publications: "",
+
+    // urutan section untuk menampilkan CV yang lebih terstruktur
+    order: [
+      "summary",
+      "skills",
+      "experience",
+      "projects",
+      "education",
+      "leadership",
+      "awards",
+      "certifications",
+      "research",
+      "publications",
+    ],
+
+    hidden: [],
   };
 }
+
 
 // memisahkan teks berdasarkan baris
 export function splitLines(value: string): string[] {

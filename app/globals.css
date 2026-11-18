@@ -142,29 +142,19 @@
   }
 }
 
-/* Keep idle mobile skills out of separate 3D rendering contexts.
-   Retain 3D for the full 300ms exit transition as well as hover. */
-@media (max-width: 1023px) {
-  [data-responsive-skills] > [data-responsive-skill] {
-    perspective: none;
-    transform-style: flat;
-    animation: skill-release-3d 300ms step-end;
-  }
-
-  [data-responsive-skills] > [data-responsive-skill]:hover {
-    perspective: 24em;
-    transform-style: preserve-3d;
-    animation: none;
-  }
+/* Pre-rendered alpha textures preserve the glass shading without live blur. */
+.skill-glass-texture {
+  -webkit-mask-image: url('/images/skills/glass-small.png');
+  mask-image: url('/images/skills/glass-small.png');
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
-@keyframes skill-release-3d {
-  from {
-    perspective: 24em;
-    transform-style: preserve-3d;
-  }
-  to {
-    perspective: none;
-    transform-style: flat;
+@media (min-width: 768px) {
+  .skill-glass-texture {
+    -webkit-mask-image: url('/images/skills/glass-large.png');
+    mask-image: url('/images/skills/glass-large.png');
   }
 }
